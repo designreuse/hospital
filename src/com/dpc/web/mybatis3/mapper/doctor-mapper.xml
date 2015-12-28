@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dpc.web.mybatis3.mapper.DoctorMapper">
+	<select id="getAllDoctorList" parameterType="pageEntity" resultType="doctorVO">
+		select 
+			u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,d.score,d.verifyed,u.registerTime
+	    	from t_user u left join t_doctor d on u.id=d.userId order by registerTime
+		<if test="rows != null">
+	        limit #{offset},#{rows}
+	    </if>
+	</select>
+	
+	<select id="getDoctorList" parameterType="doctor" resultType="doctor">
+		select * from t_doctor
+		<where>
+			<if test="id!=null">
+				id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="addDoctor" parameterType="doctor" >
+	    insert into t_doctor
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        userId,
+	      </if>
+	      <if test="hospital != null" >
+	        hospital,
+	      </if>
+	      <if test="score != null" >
+	        score,
+	      </if>
+	      <if test="department != null" >
+	        department,
+	      </if>
+	      <if test="address != null" >
+	        address,
+	      </if>
+	      <if test="technicalTitle != null" >
+	        technicalTitle,
+	      </if>
+	      <if test="teachingTitle != null" >
+	        teachingTitle,
+	      </if>
+	      <if test="verifyed != null" >
+	        verifyed,
+	      </if>
+	      <if test="totalPatient != null" >
+	        totalPatient,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="userId != null" >
+	        #{userId,jdbcType=INTEGER},
+	      </if>
+	      <if test="hospital != null" >
+	        #{hospital,jdbcType=VARCHAR},
+	      </if>
+	      <if test="score != null" >
+	        #{score,jdbcType=INTEGER},
+	      </if>
+	      <if test="department != null" >
+	        #{department,jdbcType=VARCHAR},
+	      </if>
+	      <if test="address != null" >
+	        #{address,jdbcType=VARCHAR},
+	      </if>
+	      <if test="technicalTitle != null" >
+	        #{technicalTitle,jdbcType=VARCHAR},
+	      </if>
+	      <if test="teachingTitle != null" >
+	        #{teachingTitle,jdbcType=VARCHAR},
+	      </if>
+	      <if test="verifyed != null" >
+	        #{verifyed,jdbcType=INTEGER},
+	      </if>
+	      <if test="totalPatient != null" >
+	        #{totalPatient,jdbcType=INTEGER},
+	      </if>
+	    </trim>
+  </insert>
+</mapper>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.DiagnoseExperienceMapper" >
+  <resultMap id="BaseResultMap" type="diagnoseExperience" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
+    <result column="doctorId" property="doctorId" jdbcType="INTEGER" />
+    <result column="illType" property="illType" jdbcType="VARCHAR" />
+    <result column="illDesc" property="illDesc" jdbcType="VARCHAR" />
+    <result column="readCount" property="readCount" jdbcType="INTEGER" />
+    <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="isAnonymous" property="isAnonymous" jdbcType="TINYINT" />
+    <result column="experience" property="experience" jdbcType="VARCHAR" />
+    <result column="postTime" property="creTime" jdbcType="TIMESTAMP" />
+    <result column="remainScore" property="remainScore" jdbcType="INTEGER" />
+    <collection property="remarkList" ofType="diagnoseExperienceRemark">
+	 	<id column="id" property="rid" jdbcType="INTEGER" />
+		<result property="name" column="name" />
+		<result property="profileImage" column="profileImage" />
+		<result property="content" column="remarkContent" />
+		<result property="creTime" column="remarkTime" />
+	</collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, doctorName, doctorId, illDesc, readCount, remarkCount, status, isAnonymous, experience, 
+    creTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select  <include refid="Base_Column_List" /> from d_diagnose_experience
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from d_diagnose_experience
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="diagnoseExperience" >
+    insert into d_diagnose_experience (id, doctorName, doctorId, 
+      illDesc, readCount, remarkCount, 
+      status, isAnonymous, experience, 
+      creTime)
+    values (#{id,jdbcType=INTEGER}, #{doctorName,jdbcType=VARCHAR}, #{doctorId,jdbcType=INTEGER}, 
+      #{illDesc,jdbcType=VARCHAR}, #{readCount,jdbcType=INTEGER}, #{remarkCount,jdbcType=INTEGER}, 
+      #{status,jdbcType=TINYINT}, #{isAnonymous,jdbcType=TINYINT}, #{experience,jdbcType=VARCHAR}, 
+      #{creTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="diagnoseExperience" useGeneratedKeys="true" keyProperty="id">
+    insert into d_diagnose_experience
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="doctorName != null" >
+        doctorName,
+      </if>
+      <if test="doctorId != null" >
+        doctorId,
+      </if>
+      <if test="illDesc != null" >
+        illDesc,
+      </if>
+      <if test="illType != null" >
+        illType,
+      </if>
+      <if test="readCount != null" >
+        readCount,
+      </if>
+      <if test="remarkCount != null" >
+        remarkCount,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isAnonymous != null" >
+        isAnonymous,
+      </if>
+      <if test="experience != null" >
+        experience,
+      </if>
+      <if test="creTime != null" >
+        creTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=INTEGER},
+      </if>
+      <if test="illDesc != null" >
+        #{illDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="illType != null" >
+        #{illType,jdbcType=VARCHAR},
+      </if>
+      <if test="readCount != null" >
+        #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="remarkCount != null" >
+        #{remarkCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isAnonymous != null" >
+        #{isAnonymous,jdbcType=TINYINT},
+      </if>
+      <if test="experience != null" >
+        #{experience,jdbcType=VARCHAR},
+      </if>
+      <if test="creTime != null" >
+        #{creTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="diagnoseExperience" >
+    update d_diagnose_experience
+    <set >
+      <if test="doctorName != null" >
+        doctorName = #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorId != null" >
+        doctorId = #{doctorId,jdbcType=INTEGER},
+      </if>
+      <if test="illDesc != null" >
+        illDesc = #{illDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="readCount != null" >
+        readCount = #{readCount,jdbcType=INTEGER},
+      </if>
+      <if test="remarkCount != null" >
+        remarkCount = #{remarkCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isAnonymous != null" >
+        isAnonymous = #{isAnonymous,jdbcType=TINYINT},
+      </if>
+      <if test="experience != null" >
+        experience = #{experience,jdbcType=VARCHAR},
+      </if>
+      <if test="creTime != null" >
+        creTime = #{creTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="diagnoseExperience" >
+    update d_diagnose_experience
+    set doctorName = #{doctorName,jdbcType=VARCHAR},
+      doctorId = #{doctorId,jdbcType=INTEGER},
+      illDesc = #{illDesc,jdbcType=VARCHAR},
+      readCount = #{readCount,jdbcType=INTEGER},
+      remarkCount = #{remarkCount,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      isAnonymous = #{isAnonymous,jdbcType=TINYINT},
+      experience = #{experience,jdbcType=VARCHAR},
+      creTime = #{creTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="addDiagnoseExperienceRemark" parameterType="diagnoseExperienceRemark" >
+    insert into d_dia_exp_remark
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="doctorId != null" >
+        doctorId,
+      </if>
+      <if test="diaExpId != null" >
+        diaExpId,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="profileImage != null" >
+        profileImage,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="creTime != null" >
+        creTime,
+      </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="doctorId != null" >
+        #{doctorId},
+      </if>
+      <if test="diaExpId != null" >
+        #{diaExpId},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="profileImage != null" >
+        #{profileImage},
+      </if>
+      <if test="content != null" >
+     	 #{content},
+      </if>
+      <if test="creTime != null" >
+        #{creTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="addDiagnoseExperienceImage" parameterType="diagnoseExperienceImage" >
+    insert into d_dia_exp_image
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="diaExpId != null" >
+        diaExpId,
+      </if>
+      <if test="imageUrl != null" >
+        imageUrl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="diaExpId != null" >
+        #{diaExpId},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getDiagnoseExperienceDetail" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  SELECT 
+		a.doctorName,
+		a.illType,
+		a.illDesc,
+		a.experience,
+		d.score AS remainScore,
+		b.content AS remarkContent,
+		b.creTime AS remarkTime,
+		b.profileImage AS profileImage,
+	from d_diagnose_experience a 
+	LEFT JOIN t_doctor d on a.doctorId=d.id
+	left join d_dia_exp_remark b on a.id=b.diaExpId 
+	where a.id=#{0} and b.delFlag=0 
+	order BY b.creTime  
+  </select>
+  
+  <select id="getDiagnoseExperienceList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT 
+		(case isAnonymous when 1 then '匿名发表' else a.doctorName end) doctorName,
+		a.illType,
+		a.creTime AS postTime,
+		a.illDesc,
+		a.readCount,
+		a.remarkCount,
+		a.experience
+	from d_diagnose_experience a 
+	LEFT JOIN t_doctor d on a.doctorId=d.id
+  </select>
+  
+  <select id="getDiagnoseExperienceImageByDiaExpId" parameterType="java.lang.Integer" resultType="diagnoseExperienceImage">
+  	SELECT imageUrl from d_dia_exp_image where diaExpId=#{0} 
+  </select>
+  
+</mapper>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.HeartCircleMapper" >
+  <resultMap id="BaseResultMap" type="heartCircle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="profileImage" property="profileImage" jdbcType="VARCHAR" />
+    <result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
+    <result column="doctorId" property="doctorId" jdbcType="INTEGER" />
+    <result column="images" property="images" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
+    <result column="creTime" property="creTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, profileImage, doctorId,doctorName, images, content, remarkCount, creTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from d_heart_circle
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from d_heart_circle
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="heartCircle" >
+    insert into d_heart_circle (id, profileImage, doctorName, 
+      images, content, remarkCount, 
+      creTime)
+    values (#{id,jdbcType=INTEGER}, #{profileImage,jdbcType=VARCHAR}, #{doctorName,jdbcType=VARCHAR}, 
+      #{images,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{remarkCount,jdbcType=INTEGER}, 
+      #{creTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="heartCircle" useGeneratedKeys="true" keyProperty="id">
+    insert into d_heart_circle
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="profileImage != null" >
+        profileImage,
+      </if>
+      <if test="doctorName != null" >
+        doctorName,
+      </if>
+      <if test="images != null" >
+        images,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="remarkCount != null" >
+        remarkCount,
+      </if>
+      <if test="creTime != null" >
+        creTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="profileImage != null" >
+        #{profileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="images != null" >
+        #{images,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="remarkCount != null" >
+        #{remarkCount,jdbcType=INTEGER},
+      </if>
+      <if test="creTime != null" >
+        #{creTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="heartCircle" >
+    update d_heart_circle
+    <set >
+      <if test="profileImage != null" >
+        profileImage = #{profileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorName != null" >
+        doctorName = #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="images != null" >
+        images = #{images,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="remarkCount != null" >
+        remarkCount = #{remarkCount,jdbcType=INTEGER},
+      </if>
+      <if test="creTime != null" >
+        creTime = #{creTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="heartCircle" >
+    update d_heart_circle
+    set profileImage = #{profileImage,jdbcType=VARCHAR},
+      doctorName = #{doctorName,jdbcType=VARCHAR},
+      images = #{images,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      remarkCount = #{remarkCount,jdbcType=INTEGER},
+      creTime = #{creTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="addHeartCircleImage" parameterType="heartCircleImage" >
+    insert into d_heart_circle_image (imageUrl,heartCircleId,delFlag)
+    values (#{imageUrl},#{heartCircleId},#{delFlag})
+  </insert>
+  
+  <insert id="addHeartCircleRemark" parameterType="heartCircleRemark" >
+ 	 insert into d_heartcircle_remark 
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="heartCircleId != null" >
+        heartCircleId,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="doctorId != null" >
+        doctorId,
+      </if>
+      <if test="doctorName != null" >
+        doctorName,
+      </if>
+      <if test="profileImage != null" >
+        profileImage,
+      </if>
+      <if test="creTime != null" >
+        creTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="heartCircleId != null" >
+         #{heartCircleId},
+      </if>
+      <if test="remark != null" >
+       #{remark},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName},
+      </if>
+      <if test="profileImage != null" >
+       #{profileImage},
+      </if>
+      <if test="creTime != null" >
+        #{creTime},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getHeartCircleDetail" parameterType="java.lang.Integer" resultType="heartCircle">
+  	
+  </select>
+  
+  <select id="getHeartCircleList" resultType="heartCircle">
+  	select * from d_heart_circle order by creTime desc
+  </select>
+  
+  
+  
+</mapper>

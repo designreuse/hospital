@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.PatientMapper" >
+  <resultMap id="BaseResultMap" type="patient" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="INTEGER" />
+    <result column="weight" property="weight" jdbcType="DOUBLE" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="illProfile" property="illProfile" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="wishMapper" type="wishVO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="patientName" property="patientName" jdbcType="VARCHAR" />
+    <result column="patientProfileImageUrl" property="patientProfileImageUrl" jdbcType="VARCHAR" />
+    <result column="content" property="wishContent" jdbcType="VARCHAR" />
+    <result column="postTime" property="postTime" jdbcType="VARCHAR" />
+    <result column="isComeTrue" property="isComeTrue" jdbcType="INTEGER" />
+    <collection property="wishRemarkList" ofType="wishRemark">
+   		<result column="remarkUserName" property="remarkUserName" jdbcType="VARCHAR" />
+   		<result column="remarkProfileImage" property="remarkProfileImage" jdbcType="VARCHAR" />
+   		<result column="remark" property="remark" jdbcType="VARCHAR" />
+   		<result column="remarkTime" property="remarkTime" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, userId, weight, score, illProfile
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_patient
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_patient
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="patient" >
+    insert into t_patient (id, userId, weight, 
+      score, illProfile)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{weight,jdbcType=DOUBLE}, 
+      #{score,jdbcType=INTEGER}, #{illProfile,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="patient" useGeneratedKeys="true" keyProperty="id">
+    insert into t_patient
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="illProfile != null" >
+        illProfile,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="illProfile != null" >
+        #{illProfile,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="patient" >
+    update t_patient
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="illProfile != null" >
+        illProfile = #{illProfile,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="patient" >
+    update t_patient
+    set userId = #{userId,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=DOUBLE},
+      score = #{score,jdbcType=INTEGER},
+      illProfile = #{illProfile,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getProfile" parameterType="java.lang.Integer" resultType="patientVO">
+  		select 
+			u.name,
+			u.mobile,
+			(CASE u.agender WHEN 1 THEN "男" WHEN "2" THEN "女" END) AS agender,
+			u.birthday,
+			p.weight,
+			u.profileImageUrl
+		from 
+  		t_user u left join t_patient p on u.id=p.userId
+  		where u.id=#{0} and registerType=2
+  </select>
+  
+  <insert id="addWish" parameterType="wish" useGeneratedKeys="true" keyProperty="id">
+  	 insert into p_wish
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="patientName != null" >
+        patientName,
+      </if>
+      <if test="patientProfileImageUrl != null" >
+        patientProfileImageUrl,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="postTime != null" >
+        postTime,
+      </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
+      <if test="isComeTrue != null" >
+        isComeTrue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="patientName != null" >
+        #{patientName},
+      </if>
+      <if test="patientProfileImageUrl != null" >
+        #{patientProfileImageUrl},
+      </if>
+      <if test="content != null" >
+        #{content},
+      </if>
+      <if test="postTime != null" >
+        #{postTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+      <if test="isComeTrue != null" >
+        #{isComeTrue},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateWish" parameterType="wish">
+  	 update p_wish 
+  	 <set>
+  	 	<if test="isComeTrue != null">isComeTrue = #{isComeTrue}</if>
+  	 </set>
+  	 <where>
+  	 	<if test="id != null">id = #{id}</if>
+  	 </where>
+  </update>
+  
+  
+  <insert id="addWishRemark" parameterType="wishRemark" useGeneratedKeys="true" keyProperty="id">
+  	 insert into p_wish_remark
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wishId != null" >
+        wishId,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="remarkTime != null" >
+        remarkTime,
+      </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wishId != null" >
+        #{wishId,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark},
+      </if>
+      <if test="remarkTime != null" >
+        #{remarkTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getWishListByUserId" parameterType="java.lang.Integer" resultMap="wishMapper">
+  		select 
+			w.patientName,
+			w.patientProfileImageUrl,
+			w.content,
+			w.postTime,
+			w.isComeTrue,
+			r.remarkUserName,
+			r.remarkProfileImage,
+			r.remark,
+			r.remarkTime
+		 from p_wish w inner join t_user u on w.userId=u.id left join p_wish_remark r on w.id=r.wishId where u.id=#{0} and w.delFlag=0
+  </select>
+  
+</mapper>

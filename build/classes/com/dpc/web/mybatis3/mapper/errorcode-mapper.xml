@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dpc.web.mybatis3.mapper.ErrorCodeMapper">
+	
+	<select id="getById" parameterType="Integer" resultType="errorCode">
+		SELECT * FROM error_code WHERE delflag=0 AND id=#{id}
+	</select>
+	
+	<!-- 分页获取错误码 -->
+	<select id="getErrorCodeByPage" resultType="errorCode">
+   		select * from error_code where delFlag=0 limit #{0},#{1} 
+    </select>
+	
+	<select id="getAll" resultType="errorCode">
+		SELECT * FROM error_code
+	</select>
+    <select id="getErrorCodes" resultType="java.util.HashMap">
+    	SELECT * FROM error_code ORDER BY code 
+    </select>
+    
+    <update id="batchDel" parameterType="java.util.List">
+    	delete from error_code WHERE id in
+    	<foreach collection="array" open="(" close=")" separator="," item="item">
+    		#{item}
+    	</foreach>
+    </update>
+    
+    
+    <select id="getTotalCount" resultType="Integer">
+    	select count(*) from error_code 
+    </select>
+    
+    
+    <insert id="addErrorCode" parameterType="errorCode">
+    	INSERT INTO error_code(code,descnCN,descnEN) VALUES(#{code},#{descnCN},#{descnEN})
+    </insert>
+    
+    <update id="updateErrorCode" parameterType="errorCode">
+    	UPDATE error_code set code=#{code},descnCN=#{descnCN},descnEN=#{descnEN} WHERE id=#{id}
+    </update>
+    
+</mapper>

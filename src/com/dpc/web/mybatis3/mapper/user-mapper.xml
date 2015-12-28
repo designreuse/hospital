@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dpc.web.mybatis3.mapper.UserMapper">
+	<insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+    	insert into t_user
+    	<trim prefix="(" suffix=")" suffixOverrides="," >
+      		<if test="username != null" >username,</if>
+      		<if test="password != null" >password,</if>
+      		<if test="registerTime != null" >registerTime,</if>
+      		<if test="salt != null" >salt,</if>
+      		<if test="registerType != null" >registerType</if>
+    	</trim>
+    	<trim prefix="values (" suffix=")" suffixOverrides="," >
+      		<if test="username != null" >#{username},</if>
+      		<if test="password != null" >#{password},</if>
+      		<if test="registerTime != null" >#{registerTime},</if>
+      		<if test="salt != null" >#{salt},</if>
+      		<if test="registerType != null" >#{registerType},</if>
+    	</trim>
+	</insert>
+	
+	<select id="getUser" parameterType="user" resultType="user">
+		select * from t_user 
+		<where>
+			<if test="id != null">
+				id = #{id}
+			</if>
+			<if test="username != null">
+				username = #{username}
+			</if>
+			<if test="mobile != null">
+				mobile = #{mobile}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateUser" parameterType="user">
+		update t_user 
+		<set>
+			<if test="password != null">password = #{password}</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

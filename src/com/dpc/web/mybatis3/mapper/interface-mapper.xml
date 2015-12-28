@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dpc.web.mybatis3.mapper.InterfaceMapper">
+	<insert id="addInterfaceCategory" parameterType="interfaceCategory" useGeneratedKeys="true" keyProperty="id">
+		insert into t_interface_category(name,type,delFlag) values(#{name},#{type},#{delFlag})
+	</insert>
+	
+	<insert id="addInterface" parameterType="interface" useGeneratedKeys="true" keyProperty="id">
+    	insert into t_interface
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="categoryId != null" >categoryId,</if>
+	      <if test="name != null" >name,</if>
+	      <if test="method != null" >method,</if>
+	      <if test="params != null" >params,</if>
+	      <if test="itemDesc != null" >itemDesc,</if>
+	      <if test="errorDesc != null" >errorDesc,</if>
+	      <if test="fieldDescn != null" >fieldDescn,</if>
+	      <if test="errorResult != null" >errorResult,</if>
+	      <if test="successResult != null" >successResult,</if>
+	      <if test="status != null" >status,</if>
+	      <if test="isRest != null" >isRest,</if>
+	      <if test="delFlag != null" >delFlag,</if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="categoryId != null" >#{categoryId},</if>
+	      <if test="name != null" >#{name},</if>
+	      <if test="method != null" >#{method},</if>
+	      <if test="params != null" >#{params},</if>
+	      <if test="itemDesc != null" >#{itemDesc},</if>
+	      <if test="errorDesc != null" >#{errorDesc},</if>
+	      <if test="fieldDescn != null" >#{fieldDescn},</if>
+	      <if test="errorResult != null" >#{errorResult},</if>
+	      <if test="successResult != null" >#{successResult},</if>
+	      <if test="status != null" >#{status},</if>
+	      <if test="isRest != null" >#{isRest},</if>
+	      <if test="delFlag != null" >#{delFlag},</if>
+	    </trim>
+  </insert>
+	
+	<select id="getInterfaceCategoryList" resultType="interfaceCategory">
+		select * from t_interface_category where delFlag=0
+	</select>
+	
+	<select id="getInterfacePager" parameterType="pageEntity" resultType="interface">
+		select * from t_interface 
+		<where>
+			delFlag = 0
+		</where>
+		<if test="rows != null">
+	        limit #{offset},#{rows}
+	    </if>
+	</select>
+	<select id="getAllInterfaceCount" parameterType="pageEntity" resultType="java.lang.Integer">
+		select count(*) from t_interface 
+		<where>
+			delFlag = 0
+		</where>
+	</select>
+
+	<select id="getInterfaceByCategory" parameterType="java.lang.Integer" resultType="interface">
+		select * from t_interface where categoryId = #{0}
+	</select>
+
+	<select id="getInterfaceById" parameterType="java.lang.Integer" resultType="interface">
+		select * from t_interface where id = #{0}
+	</select>
+	
+	 <select id="getByIdForMap" parameterType="Integer" resultType="java.util.HashMap">
+    	SELECT * FROM t_interface WHERE id=#{id} and delFlag=0
+    </select>
+
+ 	<resultMap type="interface" id="IItemResultMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="method" column="method"/>
+		<result property="itemDesc" column="itemDesc"/>
+		<result property="errorDesc" column="errorDesc"/>
+		<result property="fieldDescn" column="fieldDescn"/>
+		<result property="successResult" column="successResult"/>
+		<result property="errorResult" column="errorResult"/>
+		<result property="status" column="status"/>
+		<association property="category" column="categoryId" javaType="interfaceCategory" select="getICategoryByID"/>
+    </resultMap>
+    
+    <select id="getICategoryByID" parameterType="Integer" resultType="interfaceCategory">
+    	SELECT * FROM t_interface_category where id = #{id} and delFlag=0
+    </select>
+    
+	<select id="getIItemsInPageByICategoryID" resultType="interface" resultMap="IItemResultMap">
+    	SELECT * FROM t_interface WHERE delFlag=0 
+    	<if test="categoryId!=null and categoryId!=0">
+    		AND categoryID = #{categoryId} 
+    	</if>	
+    	<if test="name!=null and name!=''">
+    		AND (name LIKE "%"#{name}"%" or itemDesc LIKE "%"#{name}"%" )
+    	</if>
+    	LIMIT #{2},#{3}
+    </select>
+    
+	<select id="getCountByName" resultType="Integer">
+    	SELECT COUNT(*) FROM t_interface WHERE delFlag=0 
+    	<if test="categoryId!=null and categoryId!=0">
+    		AND categoryID = #{categoryId} 
+    	</if>
+    	<if test="name!=null and name!=''">
+    		AND name LIKE "%"#{name}"%"
+    	</if>
+    </select>
+    
+    <update id="updateIItem" parameterType="interface">
+   		UPDATE t_interface SET categoryID=#{categoryId},name=#{item.name},method=#{item.method},params=#{item.params},itemDesc=#{item.itemDesc},errorDesc=#{item.errorDesc},fieldDescn=#{item.fieldDescn},errorResult=#{item.errorResult},successResult=#{item.successResult},status=#{item.status}
+   		WHERE id=#{item.id}
+   </update>
+</mapper>
