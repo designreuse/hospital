@@ -17,13 +17,16 @@ import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
+import com.dpc.web.mybatis3.domain.MedicalDynamic;
 import com.dpc.web.mybatis3.domain.User;
+import com.dpc.web.service.IArticleService;
 import com.dpc.web.service.IDoctorService;
 
 @Controller
@@ -32,6 +35,10 @@ public class DoctorController extends BaseController{
 	
 	@Autowired
 	IDoctorService doctorService;
+	
+	@Autowired
+	IArticleService articleService;
+	
 	
 	//添加诊后心得
 	@RequestMapping(value = "/diagnose_experience/add", method = RequestMethod.POST)

@@ -8,6 +8,7 @@ import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.MedicalDynamic;
 
 public interface IArticleService {
 
@@ -15,13 +16,13 @@ public interface IArticleService {
 
 	Pager<Article> findByPagination(Article article);
 
-	void delArticle(int parseInt);
+	void delArticle(int id);
 
 	void update(Article article);
 
-	Article getArticleById(int parseInt);
+	Article getArticleById(int id);
 
-	List<Article> getArticleByCategory(int parseInt);
+	List<Article> getArticleByTypeAndCategory(int type, int category);
 
 	
 }

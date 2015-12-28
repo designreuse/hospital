@@ -1,6 +1,7 @@
 package com.dpc.web.controller.back;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.dpc.utils.ConstantUtil;
+import com.dpc.utils.DateUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.Pager;
@@ -31,13 +33,14 @@ public class ArticleController extends BaseController{
 	IArticleService articleService;
 	
 	
-	@RequestMapping(value = "/doctor/list/{type}", method = RequestMethod.POST)
+	@RequestMapping(value = "/list/{type}/{category}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getArticleByCategory(HttpSession session,HttpServletRequest request,@PathVariable("type") String type) throws IOException{
-		List<Article> list = articleService.getArticleByCategory(Integer.parseInt(type));
+	public String getDoctorArticleByCategory(HttpSession session,HttpServletRequest request,@PathVariable("type") String type,@PathVariable("category") String category) throws IOException{
+		List<Article> list = articleService.getArticleByTypeAndCategory(Integer.parseInt(type),Integer.parseInt(category));
 		if(list!=null&&list.size()>0){
 			for(Article a : list){
 				a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+				a.setPostTime(DateUtil.timeDiffer(DateUtil.parse(a.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
 			}
 		}
 		return JsonUtil.object2String(list);
@@ -136,7 +139,7 @@ public class ArticleController extends BaseController{
 		article.setDelFlag(0);
 		articleService.saveArticle(article);
 		
-		return "redirect:/back/article/doctor/list/1";
+		return "redirect:/back/article/list/1";
 	}
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateDoctorArticle(HttpSession session,HttpServletRequest request,Article article) throws IOException{

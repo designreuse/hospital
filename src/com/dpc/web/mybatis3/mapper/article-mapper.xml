@@ -244,8 +244,8 @@
  	</where>
   </select>
   
-  <select id="getArticleByCategory" parameterType="java.lang.Integer" resultType="article">
-  	select * from t_article where delFlag = 0 and category=#{0}
+  <select id="getArticleByTypeAndCategory" parameterType="java.lang.Integer" resultType="article">
+  	select * from t_article where delFlag = 0 and type=#{0} and category=#{1}
   </select>
   
 </mapper>

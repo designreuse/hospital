@@ -18,7 +18,7 @@
        <div class="row">
 			<div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                        <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/article/doctor/list/1">
+                        <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/article/list/1">
                        		<div class="col-lg-12">
                        			<label class="col-lg-1 control-label">开始时间：</label>
                           	<div class="form-group col-lg-2" id="startDate">

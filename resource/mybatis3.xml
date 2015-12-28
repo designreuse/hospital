@@ -22,8 +22,6 @@
 		<typeAlias alias="heartCircleImage" type="com.dpc.web.mybatis3.domain.HeartCircleImage"/>
 		<typeAlias alias="heartCircleRemark" type="com.dpc.web.mybatis3.domain.HeartCircleRemark"/>
 		
-		<typeAlias alias="bannerSlide" type="com.dpc.web.mybatis3.domain.BannerSlide"/>
-		
 		<typeAlias alias="article" type="com.dpc.web.mybatis3.domain.Article"/>
 		<typeAlias alias="discovery" type="com.dpc.web.mybatis3.domain.Discovery"/>
 		<typeAlias alias="discoveryImage" type="com.dpc.web.mybatis3.domain.DiscoveryImage"/>

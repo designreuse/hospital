@@ -64,8 +64,10 @@ public class ArticleServiceImpl implements IArticleService {
 	}
 
 	@Override
-	public List<Article> getArticleByCategory(int category) {
-		return articleMapper.getArticleByCategory(category);
+	public List<Article> getArticleByTypeAndCategory(int type, int category) {
+		return articleMapper.getArticleByTypeAndCategory(type,category);
 	}
 
+	
+	
 }

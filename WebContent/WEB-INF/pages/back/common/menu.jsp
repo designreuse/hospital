@@ -65,12 +65,6 @@
 	                            <li><a href="${ctx }/back/interface/view/list">接口管理</a></li>
 	                        </ul>
 	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-flask"></i><span class="nav-label">更多</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="${ctx }/back/other/bannerSlide/list">轮播图</a></li>
-	                        </ul>
-	                    </li>
 	                </ul>
 	            </div>
 	        </nav>
