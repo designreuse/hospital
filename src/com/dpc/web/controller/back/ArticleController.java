@@ -40,7 +40,7 @@ public class ArticleController extends BaseController{
 		if(list!=null&&list.size()>0){
 			for(Article a : list){
 				a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
-				a.setPostTime(DateUtil.timeDiffer(DateUtil.parse(a.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
+				a.setPostTime(DateUtil.date2Str(DateUtil.parse(a.getPostTime(), DateUtil.DATE_PATTERN), DateUtil.DATE_PATTERN));
 			}
 		}
 		return JsonUtil.object2String(list);
