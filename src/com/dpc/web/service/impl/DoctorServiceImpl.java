@@ -114,6 +114,12 @@ public class DoctorServiceImpl implements IDoctorService {
 	public List<HeartCircle> getHeartCircleList() {
 		return heartCircleMapper.getHeartCircleList();
 	}
+
+	@Override
+	public void updateDoctor(Doctor doctor) {
+		doctorMapper.updateDoctor(doctor);
+		
+	}
 	
 	
 }

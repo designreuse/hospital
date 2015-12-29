@@ -12,6 +12,7 @@ public interface DoctorMapper{
 	Integer getAllDoctorCount(PageEntity<Doctor> pageEntity);
 	void addDoctor(Doctor doctor);
 	List<Doctor> getDoctorList(Doctor d);
+	void updateDoctor(Doctor doctor);
 	
 }
 

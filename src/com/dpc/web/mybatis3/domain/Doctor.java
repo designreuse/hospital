@@ -14,6 +14,8 @@ public class Doctor implements Serializable{
 	private String technicalTitle;//技术职称
 	private String teachingTitle;//教学职称
 	private Integer verifyed;//医生是否已经认证：0未认证，1已认证
+	private String crtWithPhotoUrl;//认证证件有照片的页
+	private String crtWithNameUrl;//认证证件有姓名的页
 	private Integer totalPatient;//名下的患者数量
 	
 	//非持久化字段
@@ -97,6 +99,18 @@ public class Doctor implements Serializable{
 	}
 	public void setRegisterTime(String registerTime) {
 		this.registerTime = registerTime;
+	}
+	public String getCrtWithPhotoUrl() {
+		return crtWithPhotoUrl;
+	}
+	public void setCrtWithPhotoUrl(String crtWithPhotoUrl) {
+		this.crtWithPhotoUrl = crtWithPhotoUrl;
+	}
+	public String getCrtWithNameUrl() {
+		return crtWithNameUrl;
+	}
+	public void setCrtWithNameUrl(String crtWithNameUrl) {
+		this.crtWithNameUrl = crtWithNameUrl;
 	}
 
 }

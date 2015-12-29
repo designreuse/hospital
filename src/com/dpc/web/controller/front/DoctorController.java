@@ -28,6 +28,7 @@ import com.dpc.web.mybatis3.domain.MedicalDynamic;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.service.IArticleService;
 import com.dpc.web.service.IDoctorService;
+import com.dpc.web.service.IUserService;
 
 @Controller
 @RequestMapping(value="/doctor",produces = {"application/json;charset=UTF-8"})
@@ -38,6 +39,9 @@ public class DoctorController extends BaseController{
 	
 	@Autowired
 	IArticleService articleService;
+
+	@Autowired
+	IUserService userService;
 	
 	
 	//添加诊后心得
@@ -269,20 +273,87 @@ public class DoctorController extends BaseController{
 		return JsonUtil.object2String(list);
 	}
 	
+	//医生上传认证证件
+	@RequestMapping(value = "/verify/upload", method = RequestMethod.POST)
+	@ResponseBody
+	public String uploadVerify(HttpSession session,HttpServletRequest request) throws IOException{
+		String[] crtWithPhoto=request.getParameterValues("crtWithPhoto");
+		String[] crtWithName=request.getParameterValues("crtWithName");
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		List<String> crtWithPhotoUrls;
+		List<String> crtWithNameUrls;
+		if(!ValidateUtil.isEmpty(crtWithPhoto) && crtWithPhoto.length==1 && !ValidateUtil.isEmpty(crtWithName) && crtWithName.length==1){
+			crtWithPhotoUrls =upload(session,request,crtWithPhoto);
+			crtWithNameUrls =upload(session,request,crtWithName);
+		}else{
+			return error(ErrorCodeUtil.e11204);
+		}
+		if(crtWithPhotoUrls!=null&&crtWithPhotoUrls.size()>0&&crtWithNameUrls!=null&&crtWithNameUrls.size()>0){
+			String crtWithPhotoUrl = crtWithPhotoUrls.get(0);
+			String crtWithNameUrl = crtWithNameUrls.get(0);
+			Doctor doctor = new Doctor();
+			doctor.setUserId(u.getId());
+			doctor.setCrtWithNameUrl(crtWithNameUrl);
+			doctor.setCrtWithPhotoUrl(crtWithPhotoUrl);
+			doctorService.updateDoctor(doctor);
+		}
+		return success();
+	}
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//医生上传认证证件
+	@RequestMapping(value = "/profile/update", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateProfile(HttpSession session,HttpServletRequest request) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		Doctor doctor = new Doctor();
+		doctor.setUserId(u.getId());
+		
+		String hospital = request.getParameter("hospital");
+		String technicalTitle = request.getParameter("technicalTitle");
+		String teachingTitle = request.getParameter("teachingTitle");
+		String department = request.getParameter("department");
+		
+		String name = request.getParameter("name");
+		String agender = request.getParameter("agender");
+		String birthday = request.getParameter("birthday");
+		
+		//t_doctor
+		if(!ValidateUtil.isEmpty(hospital)){
+			doctor.setHospital(hospital);
+		}
+		if(!ValidateUtil.isEmpty(technicalTitle)){
+			doctor.setTechnicalTitle(technicalTitle);
+		}
+		if(!ValidateUtil.isEmpty(teachingTitle)){
+			doctor.setTeachingTitle(teachingTitle);
+		}
+		if(!ValidateUtil.isEmpty(department)){
+			doctor.setDepartment(department);
+		}
+		doctorService.updateDoctor(doctor);
+		
+		//t_user
+		User user = new User();
+		user.setId(u.getId());
+		if(!ValidateUtil.isEmpty(name)){
+			user.setName(name);
+		}
+		if(!ValidateUtil.isEmpty(agender)){
+			user.setAgender(Integer.parseInt(agender));
+		}
+		if(!ValidateUtil.isEmpty(birthday)){
+			user.setBirthday(birthday);
+		}
+		userService.updateUser(user);
+		return success();
+	}
 	
 }

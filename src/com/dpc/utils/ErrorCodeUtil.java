@@ -28,6 +28,9 @@ public class ErrorCodeUtil
 	public static final String e10001 = "10001";   // 系统错误
 	public static final String e10002 = "10002";   // 当前用户未登录
 	public static final String e10003 = "10003";   // 原始密码不正确
+	public static final String e10004 = "10004";   // 性别不能为空
+	public static final String e10005 = "10005";   // 生日不能为空
+	public static final String e10006 = "10006";   // 姓名不能为空
 	
 	//注册
 	public static final String e11001 = "11001";   //手机号不能为空
@@ -43,6 +46,11 @@ public class ErrorCodeUtil
 	public static final String e11201 = "11201";   //病情描述不能为空
 	public static final String e11202 = "11202";   //诊后心得不能为空
 	public static final String e11203 = "11203";   //患者类型不能为空
+	public static final String e11204 = "11204";   //认证证件不完整
+	public static final String e11206 = "11206";   //所在医院不能为空
+	public static final String e11207 = "11207";   //技术职称不能为空
+	public static final String e11208 = "11208";   //教学职称不能为空
+	public static final String e11209 = "11209";   //科室不能为空
 	
 	//心血管圈
 	public static final String e11300 = "11300";   //心血管发表内容不能为空

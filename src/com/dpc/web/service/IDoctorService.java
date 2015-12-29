@@ -35,5 +35,7 @@ public interface IDoctorService {
 
 	List<HeartCircle> getHeartCircleList();
 
+	void updateDoctor(Doctor doctor);
+
 	
 }

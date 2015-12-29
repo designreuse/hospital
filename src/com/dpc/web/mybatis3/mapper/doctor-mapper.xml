@@ -81,4 +81,19 @@
 	      </if>
 	    </trim>
   </insert>
+  
+  <update id="updateDoctor" parameterType="doctor">
+  	update t_doctor 
+  	<set>
+  		<if test="crtWithPhotoUrl != null">crtWithPhotoUrl=#{crtWithPhotoUrl},</if>
+  		<if test="crtWithNameUrl != null">crtWithNameUrl=#{crtWithNameUrl},</if>
+  		<if test="hospital != null and hospital != ''">hospital=#{hospital},</if>
+  		<if test="technicalTitle != null and technicalTitle != ''">technicalTitle=#{technicalTitle},</if>
+  		<if test="teachingTitle != null and teachingTitle != ''">teachingTitle=#{teachingTitle},</if>
+  		<if test="department != null and department != ''">department=#{department},</if>
+  	</set>
+  	<where>
+  		<if test="id != null">id=#{id}</if>
+  	</where>
+  </update>
 </mapper>
