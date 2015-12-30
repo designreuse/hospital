@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
@@ -120,6 +121,20 @@ public class DoctorServiceImpl implements IDoctorService {
 		doctorMapper.updateDoctor(doctor);
 		
 	}
-	
+
+	@Override
+	public void addAnnouncement(Announcement announcement) {
+		doctorMapper.addAnnouncement(announcement);
+	}
+
+	@Override
+	public void updateAnnouncement(Announcement announcement) {
+		doctorMapper.delAnnouncement(announcement);
+	}
+
+	@Override
+	public List<Announcement> getAnnouncementListByDoctorId(int id) {
+		return doctorMapper.getAnnouncementByDoctorId(id);
+	}
 	
 }

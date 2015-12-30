@@ -18,23 +18,20 @@ import com.dpc.utils.PageResult;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
+import com.dpc.web.VO.PatientVO;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.service.IBackDoctorService;
+import com.dpc.web.service.IBackPatientService;
 import com.google.gson.Gson;
 
 @Controller
-@RequestMapping(value="/back/doctor",produces = {"application/json;charset=UTF-8"})
-public class BackDoctorController extends BaseController{
+@RequestMapping(value="/back/patient",produces = {"application/json;charset=UTF-8"})
+public class BackPatientController extends BaseController{
 	
 	@Autowired
-	IBackDoctorService backDoctorService;
-	
-	@RequestMapping(value = "/view/list", method = RequestMethod.GET)
-	public String loginView(HttpSession session,HttpServletRequest request) throws IOException{
-		return "/back/doctor/list";
-	}
+	IBackPatientService backPatientService;
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String register(HttpSession session,HttpServletRequest request) throws IOException{
@@ -59,11 +56,10 @@ public class BackDoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(illType) && !illType.equals("-1")){
 			article.setIllType(Integer.parseInt(illType));
 		}
-		DoctorVO doctor = new DoctorVO();
-		Map<String, Object> result = new HashMap<String, Object>();
-		Pager<DoctorVO> page = backDoctorService.findByPaginaton(doctor);
+		PatientVO p = new PatientVO();
+		Pager<PatientVO> page = backPatientService.findByPaginaton(p);
 		request.setAttribute("page", page);
-		return "/back/doctor/list";
+		return "/back/patient/list";
 	}
 	
 	

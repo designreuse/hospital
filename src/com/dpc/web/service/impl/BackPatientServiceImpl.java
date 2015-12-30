@@ -11,32 +11,35 @@ import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
+import com.dpc.web.VO.PatientVO;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.mapper.DoctorMapper;
+import com.dpc.web.mybatis3.mapper.PatientMapper;
 import com.dpc.web.service.IBackDoctorService;
+import com.dpc.web.service.IBackPatientService;
 
 @Service
 @Transactional
-public class BackDoctorServiceImpl implements IBackDoctorService {
+public class BackPatientServiceImpl implements IBackPatientService {
 
 	@Autowired
-	private DoctorMapper doctorMapper ;
+	private PatientMapper patientMapper ;
 
 	@Override
-	public Pager<DoctorVO> findByPaginaton(DoctorVO doctor) {
+	public Pager<PatientVO> findByPaginaton(PatientVO p) {
 		Integer start = PageContext.getStart();
 		Integer limit = PageContext.getLimit();
-		doctor.setStart(start);
-		doctor.setLimit(limit);
-		List<DoctorVO> datas = doctorMapper.getDoctorListWithPager(doctor,start,limit);
+		p.setStart(start);
+		p.setLimit(limit);
+		List<PatientVO> datas = patientMapper.getPatientListWithPager(p,start,limit);
 		if(datas!=null&&datas.size()>0){
-			for(DoctorVO d : datas){
+			for(PatientVO d : datas){
 				
 			}
 		}
-		Integer totalCount = doctorMapper.getAllDoctorCount(doctor);
-		Pager<DoctorVO> pager = new Pager<DoctorVO>();
+		Integer totalCount = patientMapper.getAllPatientCount(p);
+		Pager<PatientVO> pager = new Pager<PatientVO>();
 		pager.setPageOffset(start);
 		pager.setPageSize(limit);
 		pager.setTotal(totalCount);
@@ -44,6 +47,8 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 		
 		return pager;
 	}
+
+	
 	
 	
 	

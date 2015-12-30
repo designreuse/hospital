@@ -2,6 +2,9 @@ package com.dpc.web.mybatis3.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Patient;
@@ -30,4 +33,8 @@ public interface PatientMapper {
 	void updateWish(Wish wish);
 
 	List<WishVO> getWishListByUserId(Integer id);
+
+	List<PatientVO> getPatientListWithPager(@Param("patient") PatientVO patient, @Param("start") Integer start, @Param("limit") Integer limit);
+	
+	Integer getAllPatientCount(PatientVO p);
 }

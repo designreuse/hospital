@@ -51,6 +51,8 @@ public class ErrorCodeUtil
 	public static final String e11207 = "11207";   //技术职称不能为空
 	public static final String e11208 = "11208";   //教学职称不能为空
 	public static final String e11209 = "11209";   //科室不能为空
+	public static final String e11210 = "11210";   //公告ID不能为空
+	public static final String e11211 = "11211";   //公告内容不能为空
 	
 	//心血管圈
 	public static final String e11300 = "11300";   //心血管发表内容不能为空

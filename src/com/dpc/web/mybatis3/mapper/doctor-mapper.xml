@@ -96,4 +96,40 @@
   		<if test="id != null">id=#{id}</if>
   	</where>
   </update>
+  
+  <!-- 医生发布广告语 -->
+ <insert id="addAnnouncement" parameterType="announcement">
+ 	insert into p_announcement(doctorId,content,imageUrl,delFlag,postTime) values(#{doctorId},#{content},)#{imageUrl},#{delFlag},#{postTime}
+ </insert>
+ <select id="getAnnouncementByDoctorId" parameterType="java.lang.Integer" resultType="announcement">
+ 	select * from p_announcement where doctorId = #{0} and delFlag = 0
+ </select>
+ <update id="delAnnouncement" parameterType="java.lang.Integer">
+ 	update p_announcement set delFlag = 1 where doctorId = #{0}
+ </update>
+ 
+ <select id="getDoctorListWithPager" parameterType="doctor" resultType="doctorVO">
+ 	select  u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime ,d.verifyed,d.score
+	from t_user u left join t_doctor d on u.id=d.userId order by registerTime
+	limit #{start},#{limit}
+<!--   	<where> -->
+<!--  	 	<if test="article.delFlag != null"> -->
+<!--  	 		and delFlag = #{article.delFlag} -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.startDate != null and article.endDate != null"> -->
+<!--  	 		and postTime >= #{article.startDate} and #{article.endDate} >= postTime -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.category != null"> -->
+<!--  	 		and category = #{article.category} -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.type != null"> -->
+<!--  	 		and type = #{article.type} -->
+<!--  	 	</if> -->
+<!--  	</where> -->
+ </select>
+ 
+ <select id="getAllDoctorCount" parameterType="doctor" resultType="java.lang.Integer">
+ 	select  count(*)
+	from   t_doctor 
+ </select>
 </mapper>

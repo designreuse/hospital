@@ -219,4 +219,29 @@
 		 from p_wish w inner join t_user u on w.userId=u.id left join p_wish_remark r on w.id=r.wishId where u.id=#{0} and w.delFlag=0
   </select>
   
+   <select id="getPatientListWithPager" parameterType="patient" resultType="patientVO">
+ 	select u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime 
+	from t_user u left join t_patient p on u.id=p.userId order by registerTime
+	limit #{start},#{limit}
+<!--   	<where> -->
+<!--  	 	<if test="article.delFlag != null"> -->
+<!--  	 		and delFlag = #{article.delFlag} -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.startDate != null and article.endDate != null"> -->
+<!--  	 		and postTime >= #{article.startDate} and #{article.endDate} >= postTime -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.category != null"> -->
+<!--  	 		and category = #{article.category} -->
+<!--  	 	</if> -->
+<!--  	 	<if test="article.type != null"> -->
+<!--  	 		and type = #{article.type} -->
+<!--  	 	</if> -->
+<!--  	</where> -->
+ </select>
+ 
+ <select id="getAllPatientCount" parameterType="patient" resultType="java.lang.Integer">
+ 	select  count(*)
+	from   t_patient
+ </select>
+  
 </mapper>

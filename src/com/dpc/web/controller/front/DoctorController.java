@@ -17,6 +17,7 @@ import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -355,5 +356,60 @@ public class DoctorController extends BaseController{
 		userService.updateUser(user);
 		return success();
 	}
+	//医生发布公告
+	@RequestMapping(value = "/announcement/add", method = RequestMethod.POST)
+	@ResponseBody
+	public String addAnnouncement(HttpSession session,HttpServletRequest request) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		String content = request.getParameter("content");
+		if(ValidateUtil.isEmpty(content)){
+			return error(ErrorCodeUtil.e11211);
+		}
+		Announcement announcement = new Announcement();
+		announcement.setDoctorId(u.getId());
+		announcement.setContent(content);
+		announcement.setDelFlag(0);
+		announcement.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		//暂时处理为空
+		announcement.setImageUrl("");
+		doctorService.addAnnouncement(announcement);
+		return success();
+	}
+	//医生更改公告转台
+	@RequestMapping(value = "/announcement/delete/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteAnnouncement(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(ValidateUtil.isEmpty(id)){
+			return error(ErrorCodeUtil.e11210);
+		}
+		Announcement announcement = new Announcement();
+		announcement.setDoctorId(u.getId());
+		announcement.setDelFlag(1);
+		doctorService.updateAnnouncement(announcement);
+		return success();
+	}
+	//获取医生公告列表
+	@RequestMapping(value = "/announcement/list/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAnnouncementListByDoctorId(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(ValidateUtil.isEmpty(id)){
+			return error(ErrorCodeUtil.e11210);
+		}
+		List<Announcement> list = doctorService.getAnnouncementListByDoctorId(Integer.parseInt(id));
+		
+		return JsonUtil.object2String(list);
+	}
+	
 	
 }

@@ -15,13 +15,13 @@
 	                    <li>
 	                        <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">患者管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">患者列表</a></li>
+	                            <li><a href="${ctx }/back/patient/list">患者列表</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>
 	                        <a href="#"><i class="fa fa-pie-chart"></i><span class="nav-label">医生管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">医生列表</a></li>
+	                            <li><a href="${ctx }/back/doctor/list">医生列表</a></li>
 	                            <li><a href="toastr_notifications.html">诊后心得</a></li>
 	                            <li><a href="toastr_notifications.html">学术支持</a></li>
 	                            <li><a href="toastr_notifications.html">新建学术活动</a></li>

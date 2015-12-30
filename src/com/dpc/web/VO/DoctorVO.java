@@ -16,6 +16,37 @@ public class DoctorVO implements Serializable{
 	private String technicalTitle;//技术职称
 	private Integer verifyed;//医生是否已经认证：0未认证，1已认证
 	private String registerTime;
+	
+	private String startDate;
+    private String endDate;
+    private Integer start;
+    private Integer limit;
+	    
+	    
+	public String getStartDate() {
+			return startDate;
+		}
+		public void setStartDate(String startDate) {
+			this.startDate = startDate;
+		}
+		public String getEndDate() {
+			return endDate;
+		}
+		public void setEndDate(String endDate) {
+			this.endDate = endDate;
+		}
+		public Integer getStart() {
+			return start;
+		}
+		public void setStart(Integer start) {
+			this.start = start;
+		}
+		public Integer getLimit() {
+			return limit;
+		}
+		public void setLimit(Integer limit) {
+			this.limit = limit;
+		}
 	public Integer getId() {
 		return id;
 	}

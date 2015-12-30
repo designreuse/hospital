@@ -2,6 +2,7 @@ package com.dpc.web.service;
 
 import java.util.List;
 
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
@@ -36,6 +37,12 @@ public interface IDoctorService {
 	List<HeartCircle> getHeartCircleList();
 
 	void updateDoctor(Doctor doctor);
+
+	void addAnnouncement(Announcement announcement);
+
+	void updateAnnouncement(Announcement announcement);
+
+	List<Announcement> getAnnouncementListByDoctorId(int parseInt);
 
 	
 }

@@ -11,10 +11,10 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>医生列表</h2>
+             <h2>患者列表</h2>
              <ol class="breadcrumb">
                  <li><a href="${ctx}/back/home">首页</a></li>
-                 <li class="active">医生列表</li>
+                 <li class="active">患者列表</li>
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
@@ -49,34 +49,32 @@
 							<th>序号</th>
 							<th>用户名</th>
 							<th>姓名</th>
-							<th>医院名称</th>
+							<!-- <th>医院名称</th>
 							<th>科室</th>
 							<th>所在地</th>
 							<th>技术职称</th>
 							<th>医生积分</th>
 							<th>医生验证</th>
 							<th>注册时间</th>
-							<th>操作</th>
+							<th>操作</th> -->
 						</tr>
 						<c:forEach var="item" items="${page.datas}" varStatus="st">
 							<tr>
 								<td>${st.index+1}</td>
 								<td>${item.username}</td>
 								<td>${item.name}</td>
-								<td>${item.hospital}</td>
+								<%-- <td>${item.hospital}</td>
 								<td>${item.department}</td>
 								<td>${item.address}</td>
 								<td>${item.technicalTitle}</td>
-								<td>${item.score}</td>
-								<td>
+								<td>${item.score}</td> --%>
+								<%-- <td>
 									<c:if test="${item.verifyed == 0}">未通过</c:if>
 									<c:if test="${item.verifyed == 1}">通过</c:if>
 								</td>
-								<td>${item.registerTime}</td>
+								<td>${item.registerTime}</td> --%>
 								<td>
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">详情</button> 
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">兑换积分</button> 
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">兑换记录</button> 
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">查看详情</button> 
 								</td>
 							</tr>
 						</c:forEach>
