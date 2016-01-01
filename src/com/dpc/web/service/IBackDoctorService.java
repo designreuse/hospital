@@ -4,10 +4,22 @@ import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
+import com.dpc.web.mybatis3.domain.AcademicSupport;
+import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.Doctor;
 
 public interface IBackDoctorService {
 
 	Pager<DoctorVO> findByPaginaton(DoctorVO doctor);
+
+	DoctorVO getDoctorDetail(int parseInt);
+
+	Pager<DiagnoseExperience> findDiagnoseExperienceByPaginaton(DiagnoseExperience dia);
+
+	DiagnoseExperience getDiaExpDetail(String id);
+
+	void addAcademicSupport(AcademicSupport academicSupport);
+
+	Pager<AcademicSupport> findAcademicSupportByPaginaton(AcademicSupport support);
 	
 }

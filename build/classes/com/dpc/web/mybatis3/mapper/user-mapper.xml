@@ -38,7 +38,9 @@
 	<update id="updateUser" parameterType="user">
 		update t_user 
 		<set>
-			<if test="password != null">password = #{password}</if>
+			<if test="password != null and password != ''">password = #{password},</if>
+			<if test="agender != null and agender != ''">agender = #{agender},</if>
+			<if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
 		</set>
 		where id = #{id}
 	</update>

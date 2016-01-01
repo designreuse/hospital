@@ -66,14 +66,14 @@ body {
 					</div>
 
 					<div class="form-group">
-						<label for="itemID">接口名称：</label> <select class="input-sm form-control" style="height: 40px;font-size: 20px;"
-							id="itemID" onchange="checkItem(this.value);">
+						<label for="itemID">接口名称：</label> 
+						<select class="input-sm form-control" style="height: 40px;font-size: 20px;" id="itemID" onchange="checkItem(this.value);">
 							<option value='0'>请选择接口名称</option>
 							<c:forEach var="item" items="${iItems }">
 								<option value='${item.id }'>${item.name }</option>
 							</c:forEach>
-
 						</select>
+						<input id="interface_text"/>
 					</div>
 
 					<hr />

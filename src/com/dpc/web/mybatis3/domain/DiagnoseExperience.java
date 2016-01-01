@@ -27,14 +27,34 @@ public class DiagnoseExperience {
     private String experience;
 
     private String creTime;
+    private Integer delFlag;
     
     //
     private Integer remainScore;
     private List<DiagnoseExperienceRemark> remarkList;
     private List<DiagnoseExperienceImage> diagnoseExpImgList;
     
+    private Integer start;
+    private Integer limit;
     
     
+    
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
 	public Integer getRemainScore() {
 		return remainScore;
 	}
@@ -145,6 +165,14 @@ public class DiagnoseExperience {
 
 	public void setIllType(String illType) {
 		this.illType = illType;
+	}
+
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
     
 }

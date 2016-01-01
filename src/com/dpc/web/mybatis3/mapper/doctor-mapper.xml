@@ -2,6 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dpc.web.mybatis3.mapper.DoctorMapper">
+	<resultMap id="diagnoseExperienceMap" type="diagnoseExperience" >
+    	<id column="id" property="id" jdbcType="INTEGER" />
+    	<result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
+    	<result column="status" property="status" jdbcType="INTEGER" />
+    	<result column="isAnonymous" property="isAnonymous" jdbcType="INTEGER" />
+    	<result column="creTime" property="creTime" jdbcType="VARCHAR" />
+    	<result column="illType" property="illType" jdbcType="VARCHAR" />
+    	<result column="readCount" property="readCount" jdbcType="VARCHAR" />
+    	<result column="illDesc" property="illDesc" jdbcType="VARCHAR" />
+    	<result column="experience" property="experience" jdbcType="VARCHAR" />
+    	<collection property="diagnoseExpImgList" ofType="diagnoseExperienceImage">
+    		<result column="imageUrl" property="imageUrl" jdbcType="VARCHAR" />
+    	</collection>
+    </resultMap>
+
 	<select id="getAllDoctorList" parameterType="pageEntity" resultType="doctorVO">
 		select 
 			u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,d.score,d.verifyed,u.registerTime
@@ -16,6 +31,9 @@
 		<where>
 			<if test="id!=null">
 				id = #{id}
+			</if>
+			<if test="mobile!=null">
+				mobile = #{mobile}
 			</if>
 		</where>
 	</select>
@@ -110,26 +128,232 @@
  
  <select id="getDoctorListWithPager" parameterType="doctor" resultType="doctorVO">
  	select  u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime ,d.verifyed,d.score
-	from t_user u left join t_doctor d on u.id=d.userId order by registerTime
-	limit #{start},#{limit}
-<!--   	<where> -->
-<!--  	 	<if test="article.delFlag != null"> -->
-<!--  	 		and delFlag = #{article.delFlag} -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.startDate != null and article.endDate != null"> -->
-<!--  	 		and postTime >= #{article.startDate} and #{article.endDate} >= postTime -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.category != null"> -->
-<!--  	 		and category = #{article.category} -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.type != null"> -->
-<!--  	 		and type = #{article.type} -->
-<!--  	 	</if> -->
-<!--  	</where> -->
+	from t_user u left join t_doctor d on u.id=d.userId 
+  	<where>
+  		registerType = 1
+ 	 	<if test="doctor.username != null">
+ 	 		and u.username = #{doctor.username}
+ 	 	</if>
+ 	 	<if test="doctor.name != null">
+ 	 		and u.name = #{doctor.name}
+ 	 	</if>
+ 	 	<if test="doctor.startDate != null and doctor.endDate != null">
+ 	 		and registerTime >= #{doctor.startDate} and #{doctor.endDate} >= registerTime
+ 	 	</if>
+ 	 	<if test="doctor.verifyed != null">
+ 	 		and d.verifyed = #{doctor.verifyed}
+ 	 	</if>
+ 	 	<if test="doctor.startScore != null and doctor.endScore != null">
+ 	 		and d.score >= #{doctor.startScore} and #{doctor.endScore} >= d.score
+ 	 	</if>
+ 	</where>
+ 	order by registerTime 
+ 	limit #{start},#{limit}
  </select>
  
  <select id="getAllDoctorCount" parameterType="doctor" resultType="java.lang.Integer">
- 	select  count(*)
-	from   t_doctor 
+ 	select count(*) from t_user u left join t_doctor d on u.id=d.userId 
+  	<where>
+  		registerType = 1
+ 	 	<if test="doctor.username != null">
+ 	 		and u.username = #{doctor.username}
+ 	 	</if>
+ 	 	<if test="doctor.name != null">
+ 	 		and u.name = #{doctor.name}
+ 	 	</if>
+ 	 	<if test="doctor.startDate != null and doctor.endDate != null">
+ 	 		and registerTime >= #{doctor.startDate} and #{doctor.endDate} >= registerTime
+ 	 	</if>
+ 	 	<if test="doctor.verifyed != null">
+ 	 		and d.verifyed = #{doctor.verifyed}
+ 	 	</if>
+ 	 	<if test="doctor.startScore != null and doctor.endScore != null">
+ 	 		and d.score >= #{doctor.startScore} and #{doctor.endScore} >= d.score
+ 	 	</if>
+ 	</where>
  </select>
+ 
+ <select id="getDoctorDetail" parameterType="java.lang.Integer" resultType="doctorVO">
+ 	select  
+	 	u.id,
+	 	u.username,
+	 	u.name,
+	 	u.agender,
+	 	date_format(u.birthday, '%Y-%m-%d') as birthday,
+	 	d.hospital,
+	 	u.mobile,
+	 	d.department,
+	 	d.address,
+	 	d.technicalTitle,
+	 	d.teachingTitle,
+	 	date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime,
+	 	d.verifyed,
+	 	d.score
+	from t_user u left join t_doctor d on u.id=d.userId where u.id = #{id}
+ </select>
+ 
+ <select id="getDiagnoseExperienceListWithPager" parameterType="diagnoseExperience" resultType="diagnoseExperience">
+ 	select  
+	 	id,
+		doctorName,
+		doctorId,
+		illType,
+		illDesc,
+		readCount,
+		remarkCount,
+		status,
+		isAnonymous,
+		experience,
+		delFlag,
+		date_format(creTime, '%Y-%m-%d %k:%i') as creTime 
+	from d_diagnose_experience 
+  	<where>
+ 	 	<if test="dia.doctorName != null">
+ 	 		and doctorName = #{dia.doctorName}
+ 	 	</if>
+ 	 	<if test="dia.status != null">
+ 	 		and status = #{dia.status}
+ 	 	</if>
+ 	 	<if test="dia.creTime != null">
+ 	 		and creTime = #{dia.creTime}
+ 	 	</if>
+ 	</where>
+ 	order by creTime DESC
+ 	limit #{start},#{limit}
+ </select>
+ 
+ <select id="getAllDiagnoseExperienceCount" parameterType="diagnoseExperience" resultType="java.lang.Integer">
+ 	select count(*) from d_diagnose_experience 
+  	<where>
+ 	 	<if test="dia.doctorName != null">
+ 	 		and doctorName = #{dia.doctorName}
+ 	 	</if>
+ 	 	<if test="dia.status != null">
+ 	 		and status = #{dia.status}
+ 	 	</if>
+ 	 	<if test="dia.creTime != null">
+ 	 		and creTime = #{dia.creTime}
+ 	 	</if>
+ 	</where>
+ </select>
+ <select id="getDiaExpDetail" parameterType="java.lang.Integer" resultMap="diagnoseExperienceMap">
+ 	SELECT 
+ 		a.doctorName,
+		a.`status`,
+		a.isAnonymous,
+		a.creTime,
+		a.illType,
+		a.readCount,
+		a.illDesc,
+		a.experience,
+		b.imageUrl
+ 	from d_diagnose_experience a LEFT JOIN d_dia_exp_image  b on a.id=b.diaExpId
+	where a.id =1
+ </select>
+ 
+ <insert id="addAcademicSupport" parameterType="academicSupport">
+ 	insert into d_academic_support
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+	        title,
+	      </if>
+	      <if test="content != null" >
+	        content,
+	      </if>
+	      <if test="type != null" >
+	        type,
+	      </if>
+	      <if test="score != null" >
+	        score,
+	      </if>
+	      <if test="promoteImage != null" >
+	        promoteImage,
+	      </if>
+	      <if test="creTime != null" >
+	        creTime,
+	      </if>
+	      <if test="delFlag != null" >
+	        delFlag,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+	        #{title},
+	      </if>
+	      <if test="content != null" >
+	        #{content},
+	      </if>
+	      <if test="type != null" >
+	        #{type},
+	      </if>
+	      <if test="score != null" >
+	        #{score},
+	      </if>
+	      <if test="promoteImage != null" >
+	        #{promoteImage},
+	      </if>
+	      <if test="creTime != null" >
+	        #{creTime},
+	      </if>
+	      <if test="delFlag != null" >
+	        #{delFlag},
+	      </if>
+	    </trim>
+ </insert>
+ <select id="getAcademicSupportListWithPager" parameterType="academicSupport" resultType="academicSupport">
+ 	select  
+ 	  	id,
+		title,
+		content,
+		type,
+		score,
+		promoteImage,
+		delFlag,
+		date_format(creTime, '%Y-%m-%d %k:%i') as creTime 
+	from d_academic_support 
+  	<where>
+ 	 	<if test="support.title != null">
+ 	 		and title = #{support.title}
+ 	 	</if>
+ 	 	<if test="support.type != null">
+ 	 		and type = #{support.type}
+ 	 	</if>
+ 	 	<if test="support.creTime != null">
+ 	 		and creTime = #{dia.creTime}
+ 	 	</if>
+ 	</where>
+ 	order by creTime DESC
+ 	limit #{start},#{limit}
+ </select>
+ 
+ <select id="getAllAcademicSupportCount" parameterType="diagnoseExperience" resultType="java.lang.Integer">
+ 	select count(*) from d_academic_support 
+  	<where>
+ 	 	<if test="support.title != null">
+ 	 		and title = #{support.title}
+ 	 	</if>
+ 	 	<if test="support.type != null">
+ 	 		and type = #{support.type}
+ 	 	</if>
+ 	 	<if test="support.creTime != null">
+ 	 		and creTime = #{dia.creTime}
+ 	 	</if>
+ 	</where>
+ </select>
+ 
+ <select id="getBindList" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
+ 	select * from t_doctor_patient where doctorId = #{0} order by checked 
+ </select>
+  
+ <update id="bindAcceptOrNot" parameterType="doctorPatientRelation">
+ 	update t_doctor_patient 
+ 	<set>
+ 		<if test="acceptOrNot == 1">checked = 1</if>
+ 		<if test="acceptOrNot == 0">checked = 2</if>
+ 	</set>
+ 	<where>
+ 		<if test="id != null">id=#{id}</if>
+ 	</where>
+ </update>
+ 
 </mapper>

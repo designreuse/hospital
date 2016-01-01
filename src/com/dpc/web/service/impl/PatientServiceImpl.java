@@ -1,20 +1,26 @@
 package com.dpc.web.service.impl;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
+import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.Patient;
+import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
 import com.dpc.web.mybatis3.mapper.DiscoveryMapper;
+import com.dpc.web.mybatis3.mapper.DoctorMapper;
 import com.dpc.web.mybatis3.mapper.PatientMapper;
+import com.dpc.web.mybatis3.mapper.UserMapper;
 import com.dpc.web.service.IPatientService;
 
 @Service
@@ -25,6 +31,10 @@ public class PatientServiceImpl implements IPatientService {
 	private DiscoveryMapper discoveryMapper;
 	@Autowired
 	private PatientMapper patientMapper;
+	@Autowired
+	private DoctorMapper doctorMapper;
+	@Autowired
+	private UserMapper userMapper;
 	
 	@Override
 	public void addDiscovery(Discovery discovery, List<String> imageUrls) {
@@ -91,6 +101,36 @@ public class PatientServiceImpl implements IPatientService {
 	public List<WishVO> getWishListByUserId(Integer id) {
 		return patientMapper.getWishListByUserId(id);
 	}
-	
-	
+
+	@Override
+	public boolean hasRelationshipWithDoctor(DoctorPatientRelation doctorPatientRelation) {
+		Integer count = patientMapper.hasRelationshipWithDoctor(doctorPatientRelation);
+		if(count > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean hasBindWithDoctor(Integer userId) {
+		Integer count = patientMapper.hasBindWithDoctor(userId);
+		if(count > 0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	@Override
+	public void patientBindDoctor(DoctorPatientRelation dp) {
+		if(dp.getDirection()==1){
+			//患者验证信息已发送。
+			dp.setChecked(0);
+		}else{
+			//医生邀请信息已发送，
+			dp.setChecked(3);
+		}
+		patientMapper.patientBindDoctor(dp);
+	}
 }

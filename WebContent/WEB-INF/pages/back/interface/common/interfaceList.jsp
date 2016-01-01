@@ -59,10 +59,10 @@ $(document).ready(function(){
 		colNames: ['编号', '接口名称','调用方式', '调用地址', '操作'],
 		colModel: [
 			{name: 'id', index: 'id', width: 50, align:"center",sorttype: "int"},
-			{name: 'itemDesc', index: 'itemDesc', width: 60, align:"center",sortable: false},
+			{name: 'itemDesc', index: 'itemDesc', width: 200, align:"left",sortable: false},
 			{name: 'method', index: 'method', width: 50, align:"center",sortable: false},
 			{name: 'name', index: 'name', width: 120, align:"left",sortable: false},
-			{name: 'operate', index: 'operate', width: 120, align:"center",sortable: false},
+			{name: 'operate', index: 'operate', width: 50, align:"center",sortable: false},
 		],
 		pager: "#pagerList",
         viewrecords: true,

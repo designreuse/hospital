@@ -8,12 +8,16 @@ public class DoctorVO implements Serializable{
 	
 	private Integer id;
 	private String username;
+	private String mobile;
+	private String agender;
+	private String birthday;
 	private String name;
 	private String hospital;//医生所在医院
 	private Integer score;//医生积分
 	private String department;//科室
 	private String address;//所在地
 	private String technicalTitle;//技术职称
+	private String teachingTitle;//技术职称
 	private Integer verifyed;//医生是否已经认证：0未认证，1已认证
 	private String registerTime;
 	
@@ -21,32 +25,52 @@ public class DoctorVO implements Serializable{
     private String endDate;
     private Integer start;
     private Integer limit;
+    private Integer exportRowCount;
+    private Integer startScore;
+    private Integer endScore;
 	    
-	    
+	public Integer getExportRowCount() {
+		return exportRowCount;
+	}
+	public void setExportRowCount(Integer exportRowCount) {
+		this.exportRowCount = exportRowCount;
+	}
+	public Integer getStartScore() {
+		return startScore;
+	}
+	public void setStartScore(Integer startScore) {
+		this.startScore = startScore;
+	}
+	public Integer getEndScore() {
+		return endScore;
+	}
+	public void setEndScore(Integer endScore) {
+		this.endScore = endScore;
+	}
 	public String getStartDate() {
 			return startDate;
-		}
-		public void setStartDate(String startDate) {
-			this.startDate = startDate;
-		}
-		public String getEndDate() {
-			return endDate;
-		}
-		public void setEndDate(String endDate) {
-			this.endDate = endDate;
-		}
-		public Integer getStart() {
-			return start;
-		}
-		public void setStart(Integer start) {
-			this.start = start;
-		}
-		public Integer getLimit() {
-			return limit;
-		}
-		public void setLimit(Integer limit) {
-			this.limit = limit;
-		}
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public Integer getStart() {
+		return start;
+	}
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+	public Integer getLimit() {
+		return limit;
+	}
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -106,6 +130,30 @@ public class DoctorVO implements Serializable{
 	}
 	public void setRegisterTime(String registerTime) {
 		this.registerTime = registerTime;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getAgender() {
+		return agender;
+	}
+	public void setAgender(String agender) {
+		this.agender = agender;
+	}
+	public String getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+	public String getTeachingTitle() {
+		return teachingTitle;
+	}
+	public void setTeachingTitle(String teachingTitle) {
+		this.teachingTitle = teachingTitle;
 	}
 	
 	

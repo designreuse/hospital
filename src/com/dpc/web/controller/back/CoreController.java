@@ -23,9 +23,9 @@ public class CoreController extends BaseController{
 	@Autowired
 	IBackDoctorService backDoctorService;
 	
-	@RequestMapping(value = "/home", method = RequestMethod.GET)
-	public String loginView(HttpSession session,HttpServletRequest request) throws IOException{
-		return "/back/common/backhome";
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(HttpSession session,HttpServletRequest request) throws IOException{
+		return "/back/index";
 	}
 	
 	

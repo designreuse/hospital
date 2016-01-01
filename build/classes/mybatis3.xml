@@ -32,5 +32,8 @@
 		<typeAlias alias="wish" type="com.dpc.web.mybatis3.domain.Wish"/>
 		<typeAlias alias="wishRemark" type="com.dpc.web.mybatis3.domain.WishRemark"/>
 		<typeAlias alias="wishVO" type="com.dpc.web.VO.WishVO"/>
+		<typeAlias alias="announcement" type="com.dpc.web.mybatis3.domain.Announcement"/>
+		<typeAlias alias="academicSupport" type="com.dpc.web.mybatis3.domain.AcademicSupport"/>
+		<typeAlias alias="doctorPatientRelation" type="com.dpc.web.mybatis3.domain.DoctorPatientRelation"/>
 	</typeAliases>
 </configuration>

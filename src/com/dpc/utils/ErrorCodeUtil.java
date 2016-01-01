@@ -37,6 +37,7 @@ public class ErrorCodeUtil
 	public static final String e11002 = "11002";   //手机号格式不正确
 	public static final String e11003 = "11003";   //密码不能为空
 	public static final String e11004 = "11004";   //注册类型不能为空
+	public static final String e11005 = "11005";   //手机号码不存在
 	
 	//登录
 	public static final String e11100 = "11100";   //用户名不存在
@@ -69,6 +70,11 @@ public class ErrorCodeUtil
 	public static final String e11500 = "11500";   //用户ID不能为空
 	public static final String e11501 = "11501";   //许愿内容不能为空
 	public static final String e11502 = "11502";   //许愿ID不能为空
+	
+	public static final String e11600 = "11600";   //已经绑定该医生
+	public static final String e11601 = "11601";   //与该医生是好友关系
+	public static final String e11602 = "11602";   //您已绑定医生
+	public static final String e11603 = "11603";   //邀请信息已发送
 	
 	public static String errorMsg(Map<String, Object> map, String errorCode) {
 		map.put("error_code", errorCode);

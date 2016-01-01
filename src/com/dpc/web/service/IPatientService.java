@@ -11,6 +11,7 @@ import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.Patient;
@@ -41,5 +42,11 @@ public interface IPatientService {
 
 	List<WishVO> getWishListByUserId(Integer id);
 
-	
+	boolean hasRelationshipWithDoctor(DoctorPatientRelation doctorPatientRelation);
+
+	boolean hasBindWithDoctor(Integer id);
+
+	void patientBindDoctor(DoctorPatientRelation dp);
+
+
 }

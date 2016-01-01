@@ -23,6 +23,7 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
@@ -43,8 +44,6 @@ public class DoctorController extends BaseController{
 
 	@Autowired
 	IUserService userService;
-	
-	
 	//添加诊后心得
 	@RequestMapping(value = "/diagnose_experience/add", method = RequestMethod.POST)
 	@ResponseBody
@@ -411,5 +410,29 @@ public class DoctorController extends BaseController{
 		return JsonUtil.object2String(list);
 	}
 	
-	
+	//获取患者绑定邀请列表（已绑定和未绑定）
+	@RequestMapping(value = "/bind/list", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBindList(HttpSession session,HttpServletRequest request) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		List<DoctorPatientRelation> list = doctorService.getBindList(u.getId());
+		
+		return JsonUtil.object2String(list);
+	}
+	//医生接受或拒绝患者的绑定请求
+	@RequestMapping(value = "/bind/acceptOrNot", method = RequestMethod.POST)
+	@ResponseBody
+	public String bindAcceptOrNot(HttpSession session,HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String acceptOrNot = request.getParameter("acceptOrNot");//0拒绝  1接受
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		doctorService.bindAcceptOrNot(Integer.parseInt(id),Integer.parseInt(acceptOrNot));
+		return success();
+	}
 }

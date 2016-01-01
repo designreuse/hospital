@@ -3,22 +3,9 @@
 
 <ul class="pagination visible-md visible-lg visible-sm" id="page-left">
 	<li><a href="javascript:void('0')" style="font-weight: bolder;">
-			共&nbsp; <c:if
-				test="${empty page.totalPageNo or page.totalPageNo eq 0}">
-				0
-			</c:if> <c:if test="${!empty page.totalPageNo and page.totalPageNo ne 0}">
-				${page.totalPageNo }
-			</c:if> &nbsp;页,&nbsp;&nbsp;&nbsp;当前第&nbsp; <c:if
-				test="${empty page.pageNo or page.pageNo eq 0}">
-				0
-			</c:if> <c:if test="${!empty page.pageNo and page.pageNo ne 0}">
-				${page.pageNo}
-			</c:if> &nbsp;页,&nbsp;&nbsp;&nbsp;共&nbsp; <c:if
-				test="${empty page.total or page.total eq 0}">
-				0
-			</c:if> <c:if test="${!empty page.total and page.total ne 0}">
+			共<c:if test="${!empty page.total and page.total ne 0}">
 				${page.total}
-			</c:if> &nbsp; 条记录
+			</c:if>条
 	</a></li>
 </ul>
 <ul class="pagination visible-md visible-lg visible-sm" id="page-right">

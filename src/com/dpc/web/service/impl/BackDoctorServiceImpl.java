@@ -11,7 +11,9 @@ import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
+import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Article;
+import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.mapper.DoctorMapper;
 import com.dpc.web.service.IBackDoctorService;
@@ -37,6 +39,55 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 		}
 		Integer totalCount = doctorMapper.getAllDoctorCount(doctor);
 		Pager<DoctorVO> pager = new Pager<DoctorVO>();
+		pager.setPageOffset(start);
+		pager.setPageSize(limit);
+		pager.setTotal(totalCount);
+		pager.setDatas(datas);
+		
+		return pager;
+	}
+
+	@Override
+	public DoctorVO getDoctorDetail(int id) {
+		return doctorMapper.getDoctorDetail(id);
+	}
+
+	@Override
+	public Pager<DiagnoseExperience> findDiagnoseExperienceByPaginaton(DiagnoseExperience dia) {
+		Integer start = PageContext.getStart();
+		Integer limit = PageContext.getLimit();
+		dia.setStart(start);
+		dia.setLimit(limit);
+		List<DiagnoseExperience> datas = doctorMapper.getDiagnoseExperienceListWithPager(dia,start,limit);
+		Integer totalCount = doctorMapper.getAllDiagnoseExperienceCount(dia);
+		Pager<DiagnoseExperience> pager = new Pager<DiagnoseExperience>();
+		pager.setPageOffset(start);
+		pager.setPageSize(limit);
+		pager.setTotal(totalCount);
+		pager.setDatas(datas);
+		
+		return pager;
+	}
+
+	@Override
+	public DiagnoseExperience getDiaExpDetail(String id) {
+		return doctorMapper.getDiaExpDetail(id);
+	}
+
+	@Override
+	public void addAcademicSupport(AcademicSupport academicSupport) {
+		doctorMapper.addAcademicSupport(academicSupport);
+	}
+
+	@Override
+	public Pager<AcademicSupport> findAcademicSupportByPaginaton(AcademicSupport support) {
+		Integer start = PageContext.getStart();
+		Integer limit = PageContext.getLimit();
+		support.setStart(start);
+		support.setLimit(limit);
+		List<AcademicSupport> datas = doctorMapper.getAcademicSupportListWithPager(support,start,limit);
+		Integer totalCount = doctorMapper.getAllAcademicSupportCount(support);
+		Pager<AcademicSupport> pager = new Pager<AcademicSupport>();
 		pager.setPageOffset(start);
 		pager.setPageSize(limit);
 		pager.setTotal(totalCount);

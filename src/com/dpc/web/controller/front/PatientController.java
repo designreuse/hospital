@@ -26,10 +26,12 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
 import com.dpc.web.service.IPatientService;
+import com.dpc.web.service.IUserService;
 
 @Controller
 @RequestMapping(value="/patient",produces = {"application/json;charset=UTF-8"})
@@ -37,6 +39,8 @@ public class PatientController extends BaseController{
 	
 	@Autowired
 	IPatientService patientService;
+	@Autowired
+	IUserService userService;
 	
 	//患者个人资料
 	@RequestMapping(value = "/profile/{id}", method = RequestMethod.GET)
@@ -248,5 +252,64 @@ public class PatientController extends BaseController{
 			}
 		}
 		return JsonUtil.object2String(list);
+	}
+	
+	
+	//患者绑定医生或加医生好友
+	@RequestMapping(value = "/patientBindDoctor", method = RequestMethod.POST)
+	@ResponseBody
+	public String patientBindDoctor(HttpSession session,HttpServletRequest request) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		//输入号码，暂时用手机
+		String mobile = request.getParameter("mobile");
+		
+		if(ValidateUtil.isEmpty(mobile)){
+			return error(ErrorCodeUtil.e11001);
+		}
+		
+		//通过医生号码找到医生的ID
+		User user = new User();
+		user.setMobile(mobile);
+		user = userService.getUser(user);
+		if(user == null){
+			return error(ErrorCodeUtil.e11005);
+		}		
+		
+		//查看当前患者和绑定医生是否已经绑定或已经是好友
+		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
+		doctorPatientRelation.setDoctorId(user.getId());
+		doctorPatientRelation.setPatientId(u.getId());
+		//绑定信息是否已经发送
+		doctorPatientRelation.setChecked(-1);
+		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+			return error(ErrorCodeUtil.e11603);
+		}
+		doctorPatientRelation.setRelation(1);
+		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+			return error(ErrorCodeUtil.e11600);
+		}
+		doctorPatientRelation.setRelation(2);
+		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+			return error(ErrorCodeUtil.e11601);
+		}
+		DoctorPatientRelation dp = new DoctorPatientRelation();
+		dp.setPatientId(u.getId());
+		dp.setDoctorId(user.getId());
+		dp.setDirection(1);
+		dp.setPatientName(u.getName());
+		//该患者是否已经和其他医生绑定
+		if(patientService.hasBindWithDoctor(u.getId())){
+			//好友关系
+			dp.setRelation(2);
+			patientService.patientBindDoctor(dp);
+		}
+		//绑定关系
+		dp.setRelation(1);
+		patientService.patientBindDoctor(dp);
+		
+		return success();
 	}
 }

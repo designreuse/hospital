@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
@@ -37,4 +38,10 @@ public interface PatientMapper {
 	List<PatientVO> getPatientListWithPager(@Param("patient") PatientVO patient, @Param("start") Integer start, @Param("limit") Integer limit);
 	
 	Integer getAllPatientCount(PatientVO p);
+
+	Integer hasRelationshipWithDoctor(DoctorPatientRelation doctorPatientRelation);
+
+	Integer hasBindWithDoctor(Integer userId);
+
+	void patientBindDoctor(DoctorPatientRelation doctorPatientRelation);
 }

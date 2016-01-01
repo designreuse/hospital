@@ -11,6 +11,7 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
@@ -136,5 +137,20 @@ public class DoctorServiceImpl implements IDoctorService {
 	public List<Announcement> getAnnouncementListByDoctorId(int id) {
 		return doctorMapper.getAnnouncementByDoctorId(id);
 	}
+
+	@Override
+	public List<DoctorPatientRelation> getBindList(Integer id) {
+		return doctorMapper.getBindList(id);
+	}
+
+	@Override
+	public void bindAcceptOrNot(int id, int acceptOrNot) {
+		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
+		doctorPatientRelation.setId(id);
+		doctorPatientRelation.setAcceptOrNot(acceptOrNot);
+		doctorMapper.bindAcceptOrNot(doctorPatientRelation);
+	}
+	
+	
 	
 }

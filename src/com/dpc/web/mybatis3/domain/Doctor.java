@@ -20,6 +20,7 @@ public class Doctor implements Serializable{
 	
 	//非持久化字段
 	private String username;
+	private String mobile;
 	private String name;
 	private String registerTime;
 	public Integer getId() {
@@ -33,6 +34,13 @@ public class Doctor implements Serializable{
 	}
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+	
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 	public String getHospital() {
 		return hospital;

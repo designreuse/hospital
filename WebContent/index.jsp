@@ -1,95 +1,54 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/pages/context/common.jsp"%>
+<!DOCTYPE>
 <html>
 <head>
-    <title>首頁</title>
-    <style type="text/css">
-    </style>
+<title>后台管理系统</title>
+<style type="text/css">
+	body{background: #ffffff}
+</style>
 </head>
-    <body>
-        <div id="wrapper">
-	        <nav class="navbar-default navbar-static-side" role="navigation">
-	        	<div class="sidebar-collapse">
-	                <ul class="nav metismenu" id="side-menu">
-	                    <li class="nav-header">
-	                        <div class="dropdown profile-element"> 
-	                        	<span><img alt="image" class="img-circle" src="img/profile_small.jpg" /></span>
-	                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-	                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">ADMIN</strong>
-	                             </span></span> </a>
-	                        </div>
-	                    </li>
-	                    <li class="active">
-	                        <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">文章管理</span> <span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li class="active"><a href="index.html">文章上传(患者)</a></li>
-	                            <li><a href="dashboard_2.html">文章列表(患者)</a></li>
-	                            <li><a href="dashboard_3.html">文章上传(医生)</a></li>
-	                            <li><a href="dashboard_4_1.html">文章列表(医生)</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">患者管理</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">患者列表</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-pie-chart"></i><span class="nav-label">医生管理</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">医生列表</a></li>
-	                            <li><a href="toastr_notifications.html">诊后心得</a></li>
-	                            <li><a href="toastr_notifications.html">学术支持</a></li>
-	                            <li><a href="toastr_notifications.html">新建学术活动</a></li>
-	                            <li><a href="toastr_notifications.html">病例精析</a></li>
-	                            <li><a href="toastr_notifications.html">新建病例精析</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-edit"></i><span class="nav-label">审核认证管理</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">医生认证审核</a></li>
-	                            <li><a href="toastr_notifications.html">银行绑定认证</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-desktop"></i><span class="nav-label">帖子管理</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">帖子列表(患者)</a></li>
-	                            <li><a href="toastr_notifications.html">新建帖子(患者)</a></li>
-	                            <li><a href="toastr_notifications.html">帖子列表(医生)</a></li>
-	                            <li><a href="toastr_notifications.html">新建帖子(医生)</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-files-o"></i><span class="nav-label">心愿管理</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">心愿列表</a></li>
-	                        </ul>
-	                    </li>
-	                    <li>
-	                        <a href="#"><i class="fa fa-flask"></i><span class="nav-label">设置</span><span class="fa arrow"></span></a>
-	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">修改密码</a></li>
-	                            <li><a href="toastr_notifications.html">意见反馈</a></li>
-	                        </ul>
-	                    </li>
-	                </ul>
-	            </div>
-	        </nav>
-	        <div id="page-wrapper" class="gray-bg dashbard-1">
-		        <div class="row border-bottom">
-			        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-			        <div class="navbar-header">
-			            <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-			            <form role="search" class="navbar-form-custom" action="search_results.html">
-			                <div class="form-group">
-			                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
-			                </div>
-			            </form>
-			        </div>
-		        </div>
-	         </div>
-        </div>
-	</body>
+<body>
+<div>
+	<div class="row">
+	    <div class="col-lg-4"></div>
+	    <div class="col-lg-4">
+	    	<div class="ibox float-e-margins" style="margin-top: 130px;">
+                <div >
+                    <h2 class="text-center" style="margin-bottom: 30px;">管理员登录</h2>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal" action="${ctx }/back/index" method="get">
+                        <div class="form-group"><label class="col-lg-2 control-label" style="height: 50px;line-height: 50px;">用户名</label>
+                            <div class="col-lg-10">
+                            	<input type="username" style="height: 50px;" placeholder="请输入用户名" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group"><label class="col-lg-2 control-label" style="height: 50px;line-height: 50px;">密码</label>
+                            <div class="col-lg-10">
+                            	<input type="password" style="height: 50px;" placeholder="请输入密码" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offset-4 col-lg-10">
+                                <button class="btn btn-w-m btn-success" style="height: 45px;" type="submit">登录</button>
+                                <button class="btn btn-w-m btn-default" style="height: 45px;" type="submit">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+	    </div>
+	    <div class="col-lg-4"></div>
+    </div>
+    <div class="row" style="">
+	    <div style="background-color: #dddddd;text-align: center;bottom: 0px;position: absolute;font-size: 16px;font-weight: bold;width:100% ;height: 40px;line-height: 40px;">
+	    	@Copyright 1999-2015 www.ixinzang.com All rights reserved 版权所有 北京医康世纪科技有限公司     京ICP备14049723号-1 京公网安备11011402000145号
+	    </div>
+    </div>
+</div>
+<script type="text/javascript">
+	
+</script>
+</body>
 </html>
