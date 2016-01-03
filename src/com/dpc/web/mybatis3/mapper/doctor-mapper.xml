@@ -109,6 +109,8 @@
   		<if test="technicalTitle != null and technicalTitle != ''">technicalTitle=#{technicalTitle},</if>
   		<if test="teachingTitle != null and teachingTitle != ''">teachingTitle=#{teachingTitle},</if>
   		<if test="department != null and department != ''">department=#{department},</if>
+  		<if test="crtOperTime != null and crtOperTime != ''">crtOperTime=#{crtOperTime},</if>
+  		<if test="verifyed != null and verifyed != ''">verifyed=#{verifyed},</if>
   	</set>
   	<where>
   		<if test="id != null">id=#{id}</if>
@@ -355,5 +357,40 @@
  		<if test="id != null">id=#{id}</if>
  	</where>
  </update>
+ <select id="getAuthenticationListWithPager" parameterType="doctor" resultType="doctorVO">
+	select  
+ 	  	d.id,
+		u.name,
+		d.verifyed,
+		d.crtWithPhotoUrl,
+		d.crtWithNameUrl,
+		date_format(d.crtOperTime, '%Y-%m-%d %k:%i') as crtOperTime 
+	from t_doctor d left join t_user u on d.userId=u.id
+  	<where>
+ 	 	<if test="doctor.startDate != null and doctor.endDate != null">
+ 	 		crtOperTime >= #{doctor.startDate} and #{doctor.endDate} >= crtOperTime
+ 	 	</if>
+ 	</where>
+ 	limit #{start},#{limit}
+ </select>
+ <select id="getAllAuthenticationCount" parameterType="doctor" resultType="java.lang.Integer">
+	 select count(*) from t_doctor d left join t_user u on d.userId=u.id
+  	<where>
+ 	 	<if test="doctor.startDate != null and doctor.endDate != null">
+ 	 		crtOperTime >= #{doctor.startDate} and #{doctor.endDate} >= crtOperTime
+ 	 	</if>
+ 	</where>
+ </select>
+ 
+ <select id="getDoctorListExport" resultType="doctorVO">
+ 	select 
+		u.name,
+		u.mobile,
+		d.hospital,
+		d.department,
+		d.technicalTitle,
+		u.registerTime
+ 	from t_doctor d left join t_user u on d.userId=u.id
+ </select>
  
 </mapper>

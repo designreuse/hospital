@@ -87,7 +87,7 @@
 									<button type="submit" class="btn btn-primary">查询</button>	                             
 									<button type="button" class="btn btn-primary">选择兑换</button>	                             
 									<button type="button" class="btn btn-primary">一键兑换</button>	                             
-									<button type="button" class="btn btn-primary">导出</button>	
+									<button type="button" class="btn btn-primary" onclick="exportDoctor()">导出</button>	
 								</div>
                              </div>
                          </form>
@@ -99,17 +99,17 @@
 					<table
 						class="table table-striped table-bordered table-hover">
 						<tr>
-							<th>序号</th>
-							<th>用户名</th>
-							<th>姓名</th>
-							<th>医院名称</th>
-							<th>科室</th>
-							<th>所在地</th>
-							<th>技术职称</th>
-							<th>医生积分</th>
-							<th>医生验证</th>
-							<th>注册时间</th>
-							<th>操作</th>
+							<th width="2%">序号</th>
+							<th width="5%">用户名</th>
+							<th width="5%">姓名</th>
+							<th width="5%">医院名称</th>
+							<th width="5%">科室</th>
+							<th width="10%">所在地</th>
+							<th width="5%">技术职称</th>
+							<th width="5%">医生积分</th>
+							<th width="5%">医生验证</th>
+							<th width="10%">注册时间</th>
+							<th width="13%">操作</th>
 						</tr>
 						<c:forEach var="item" items="${page.datas}" varStatus="st">
 							<tr>
@@ -146,6 +146,9 @@
 <script type="text/javascript">
 function detail(id){
 	window.location.href = "${ctx}/back/doctor/detail/"+id;
+}
+function exportDoctor(){
+	window.location.href = "${ctx}/back/doctor/export";
 }
 function exchange(){
 	

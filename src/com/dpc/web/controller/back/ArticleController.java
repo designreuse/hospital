@@ -138,8 +138,7 @@ public class ArticleController extends BaseController{
 		}
 		article.setDelFlag(0);
 		articleService.saveArticle(article);
-		
-		return "redirect:/back/article/list/1";
+		return "redirect:/back/article/list/"+article.getType();
 	}
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateDoctorArticle(HttpSession session,HttpServletRequest request,Article article) throws IOException{

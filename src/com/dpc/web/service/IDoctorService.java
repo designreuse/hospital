@@ -2,6 +2,7 @@ package com.dpc.web.service;
 
 import java.util.List;
 
+import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -48,6 +49,8 @@ public interface IDoctorService {
 	List<DoctorPatientRelation> getBindList(Integer id);
 
 	void bindAcceptOrNot(int parseInt, int parseInt2);
+
+	List<DoctorVO> getAllDoctorList();
 
 	
 }

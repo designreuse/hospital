@@ -69,7 +69,7 @@ function checkItem(itemID) {
 	// $('#iForm').html(data);
 
 	// });
-	$("#interface_text").val($(this).find("option:selected").text());
+	$("#interface_text").val($("#itemID").find("option:selected").text());
 }
 
 function formatJson(json, options) {

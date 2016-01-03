@@ -238,8 +238,8 @@
  	 	<if test="article.category != null">
  	 		and category = #{article.category}
  	 	</if>
- 	 	<if test="article.category != null">
- 	 		and category = #{article.category}
+ 	 	<if test="article.type != null">
+ 	 		and type = #{article.type}
  	 	</if>
  	</where>
   </select>

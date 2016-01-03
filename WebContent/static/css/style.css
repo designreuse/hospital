@@ -7476,3 +7476,39 @@ body.skin-3 {
     display: none;
   }
 }
+
+.theme-popover-mask {
+	z-index: 9998;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:#000;
+	opacity:0.4;
+	filter:alpha(opacity=40);
+	display:none
+}
+.theme-popover {
+	z-index:9999;
+	position:fixed;
+	top:50%;
+	left:50%;
+	margin:-180px 0 0 -330px;
+	border-radius:5px;
+	background-color:#fff;
+	display:none;
+	box-shadow: 0 0 10px #9E9E9E;
+}
+
+.confirm_container{
+	display: none;z-index: 9999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: -180px 0 0 -330px;
+    border-radius: 5px;
+    background-color: #fff;
+    display: none;
+    box-shadow: 0 0 10px #9E9E9E;
+}

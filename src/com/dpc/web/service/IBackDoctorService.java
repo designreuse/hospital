@@ -1,12 +1,9 @@
 package com.dpc.web.service;
 
-import com.dpc.utils.PageEntity;
-import com.dpc.utils.PageResult;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
-import com.dpc.web.mybatis3.domain.Doctor;
 
 public interface IBackDoctorService {
 
@@ -21,5 +18,7 @@ public interface IBackDoctorService {
 	void addAcademicSupport(AcademicSupport academicSupport);
 
 	Pager<AcademicSupport> findAcademicSupportByPaginaton(AcademicSupport support);
+
+	Pager<DoctorVO> findAuthenticationByPaginaton(DoctorVO doctor);
 	
 }

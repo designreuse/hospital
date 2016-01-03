@@ -17,6 +17,7 @@ public class Doctor implements Serializable{
 	private String crtWithPhotoUrl;//认证证件有照片的页
 	private String crtWithNameUrl;//认证证件有姓名的页
 	private Integer totalPatient;//名下的患者数量
+	private String crtOperTime;//认证操作时间
 	
 	//非持久化字段
 	private String username;
@@ -36,6 +37,12 @@ public class Doctor implements Serializable{
 		this.userId = userId;
 	}
 	
+	public String getCrtOperTime() {
+		return crtOperTime;
+	}
+	public void setCrtOperTime(String crtOperTime) {
+		this.crtOperTime = crtOperTime;
+	}
 	public String getMobile() {
 		return mobile;
 	}

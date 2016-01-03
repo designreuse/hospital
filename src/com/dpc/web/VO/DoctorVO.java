@@ -20,15 +20,24 @@ public class DoctorVO implements Serializable{
 	private String teachingTitle;//技术职称
 	private Integer verifyed;//医生是否已经认证：0未认证，1已认证
 	private String registerTime;
-	
+	private String crtWithPhotoUrl;
+	private String crtWithNameUrl;
 	private String startDate;
     private String endDate;
     private Integer start;
     private Integer limit;
     private Integer exportRowCount;
+    private String crtOperTime;//认证操作时间
     private Integer startScore;
     private Integer endScore;
 	    
+    
+	public String getCrtOperTime() {
+		return crtOperTime;
+	}
+	public void setCrtOperTime(String crtOperTime) {
+		this.crtOperTime = crtOperTime;
+	}
 	public Integer getExportRowCount() {
 		return exportRowCount;
 	}
@@ -154,6 +163,18 @@ public class DoctorVO implements Serializable{
 	}
 	public void setTeachingTitle(String teachingTitle) {
 		this.teachingTitle = teachingTitle;
+	}
+	public String getCrtWithPhotoUrl() {
+		return crtWithPhotoUrl;
+	}
+	public void setCrtWithPhotoUrl(String crtWithPhotoUrl) {
+		this.crtWithPhotoUrl = crtWithPhotoUrl;
+	}
+	public String getCrtWithNameUrl() {
+		return crtWithNameUrl;
+	}
+	public void setCrtWithNameUrl(String crtWithNameUrl) {
+		this.crtWithNameUrl = crtWithNameUrl;
 	}
 	
 	

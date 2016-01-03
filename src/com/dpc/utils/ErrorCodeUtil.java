@@ -76,6 +76,9 @@ public class ErrorCodeUtil
 	public static final String e11602 = "11602";   //您已绑定医生
 	public static final String e11603 = "11603";   //邀请信息已发送
 	
+	//意见反馈
+	public static final String e11700 = "11700";//反馈内容不能为空
+	
 	public static String errorMsg(Map<String, Object> map, String errorCode) {
 		map.put("error_code", errorCode);
 		map.put("error", pro.getProperties(errorCode));

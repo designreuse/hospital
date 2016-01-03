@@ -133,4 +133,17 @@ public class PatientServiceImpl implements IPatientService {
 		}
 		patientMapper.patientBindDoctor(dp);
 	}
+
+	@Override
+	public Wish getWishListById(int id) {
+		// TODO Auto-generated method stub
+		return patientMapper.getWishListById(id);
+	}
+
+	@Override
+	public void updatePatient(Patient patient) {
+		patientMapper.updateByPrimaryKeySelective(patient);
+	}
+	
+	
 }

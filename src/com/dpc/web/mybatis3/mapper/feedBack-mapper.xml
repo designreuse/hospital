@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.FeedBackMapper" >
+  <resultMap id="BaseResultMap" type="feedBack" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="feedBackTime" property="feedBackTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, mobile, content, feedBackTime, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_feedback
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="feedBack" >
+    insert into t_feedback (id, username, mobile, 
+      content, feedBackTime, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{feedBackTime,jdbcType=TIMESTAMP}, #{status,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="feedBack" >
+    insert into t_feedback
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="feedBackTime != null" >
+        feedBackTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="feedBackTime != null" >
+        #{feedBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="feedBack" >
+    update t_feedback
+    <set >
+      <if test="userId != null" >
+        userId = #{userId},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="feedBackTime != null" >
+        feedBackTime = #{feedBackTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="reply != null" >
+        reply = #{reply},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getFeedBackListWithPager" resultType="feedBack">
+  		select f.id,u.username,f.content,f.reply,u.mobile,feedBackTime,f.status from t_feedback f inner join t_user u on f.userId = u.id
+  		<where>
+  			<if test="feedBack.username != null">u.username = #{feedBack.username}</if>
+  			<if test="feedBack.startDate != null and  feedBack.endDate != null">
+  			 	and feedBackTime >= #{feedBack.startDate} and #{feedBack.endDate} >= feedBackTime
+  			</if>
+  			<if test="feedBack.status != null">
+  				and status = #{feedBack.status}
+  			</if>
+  		</where>
+  		limit #{start},#{limit}
+  </select>
+  <select id="getAllFeedBackCount" parameterType="feedBack" resultType="java.lang.Integer">
+	  	select count(*) from t_feedback f inner join t_user u on f.userId = u.id
+  		<where>
+  			<if test="feedBack.username != null">u.username = #{feedBack.username}</if>
+  			<if test="feedBack.startDate != null and  feedBack.endDate != null">
+  			 	and feedBackTime >= #{feedBack.startDate} and #{feedBack.endDate} >= feedBackTime
+  			</if>
+  			<if test="feedBack.status != null">
+  				and status = #{feedBack.status}
+  			</if>
+  		</where>
+  </select>
+  
+  
+  
+</mapper>

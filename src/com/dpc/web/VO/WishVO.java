@@ -9,6 +9,7 @@ import com.dpc.web.mybatis3.domain.WishRemark;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class WishVO implements Serializable{
+	private Integer id;
 	
 	private String patientName;
 	
@@ -30,7 +31,13 @@ public class WishVO implements Serializable{
 		this.patientName = patientName;
 	}
 
-	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getPatientProfileImageUrl() {
 		return patientProfileImageUrl;

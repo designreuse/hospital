@@ -9,16 +9,42 @@ public class WishRemark {
     private Integer id;
 
     private Integer wishId;
+    
+    private Integer userId;
 
     private String remark;
     
-    private String remarkUserName;
-    
-    private String remarkProfileImage;
-
     private String remarkTime;
 
     private Integer delFlag;
+
+    private String remarkUserName;
+    private String remarkProfileImage;
+    
+    
+	public String getRemarkUserName() {
+		return remarkUserName;
+	}
+
+	public void setRemarkUserName(String remarkUserName) {
+		this.remarkUserName = remarkUserName;
+	}
+
+	public String getRemarkProfileImage() {
+		return remarkProfileImage;
+	}
+
+	public void setRemarkProfileImage(String remarkProfileImage) {
+		this.remarkProfileImage = remarkProfileImage;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
 	public Integer getId() {
 		return id;
@@ -58,22 +84,6 @@ public class WishRemark {
 
 	public void setDelFlag(Integer delFlag) {
 		this.delFlag = delFlag;
-	}
-
-	public String getRemarkUserName() {
-		return remarkUserName;
-	}
-
-	public void setRemarkUserName(String remarkUserName) {
-		this.remarkUserName = remarkUserName;
-	}
-
-	public String getRemarkProfileImage() {
-		return remarkProfileImage;
-	}
-
-	public void setRemarkProfileImage(String remarkProfileImage) {
-		this.remarkProfileImage = remarkProfileImage;
 	}
 
 }

@@ -3,7 +3,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>文章上传(医生)</title>
+<title>文章上传(患者)</title>
 </head>
 <style type="text/css">
 	#content{}
@@ -14,7 +14,7 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>文章上传(医生)</h2>
+             <h2>文章上传(患者)</h2>
          </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -39,10 +39,10 @@
                                     	<select class="form-control m-b" name="category">
 	                                        <option value="-1">-请选择-</option>
 	                                        <option value="5">心漫画</option>
-	                                        <option value="6">心视野</option>
+	                                        <option value="6">心视频</option>
 	                                        <option value="7">心知识</option>
-	                                        <option value="8">首页轮播图</option>
-	                                        <option value="9">首页H5链接</option>
+	                                        <option value="1">首页轮播图</option>
+	                                        <option value="4">首页H5链接</option>
 	                                    </select>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
 	                                 </div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">正文</label>
-                                   	<div class="col-lg-6" id="contentDiv">
+                                   	<div class="col-lg-9" id="contentDiv">
                                    	
                                    	</div>
                                    	<input type="hidden" id="content" name="content"/>
@@ -103,16 +103,7 @@
 <script type="text/javascript">
 	$(function(){
 		UE.getEditor('contentDiv',{
-	         //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-	         toolbars:[['FullScreen', 'Undo', 'Redo','Bold','underline','fontsize','fontfamily','forecolor','insertimage','indent','lineheight','ertorderedlist','insertunorderedlist','link','unlink','rowspacing','date','time']],
-	         //focus时自动清空初始化时的内容
-	         autoClearinitialContent:true,
-	         //关闭字数统计
-	         wordCount:true,
-	         //关闭elementPath
-	         elementPathEnabled:false,
-	         //默认的编辑区域高度
-	         initialFrameHeight:500
+	         initialFrameHeight:600
 	     })
 	     
 		$('#datePick .input-group.date').datepicker({

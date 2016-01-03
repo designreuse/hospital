@@ -32,7 +32,7 @@
 	                    <li>
 	                        <a href="#"><i class="fa fa-edit"></i><span class="nav-label">审核认证管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">医生认证审核</a></li>
+	                            <li><a href="${ctx }/back/doctor/authentication/list">医生认证审核</a></li>
 	                            <li><a href="toastr_notifications.html">银行绑定认证</a></li>
 	                        </ul>
 	                    </li>
@@ -48,14 +48,14 @@
 	                    <li>
 	                        <a href="#"><i class="fa fa-files-o"></i><span class="nav-label">心愿管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">心愿列表</a></li>
+	                            <li><a href="${ctx }/back/patient/wish/list">心愿列表</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>
 	                        <a href="#"><i class="fa fa-flask"></i><span class="nav-label">设置</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
 	                            <li><a href="toastr_notifications.html">修改密码</a></li>
-	                            <li><a href="toastr_notifications.html">意见反馈</a></li>
+	                            <li><a href="${ctx }/back/feedback/list">意见反馈</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>
@@ -69,3 +69,4 @@
 	            </div>
 	        </nav>
         </div>
+        

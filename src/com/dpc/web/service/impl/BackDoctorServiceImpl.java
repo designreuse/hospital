@@ -95,7 +95,22 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 		
 		return pager;
 	}
-	
-	
+
+	@Override
+	public Pager<DoctorVO> findAuthenticationByPaginaton(DoctorVO doctor) {
+		Integer start = PageContext.getStart();
+		Integer limit = PageContext.getLimit();
+		doctor.setStart(start);
+		doctor.setLimit(limit);
+		List<DoctorVO> datas = doctorMapper.getAuthenticationListWithPager(doctor,start,limit);
+		Integer totalCount = doctorMapper.getAllAuthenticationCount(doctor);
+		Pager<DoctorVO> pager = new Pager<DoctorVO>();
+		pager.setPageOffset(start);
+		pager.setPageSize(limit);
+		pager.setTotal(totalCount);
+		pager.setDatas(datas);
+		
+		return pager;
+	}
 	
 }

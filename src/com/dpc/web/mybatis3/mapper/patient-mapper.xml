@@ -88,7 +88,10 @@
         illProfile = #{illProfile,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    <where>
+    	<if test="id != null">id = #{id,jdbcType=INTEGER}</if>
+    	<if test="userId != null">userId = #{userId,jdbcType=INTEGER}</if>
+    </where>
   </update>
   <update id="updateByPrimaryKey" parameterType="patient" >
     update t_patient
@@ -118,12 +121,6 @@
       <if test="userId != null" >
         userId,
       </if>
-      <if test="patientName != null" >
-        patientName,
-      </if>
-      <if test="patientProfileImageUrl != null" >
-        patientProfileImageUrl,
-      </if>
       <if test="content != null" >
         content,
       </if>
@@ -140,12 +137,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
         #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="patientName != null" >
-        #{patientName},
-      </if>
-      <if test="patientProfileImageUrl != null" >
-        #{patientProfileImageUrl},
       </if>
       <if test="content != null" >
         #{content},
@@ -188,6 +179,9 @@
       <if test="delFlag != null" >
         delFlag,
       </if>
+      <if test="userId != null" >
+        userId,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="wishId != null" >
@@ -202,21 +196,18 @@
       <if test="delFlag != null" >
         #{delFlag},
       </if>
+      <if test="userId != null" >
+        #{userId},
+      </if>
     </trim>
   </insert>
   
   <select id="getWishListByUserId" parameterType="java.lang.Integer" resultMap="wishMapper">
   		select 
-			w.patientName,
-			w.patientProfileImageUrl,
-			w.content,
-			w.postTime,
-			w.isComeTrue,
-			r.remarkUserName,
-			r.remarkProfileImage,
-			r.remark,
-			r.remarkTime
-		 from p_wish w inner join t_user u on w.userId=u.id left join p_wish_remark r on w.id=r.wishId where u.id=#{0} and w.delFlag=0
+			a.id,a.patientName,a.patientProfileImageUrl,a.content,a.postTime,a.isComeTrue,
+			b.remarkUserName,b.remarkProfileImage,b.remark,b.remarkTime
+		 from (select w.id id,w.content,w.postTime,w.isComeTrue,u.name patientName,u.profileImageUrl patientProfileImageUrl from p_wish w inner join t_user u on w.userId=u.id where w.delFlag=0 and u.id=#{0})	a 
+		 left join (select wr.wishId,user.name remarkUserName,user.profileImageUrl remarkProfileImage,wr.remark,wr.remarkTime from p_wish_remark wr left join t_user user on wr.userId=user.id) b on a.id=b.wishId 
   </select>
   
    <select id="getPatientListWithPager" parameterType="patient" resultType="patientVO">
@@ -267,4 +258,72 @@
   <insert id="patientBindDoctor" parameterType="doctorPatientRelation" useGeneratedKeys="true" keyProperty="id">
   	insert into t_doctor_patient(doctorId,patientId,relation,checked,patientName) values(#{doctorId},#{patientId},#{relation},#{checked},#{patientName})
   </insert>
+  
+  <select id="getWishList" parameterType="wish" resultType="wish">
+ 	select 
+	 	w.id,
+		w.userId,
+		u.name patientName,
+		w.content,
+		date_format(w.postTime, '%Y-%m-%d %k:%i') as postTime,
+		w.isComeTrue,
+ 		u.mobile,
+ 		wr.remark
+ 	from p_wish w left join t_user u on w.userId=u.id left join p_wish_remark wr on w.id=wr.wishId
+ 	<where>
+ 		<if test="wish.patientName !=null">u.name = #{wish.patientName}</if>
+ 		<if test="wish.isComeTrue !=null"> and isComeTrue = #{wish.isComeTrue}</if>
+ 		<if test="wish.mobile !=null"> and u.mobile = #{wish.mobile}</if>
+ 	</where>
+	limit #{start},#{limit}
+ </select>
+  <select id="getAllWishCount" parameterType="wish" resultType="java.lang.Integer">
+ 	select count(*)
+ 	from p_wish w left join t_user u on w.userId=u.id
+ 	<where>
+ 		<if test="wish.patientName !=null">patientName = #{wish.patientName}</if>
+ 		<if test="wish.isComeTrue !=null"> and isComeTrue = #{wish.isComeTrue}</if>
+ 		<if test="wish.mobile !=null"> and u.mobile = #{wish.mobile}</if>
+ 	</where>
+ </select>
+  <select id="getWishDetail" parameterType="java.lang.Integer" resultType="wish">
+ 	select 
+		u.name patientName,
+		u.mobile,
+		date_format(w.postTime, '%Y-%m-%d %k:%i') as postTime,
+		w.isComeTrue,
+		w.content,
+		wr.remark
+ 	from p_wish w left join t_user u on w.userId=u.id left join p_wish_remark wr on w.id=wr.wishId
+ 	where w.id = #{0}
+ </select>
+ 
+  <select id="getWishListById" parameterType="java.lang.Integer" resultType="wish">
+ 	select * from p_wish  where id = #{0}
+ </select>
+ 
+ <select id="getDiscoveryList" parameterType="discovery" resultType="discovery">
+ 	select 
+	 	d.id,
+	 	u,name,
+	 	d.content,
+	 	date_format(d.postTime, '%Y-%m-%d %k:%i') as postTime,
+	 	di.imageUrl
+ 	from p_discovery d left join t_user u on d.userId=u.id left join p_discovery_image di on d.id=di.discoveryId 
+ 	<where>
+ 		<if test="discovery.name !=null">u.name = #{discovery.name}</if>
+ 		<if test="discovery.postTime !=null"> and d.postTime = #{discovery.postTime}</if>
+ 	</where>
+	limit #{start},#{limit}
+ </select>
+ 
+ <select id="getAllDiscoveryCount" parameterType="discovery" resultType="java.lang.Integer">
+ 	select count(*)
+ 	from p_discovery d left join t_user u on d.userId=u.id 
+ 	<where>
+ 		<if test="discovery.name !=null">u.name = #{discovery.name}</if>
+ 		<if test="discovery.postTime !=null"> and d.postTime = #{discovery.postTime}</if>
+ 	</where>
+ </select>
+ 
 </mapper>

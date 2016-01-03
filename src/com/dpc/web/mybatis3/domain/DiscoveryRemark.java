@@ -10,15 +10,34 @@ public class DiscoveryRemark {
 
     private Integer discoveryId;
     
-    private String remarkUserName;
-
-    private String remarkUserProfile;
-
+    private Integer userId;
+    
     private String remark;
 
     private String postTime;
 
-    public Integer getId() {
+    
+    private String remarkUserName;
+    private String  remarkUserProfile;
+    
+    
+    public String getRemarkUserName() {
+		return remarkUserName;
+	}
+
+	public void setRemarkUserName(String remarkUserName) {
+		this.remarkUserName = remarkUserName;
+	}
+
+	public String getRemarkUserProfile() {
+		return remarkUserProfile;
+	}
+
+	public void setRemarkUserProfile(String remarkUserProfile) {
+		this.remarkUserProfile = remarkUserProfile;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -26,21 +45,14 @@ public class DiscoveryRemark {
         this.id = id;
     }
 
-    public String getRemarkUserName() {
-        return remarkUserName;
-    }
 
-    public void setRemarkUserName(String remarkUserName) {
-        this.remarkUserName = remarkUserName == null ? null : remarkUserName.trim();
-    }
+    public Integer getUserId() {
+		return userId;
+	}
 
-    public String getRemarkUserProfile() {
-        return remarkUserProfile;
-    }
-
-    public void setRemarkUserProfile(String remarkUserProfile) {
-        this.remarkUserProfile = remarkUserProfile == null ? null : remarkUserProfile.trim();
-    }
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
     public String getRemark() {
         return remark;

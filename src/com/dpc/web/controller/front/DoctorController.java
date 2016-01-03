@@ -298,6 +298,7 @@ public class DoctorController extends BaseController{
 			doctor.setUserId(u.getId());
 			doctor.setCrtWithNameUrl(crtWithNameUrl);
 			doctor.setCrtWithPhotoUrl(crtWithPhotoUrl);
+			doctor.setCrtOperTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 			doctorService.updateDoctor(doctor);
 		}
 		return success();
@@ -305,7 +306,7 @@ public class DoctorController extends BaseController{
 	
 	
 	
-	//医生上传认证证件
+	//修改医生个人资料
 	@RequestMapping(value = "/profile/update", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateProfile(HttpSession session,HttpServletRequest request) throws IOException{

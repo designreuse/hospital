@@ -45,23 +45,23 @@
                                     </div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">文章来源</label>
-                                    <div class="col-lg-6"><input type="text" name="resource" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="text" name="resource" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">封面图</label>
-                                    <div class="col-lg-6"><input type="file" name="coverImage" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="file" name="coverImage" class="form-control"></div>
                                 </div>
                                 
                                 <div class="form-group"><label class="col-lg-2 control-label">文章标题</label>
-                                    <div class="col-lg-6"><input type="text" name="title" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="text" name="title" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">视频地址</label>
-                                    <div class="col-lg-6"><input type="text" name="videoUrl" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="text" name="videoUrl" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">首页H5链接</label>
-                                    <div class="col-lg-6"><input type="text" name="H5Url" class="form-control"></div>
+                                    <div class="col-lg-5"><input type="text" name="H5Url" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">链接地址</label>
-                                   	<div class="col-lg-6">
+                                   	<div class="col-lg-5">
 	                                   	<select class="form-control m-b" name="linkType">
 	                                        <option value="0">-请选择-</option>
 	                                        <option value="1">不做跳转</option>
@@ -71,7 +71,7 @@
 	                                 </div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">正文</label>
-                                   	<div class="col-lg-6" id="contentDiv">
+                                   	<div class="col-lg-9" id="contentDiv">
                                    	
                                    	</div>
                                    	<input type="hidden" id="content" name="content"/>
@@ -93,16 +93,7 @@
 <script type="text/javascript">
 	$(function(){
 		UE.getEditor('contentDiv',{
-	         //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-	         toolbars:[['FullScreen', 'Undo', 'Redo','Bold','underline','fontsize','fontfamily','forecolor','insertimage','indent','lineheight','ertorderedlist','insertunorderedlist','link','unlink','rowspacing','date','time']],
-	         //focus时自动清空初始化时的内容
-	         autoClearinitialContent:true,
-	         //关闭字数统计
-	         wordCount:true,
-	         //关闭elementPath
-	         elementPathEnabled:false,
-	         //默认的编辑区域高度
-	         initialFrameHeight:500
+	         initialFrameHeight:700
 	     })
 	     
 		$('#datePick .input-group.date').datepicker({

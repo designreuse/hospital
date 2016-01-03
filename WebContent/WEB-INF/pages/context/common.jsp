@@ -17,6 +17,7 @@
 <link href="${ctx }/static/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
 <link href="${ctx }/static/css/animate.css" rel="stylesheet">
 <link href="${ctx }/static/css/style.css" rel="stylesheet">
+<link href="${ctx }/static/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
 
 <link href="${ctx }/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 

@@ -3,7 +3,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>文章上传（医生）</title>
+<title>文章列表（患者）</title>
 </head>
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
@@ -11,7 +11,7 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>文章上传（医生）</h2>
+             <h2>文章列表（患者）</h2>
          </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -67,11 +67,14 @@
                           		</div>
                           		<div class="form-group col-lg-2">
                           			<label class="col-lg-1 control-label"></label>
-                          			<button class="btn btn-success" type="submit">查的询</button>
+                          			<button class="btn btn-success" type="submit">查询</button>
                           		</div>
                           	</div>
                         </form>
                 </div>
+                <jsp:include page="/WEB-INF/pages/context/pagination.jsp">
+							<jsp:param value="${ctx}/back/article/list/2" name="url" />
+						</jsp:include>
                 <div class="panel-body">
 					<table
 						class="table table-striped table-bordered table-hover">
@@ -105,9 +108,6 @@
 							</tr>
 						</c:forEach>
 					</table>
-					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/article/doctor/list/1" name="url" />
-					</jsp:include>
 				</div>
            </div>
        </div>

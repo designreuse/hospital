@@ -48,5 +48,9 @@ public interface IPatientService {
 
 	void patientBindDoctor(DoctorPatientRelation dp);
 
+	Wish getWishListById(int parseInt);
+
+	void updatePatient(Patient patient);
+
 
 }

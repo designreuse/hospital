@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -149,6 +150,11 @@ public class DoctorServiceImpl implements IDoctorService {
 		doctorPatientRelation.setId(id);
 		doctorPatientRelation.setAcceptOrNot(acceptOrNot);
 		doctorMapper.bindAcceptOrNot(doctorPatientRelation);
+	}
+
+	@Override
+	public List<DoctorVO> getAllDoctorList() {
+		return doctorMapper.getDoctorListExport();
 	}
 	
 	

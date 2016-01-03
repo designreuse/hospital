@@ -35,5 +35,6 @@
 		<typeAlias alias="announcement" type="com.dpc.web.mybatis3.domain.Announcement"/>
 		<typeAlias alias="academicSupport" type="com.dpc.web.mybatis3.domain.AcademicSupport"/>
 		<typeAlias alias="doctorPatientRelation" type="com.dpc.web.mybatis3.domain.DoctorPatientRelation"/>
+		<typeAlias alias="feedBack" type="com.dpc.web.mybatis3.domain.FeedBack"/>
 	</typeAliases>
 </configuration>

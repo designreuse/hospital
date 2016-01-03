@@ -27,6 +27,7 @@ import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
+import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
@@ -54,8 +55,60 @@ public class PatientController extends BaseController{
 			return error(ErrorCodeUtil.e11500);
 		}
 		PatientVO patientVO = patientService.getProfile(Integer.parseInt(id));
+		if(patientVO!=null&&patientVO.getProfileImageUrl()!=null&&patientVO.getProfileImageUrl()!=""){
+			patientVO.setProfileImageUrl(ConstantUtil.DOMAIN+patientVO.getProfileImageUrl());
+		}
 		return JsonUtil.object2String(patientVO);
 	}
+	@RequestMapping(value = "/profile/update/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateProfile(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		User u = (User) session.getAttribute("u");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		String name = request.getParameter("name");
+		String agender = request.getParameter("agender");
+		String birthday = request.getParameter("birthday");
+		String mobile = request.getParameter("mobile");
+		
+		String weight = request.getParameter("weight");
+		
+		String[] profileImage = request.getParameterValues("profileImageUrl");
+		List<String> profileImageUrl = null;
+		if(!ValidateUtil.isEmpty(profileImage)){
+			profileImageUrl = upload(session,request,profileImage);
+		}
+		
+		User user = new User();
+		user.setId(u.getId());
+		if(!ValidateUtil.isEmpty(mobile)){
+			user.setMobile(mobile);
+		}
+		if(!ValidateUtil.isEmpty(name)){
+			user.setName(name);
+		}
+		if(!ValidateUtil.isEmpty(agender)){
+			user.setAgender(Integer.parseInt(agender));
+		}
+		if(!ValidateUtil.isEmpty(birthday)){
+			user.setBirthday(birthday);
+		}
+		if(profileImageUrl!=null&&profileImageUrl.size()>0){
+			user.setProfileImageUrl(profileImageUrl.get(0));
+		}
+		userService.updateUser(user);
+		
+		Patient patient = new Patient();
+		patient.setUserId(u.getId());
+		if(!ValidateUtil.isEmpty(weight)){
+			patient.setWeight(Double.parseDouble(weight));
+		}
+		patientService.updatePatient(patient);
+		return success();
+	}
+	
+	
 	
 	//患者许愿
 	@RequestMapping(value = "/wish", method = RequestMethod.POST)
@@ -71,9 +124,7 @@ public class PatientController extends BaseController{
 		}
 		Wish wish = new Wish();
 		wish.setUserId(u.getId());
-		wish.setPatientName(u.getName());
 		wish.setContent(content);
-		wish.setPatientProfileImageUrl(u.getProfileImageUrl());
 		wish.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		wish.setDelFlag(0);
 		wish.setIsComeTrue(0);
@@ -124,10 +175,10 @@ public class PatientController extends BaseController{
 		}
 		return JsonUtil.object2String(wishList);
 	}
-	//患者许愿
+	//患者许愿评论
 	@RequestMapping(value = "/wish/remark/{id}", method = RequestMethod.POST)
 	@ResponseBody
-	public String wish(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+	public String wishRemark(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
 		User u = (User) session.getAttribute("u");
 		String content = request.getParameter("content");
 		if(u==null){
@@ -137,6 +188,7 @@ public class PatientController extends BaseController{
 			return error(ErrorCodeUtil.e11501);
 		}
 		WishRemark wishRemark = new WishRemark();
+		wishRemark.setUserId(u.getId());
 		wishRemark.setDelFlag(0);
 		wishRemark.setRemark(content);
 		wishRemark.setRemarkTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
@@ -167,8 +219,7 @@ public class PatientController extends BaseController{
 		discovery.setVoteCount(0);
 		discovery.setRemarkCount(0);
 		discovery.setDelFlag(0);
-		discovery.setUsername(u.getName());
-		discovery.setProfileImageUrl(u.getProfileImageUrl());
+		discovery.setUserId(u.getId());
 		discovery.setContent(content);
 		patientService.addDiscovery(discovery,imageUrls);
 		
@@ -191,8 +242,7 @@ public class PatientController extends BaseController{
 		discoveryRemark.setDiscoveryId(Integer.parseInt(id));
 		discoveryRemark.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		discoveryRemark.setRemark(remark);
-		discoveryRemark.setRemarkUserName(u.getName());
-		discoveryRemark.setRemarkUserProfile(u.getProfileImageUrl());
+		discoveryRemark.setUserId(u.getId());
 		patientService.addDiscoveryRemark(discoveryRemark);
 		return success();
 	}
@@ -209,16 +259,18 @@ public class PatientController extends BaseController{
 		}
 		Discovery d = patientService.getDiscoveryDetail(Integer.parseInt(id));
 		if(d!=null){
+			d.setProfileImageUrl(ConstantUtil.DOMAIN+d.getProfileImageUrl());
 			d.setPostTime(DateUtil.timeDiffer(DateUtil.parse(d.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
 			List<DiscoveryImage> imageList = patientService.getDiscoveryImageListByDiscoveryId(d.getId());
 			if(imageList!=null&&imageList.size()>0){
 				for(DiscoveryImage image : imageList){
 					image.setImageUrl(ConstantUtil.DOMAIN+image.getImageUrl());
 				}
-			}
+			}	
 			List<DiscoveryRemark> remarkList = d.getRemarkList();
 			if(remarkList!=null&&remarkList.size()>0){
 				for(DiscoveryRemark remark : remarkList){
+					remark.setRemarkUserProfile(ConstantUtil.DOMAIN+remark.getRemarkUserProfile());
 					remark.setPostTime(DateUtil.timeDiffer(DateUtil.parse(remark.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
 				}
 			}

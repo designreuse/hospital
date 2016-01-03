@@ -34,6 +34,9 @@ public interface DoctorMapper{
 	Integer getAllAcademicSupportCount(@Param("support") AcademicSupport support);
 	List<DoctorPatientRelation> getBindList(Integer id);
 	void bindAcceptOrNot(DoctorPatientRelation doctorPatientRelation);
+	List<DoctorVO> getAuthenticationListWithPager(@Param("doctor") DoctorVO doctor, @Param("start") Integer start, @Param("limit") Integer limit);
+	Integer getAllAuthenticationCount(@Param("doctor") DoctorVO doctor);
+	List<DoctorVO> getDoctorListExport();
 	
 }
 

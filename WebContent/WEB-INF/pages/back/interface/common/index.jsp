@@ -73,7 +73,9 @@ body {
 								<option value='${item.id }'>${item.name }</option>
 							</c:forEach>
 						</select>
-						<input id="interface_text"/>
+					</div>
+					<div class="form-group">
+							<input type="text" id="interface_text" class="form-control"> 
 					</div>
 
 					<hr />

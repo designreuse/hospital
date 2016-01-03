@@ -8,10 +8,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Discovery {
     private Integer id;
-
-    private String username;
-
-    private String profileImageUrl;
+    
+    private Integer userId;
 
     private String content;
 
@@ -23,17 +21,52 @@ public class Discovery {
 
     private Integer delFlag;
     
-    
     //非持久化字段
     private List<DiscoveryImage> imageList;
     private List<DiscoveryRemark> remarkList;
+    private Integer start;
+    private Integer limit;
+    private String name;
+    private String profileImageUrl;
     
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
 	public List<DiscoveryRemark> getRemarkList() {
 		return remarkList;
 	}
 
 	public void setRemarkList(List<DiscoveryRemark> remarkList) {
 		this.remarkList = remarkList;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
 	}
 
 	public Integer getId() {
@@ -44,23 +77,15 @@ public class Discovery {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
+    public Integer getUserId() {
+		return userId;
+	}
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl == null ? null : profileImageUrl.trim();
-    }
-
-    public String getContent() {
+	public String getContent() {
         return content;
     }
 

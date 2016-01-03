@@ -13,7 +13,7 @@
   </resultMap>
   <resultMap id="discoveryDetailMap" type="discovery" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="profileImageUrl" property="profileImageUrl" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
@@ -54,11 +54,8 @@
       <if test="id != null" >
         id,
       </if>
-      <if test="username != null" >
-        username,
-      </if>
-      <if test="profileImageUrl != null" >
-        profileImageUrl,
+      <if test="userId != null" >
+        userId,
       </if>
       <if test="content != null" >
         content,
@@ -80,11 +77,8 @@
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="username != null" >
-        #{username,jdbcType=VARCHAR},
-      </if>
-      <if test="profileImageUrl != null" >
-        #{profileImageUrl,jdbcType=VARCHAR},
+      <if test="userId != null" >
+        #{userId},
       </if>
       <if test="content != null" >
         #{content,jdbcType=VARCHAR},
@@ -134,11 +128,8 @@
       <if test="discoveryId != null" >
         discoveryId,
       </if>
-      <if test="remarkUserName != null" >
-        remarkUserName,
-      </if>
-      <if test="remarkUserProfile != null" >
-        remarkUserProfile,
+      <if test="userId != null" >
+        userId,
       </if>
       <if test="remark != null" >
         remark,
@@ -151,11 +142,8 @@
       <if test="discoveryId != null" >
         #{discoveryId},
       </if>
-      <if test="remarkUserName != null" >
-        #{remarkUserName},
-      </if>
-      <if test="remarkUserProfile != null" >
-        #{remarkUserProfile},
+      <if test="userId != null" >
+        #{userId},
       </if>
       <if test="remark != null" >
         #{remark},
@@ -205,7 +193,17 @@
   </update>
   
   <select id="getDiscoveryList" resultType="discovery">
-  	select * from p_discovery where delFlag=0 order by postTime desc
+  	select 
+  		d.id,
+		d.userId,
+		d.content,
+		d.voteCount,
+		d.remarkCount,
+		d.postTime,
+		u.name,
+		u.profileImageUrl
+  	from p_discovery d left join t_user u on d.userId=u.id
+  	where delFlag=0 order by postTime desc
   </select>
   
   <select id="getDiscoveryImageListByDiscoveryId" parameterType="java.lang.Integer" resultType="discoveryImage">
@@ -213,19 +211,20 @@
   </select>
   
   <select id="getDiscoveryDetail" parameterType="java.lang.Integer" resultMap="discoveryDetailMap">
-  		select 
-  			a.id,
-			a.username,
-			a.profileImageUrl,
-			a.content,
-			a.remarkCount,
-			a.postTime,
-			b.remarkUserName,
-			b.remarkUserProfile,
-			b.remark,
-			b.postTime AS remarkPostTime
-		from p_discovery a left JOIN p_discovery_remark  b 
-		on a.id=b.discoveryid where a.id = #{0} and a.delFlag=0 
+	select 
+		a.id,
+		a.content,
+		a.postTime,
+		a.remarkCount,
+		a.name,
+		a.profileImageUrl,
+		b.remarkUserName,
+		b.remarkUserProfile,
+		b.remark,
+		b.postTime AS remarkPostTime
+	from (select discovery.id id,discovery.delFlag delFlag,discovery.content content,discovery.postTime postTime,discovery.remarkCount remarkCount,user.name name,user.profileImageUrl profileImageUrl  from p_discovery discovery left JOIN t_user user on discovery.userId=user.id ) a
+	left join (select discoveryId,remark,dr.postTime,u.name remarkUserName,u.profileImageUrl remarkUserProfile from p_discovery_remark dr left join t_user u on dr.userId=u.id) b  on a.id=b.discoveryId
+	where a.id = #{0} and a.delFlag=0 
   </select>
   
 </mapper>

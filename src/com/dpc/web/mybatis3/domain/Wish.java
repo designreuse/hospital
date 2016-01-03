@@ -8,10 +8,6 @@ public class Wish {
 
     private Integer userId;
 
-    private String patientName;
-
-    private String patientProfileImageUrl;
-
     private String content;
 
     private String postTime;
@@ -19,6 +15,37 @@ public class Wish {
     private Integer isComeTrue;
 
     private Integer delFlag;
+    
+    
+    private String mobile;
+    private String patientName;
+    private String remark;
+    private Integer start;
+    private Integer limit;
+    
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
 
 	public Integer getId() {
 		return id;
@@ -42,14 +69,6 @@ public class Wish {
 
 	public void setPatientName(String patientName) {
 		this.patientName = patientName;
-	}
-
-	public String getPatientProfileImageUrl() {
-		return patientProfileImageUrl;
-	}
-
-	public void setPatientProfileImageUrl(String patientProfileImageUrl) {
-		this.patientProfileImageUrl = patientProfileImageUrl;
 	}
 
 	public String getContent() {
@@ -82,6 +101,14 @@ public class Wish {
 
 	public void setIsComeTrue(Integer isComeTrue) {
 		this.isComeTrue = isComeTrue;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 }
