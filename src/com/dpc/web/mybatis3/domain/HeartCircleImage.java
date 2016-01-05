@@ -1,6 +1,8 @@
 package com.dpc.web.mybatis3.domain;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class HeartCircleImage {
     private Integer id;
 

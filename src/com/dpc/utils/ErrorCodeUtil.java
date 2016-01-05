@@ -20,8 +20,6 @@ public class ErrorCodeUtil
 {
 	
 	private static ErrorCodeProperties pro = ErrorCodeProperties.getInstance();
-
-	
 	
 	public static final String e10000 = "10000";   // 您无权进行此操作
 	
@@ -38,6 +36,9 @@ public class ErrorCodeUtil
 	public static final String e11003 = "11003";   //密码不能为空
 	public static final String e11004 = "11004";   //注册类型不能为空
 	public static final String e11005 = "11005";   //手机号码不存在
+	public static final String e11006 = "11006";   //验证码已失效
+	public static final String e11007 = "11007";   //验证码不正确
+	public static final String e11008 = "11008";   //手机号码已注册
 	
 	//登录
 	public static final String e11100 = "11100";   //用户名不存在
@@ -54,6 +55,8 @@ public class ErrorCodeUtil
 	public static final String e11209 = "11209";   //科室不能为空
 	public static final String e11210 = "11210";   //公告ID不能为空
 	public static final String e11211 = "11211";   //公告内容不能为空
+	public static final String e11212 = "11212";   //诊后心得ID不能为空
+	public static final String e11213 = "11213";   //诊后心得评价内容不能为空
 	
 	//心血管圈
 	public static final String e11300 = "11300";   //心血管发表内容不能为空

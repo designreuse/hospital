@@ -9,15 +9,17 @@
     <result column="illDesc" property="illDesc" jdbcType="VARCHAR" />
     <result column="readCount" property="readCount" jdbcType="INTEGER" />
     <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="TINYINT" />
     <result column="isAnonymous" property="isAnonymous" jdbcType="TINYINT" />
     <result column="experience" property="experience" jdbcType="VARCHAR" />
+    <result column="dprofileImage" property="profileImage" jdbcType="VARCHAR" />
     <result column="postTime" property="creTime" jdbcType="TIMESTAMP" />
     <result column="remainScore" property="remainScore" jdbcType="INTEGER" />
     <collection property="remarkList" ofType="diagnoseExperienceRemark">
-	 	<id column="id" property="rid" jdbcType="INTEGER" />
-		<result property="name" column="name" />
-		<result property="profileImage" column="profileImage" />
+	 	<id column="rid" property="id" jdbcType="INTEGER" />
+		<result property="name" column="remarkUserName" />
+		<result property="profileImage" column="remarkProfileImage" />
 		<result property="content" column="remarkContent" />
 		<result property="creTime" column="remarkTime" />
 	</collection>
@@ -167,17 +169,11 @@
   <insert id="addDiagnoseExperienceRemark" parameterType="diagnoseExperienceRemark" >
     insert into d_dia_exp_remark
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="doctorId != null" >
-        doctorId,
+      <if test="userId != null" >
+        userId,
       </if>
       <if test="diaExpId != null" >
         diaExpId,
-      </if>
-      <if test="name != null" >
-        name,
-      </if>
-      <if test="profileImage != null" >
-        profileImage,
       </if>
       <if test="content != null" >
         content,
@@ -190,17 +186,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="doctorId != null" >
-        #{doctorId},
+      <if test="userId != null" >
+        #{userId},
       </if>
       <if test="diaExpId != null" >
         #{diaExpId},
-      </if>
-      <if test="name != null" >
-        #{name},
-      </if>
-      <if test="profileImage != null" >
-        #{profileImage},
       </if>
       <if test="content != null" >
      	 #{content},
@@ -235,20 +225,21 @@
   </insert>
   
   <select id="getDiagnoseExperienceDetail" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-  SELECT 
-		a.doctorName,
+  	 SELECT 
+		a.id,
+		a.`name` as doctorName,
 		a.illType,
 		a.illDesc,
 		a.experience,
-		d.score AS remainScore,
-		b.content AS remarkContent,
-		b.creTime AS remarkTime,
-		b.profileImage AS profileImage,
-	from d_diagnose_experience a 
-	LEFT JOIN t_doctor d on a.doctorId=d.id
-	left join d_dia_exp_remark b on a.id=b.diaExpId 
-	where a.id=#{0} and b.delFlag=0 
-	order BY b.creTime  
+		doc.score,
+		b.remarkUserName,
+		b.remarkProfileImage,
+		b.remarkContent,
+		b.remarkTime
+	from (SELECT `user`.profileImageUrl,de.id,de.illDesc,de.illType,de.experience,de.doctorId,`user`.`name` from d_diagnose_experience de left join t_user user on de.doctorId=`user`.id)  a
+	left join t_doctor doc on a.doctorId=doc.userID
+	left JOIN (SELECT der.diaExpId,u.name as remarkUserName,u.profileImageUrl as remarkProfileImage,der.content as remarkContent,der.creTime as remarkTime from d_dia_exp_remark der left join t_user u on der.userId=u.id ORDER BY der.creTime DESC) b on a.id=b.diaExpId
+	where a.id = #{0}
   </select>
   
   <select id="getDiagnoseExperienceList" parameterType="java.lang.Integer" resultMap="BaseResultMap">

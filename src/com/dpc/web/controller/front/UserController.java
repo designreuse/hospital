@@ -2,19 +2,27 @@ package com.dpc.web.controller.front;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.dpc.utils.Base64;
 import com.dpc.utils.DateUtil;
+import com.dpc.utils.ErrorCodeProperties;
 import com.dpc.utils.ErrorCodeUtil;
+import com.dpc.utils.JsonUtil;
 import com.dpc.utils.MD5Encoder;
+import com.dpc.utils.SMSUtil;
+import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.Patient;
@@ -34,11 +42,30 @@ public class UserController extends BaseController{
 	@Autowired
 	IPatientService patientService;
 	
+	@RequestMapping(value = "/verificationCode", method = RequestMethod.GET)
+	@ResponseBody
+	public String getVerificationCode(HttpServletRequest request) throws IOException{
+		ErrorCodeProperties pro = ErrorCodeProperties.getInstance();
+		String mobile = request.getParameter("mobile");
+		if(ValidateUtil.isEmpty(mobile)){
+			return error(ErrorCodeUtil.e11001);
+		}
+		String errorCode = SMSUtil.sendSMS(mobile);
+		if(!errorCode.equals("000000")){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error_code", errorCode);
+			map.put("error", pro.getProperties(errorCode));
+			return JsonUtil.object2String(map);
+		}
+		return success();
+	}
+	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	@ResponseBody
-	public String register(HttpSession session,HttpServletRequest request) throws IOException{
+	public String register(HttpServletRequest request) throws IOException{
 		String registerType = request.getParameter("registerType"); //注册类型：1-医生注册；2-病人注册
 		String mobile = request.getParameter("mobile"); //密码
+		String verifycode = request.getParameter("verifycode"); //密码
 		String password = request.getParameter("password"); //密码
 		String salt = UUID.randomUUID().toString();
 		if(ValidateUtil.isEmpty(registerType)){
@@ -52,6 +79,29 @@ public class UserController extends BaseController{
 		}
 		if(ValidateUtil.isEmpty(password)){
 			return error(ErrorCodeUtil.e11003);
+		}
+		//是否已经注册
+		User user = new User();
+		user.setUsername(mobile);
+		user = userService.getUser(user);
+		if(user!=null){
+			return error(ErrorCodeUtil.e11008);
+		}
+		//短信验证码校验
+		MemSession session = MemSession.getSession(mobile,false,"ten_min");
+		if(session == null){
+			return error(ErrorCodeUtil.e11006);
+		}
+		if(session.getMap() == null){
+			return error(ErrorCodeUtil.e11006);
+		}
+		if(session.getAttribute("verifycode")!=null){
+			String randomCode = session.getAttribute("verifycode").toString();
+			if(!randomCode.equals(verifycode)){
+				return error(ErrorCodeUtil.e11007);
+			}
+		}else{
+			return error(ErrorCodeUtil.e11006);
 		}
 		//注册用户
 		User u = new User();
@@ -86,7 +136,13 @@ public class UserController extends BaseController{
 	public String updatePwd(HttpSession session,HttpServletRequest request) throws IOException{
 		String oldPwd = request.getParameter("oldPwd");
 		String newPwd = request.getParameter("newPwd");
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		Integer uid = 0;
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
@@ -99,15 +155,17 @@ public class UserController extends BaseController{
 		if(!u.getPassword().equals(MD5Encoder.encrypt(oldPwd, u.getSalt()))){
 			return error(ErrorCodeUtil.e10003);
 		}
+		String salt = u.getSalt();
 		u = new User();
 		u.setId(uid);
-		u.setPassword(MD5Encoder.encrypt(newPwd, u.getSalt()));
+		u.setPassword(MD5Encoder.encrypt(newPwd, salt));
 		userService.updateUser(u);
 		return success();
 	}
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public String login(HttpSession session,HttpServletRequest request) throws IOException{
+	public String login(HttpServletRequest request) throws IOException{
+		Map<String, Object> result = new HashMap<String, Object>();
 		String username = request.getParameter("username"); 
 		String password = request.getParameter("password"); //密码
 		if(ValidateUtil.isEmpty(username)){
@@ -127,17 +185,26 @@ public class UserController extends BaseController{
 		if (user == null){
 			return error(ErrorCodeUtil.e11100);
 		}		
-		//获得盐值
-		String salt = user.getSalt();
 		//获得密码
 		String pwd = user.getPassword();
-		password = MD5Encoder.encrypt(password, salt);
+		password =MD5Encoder.encrypt(password, user.getSalt());
+		
 		//比对密码
 		if (!pwd.equals(password)) {
 			return error(ErrorCodeUtil.e11101);
 		}
-		session.setAttribute("u", user);
-		return success();
+		//session 默认30天
+		MemSession session = MemSession.getSession("u" + user.getId(),true,"default");
+		session.setAttribute("user",user,"default");
+		//保存session
+		String accessToken = StringUtil.getRandStr(6, false) + "-"+ (System.currentTimeMillis() + 12 * 60 * 60 * 1000) + "_"+ user.getId();
+		session.setAttribute("accessToken", accessToken,"default");
+		
+		//设置返回值
+		result.put("accessToken",Base64.encodeToString(accessToken.getBytes(),11));
+		result.put("user", user);
+				
+		return success(result);
 	}
 	
 	@RequestMapping(value = "/view/login", method = RequestMethod.GET)

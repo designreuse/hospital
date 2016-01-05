@@ -156,6 +156,22 @@ public class DoctorServiceImpl implements IDoctorService {
 	public List<DoctorVO> getAllDoctorList() {
 		return doctorMapper.getDoctorListExport();
 	}
+
+	@Override
+	public void updateDiagnoseExp(DiagnoseExperience diaexp) {
+		diagnoseExperienceMapper.updateByPrimaryKeySelective(diaexp);
+	}
+
+	@Override
+	public DiagnoseExperience getDiagnoseExperienceById(int id) {
+		
+		return diagnoseExperienceMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int hcId) {
+		return heartCircleMapper.getHeartCircleImageListByHeartCircleId(hcId);
+	}
 	
 	
 	

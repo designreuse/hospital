@@ -16,6 +16,7 @@ import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Article;
@@ -25,6 +26,7 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
+import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
 import com.dpc.web.mybatis3.domain.User;
@@ -48,10 +50,17 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/diagnose_experience/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String addDiagnoseExperience(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		
 		String isAnonymous = request.getParameter("isAnonymous"); 
 		String experience = request.getParameter("experience"); 
 		String status = request.getParameter("status"); 
@@ -98,36 +107,63 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/diagnose_experience/remark", method = RequestMethod.POST)
 	@ResponseBody
 	public String diagnoseExperienceRemark(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		String diaExpId = request.getParameter("diaExpId"); 
+		String content = request.getParameter("content"); 
+		if(ValidateUtil.isEmpty(diaExpId)){
+			return error(ErrorCodeUtil.e11212);
+		}
+		if(ValidateUtil.isEmpty(content)){
+			return error(ErrorCodeUtil.e11213);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
-		String diaExpId = request.getParameter("diaExpId"); 
-		String content = request.getParameter("content"); 
-		String name = u.getName();
-		String profileImage = u.getProfileImageUrl();
+		u = userService.getUserById(u.getId());
 		
 		DiagnoseExperienceRemark remark = new DiagnoseExperienceRemark();
 		remark.setContent(content);
 		remark.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		remark.setDiaExpId(Integer.parseInt(diaExpId));
-		remark.setDoctorId(u.getId());
-		remark.setName(name);
-		remark.setProfileImage(profileImage);
+		remark.setUserId(u.getId());
 		remark.setDelFlag(0);
 		
 		doctorService.addDiagnoseExperienceRemark(remark);
+		//评论数加1
+		DiagnoseExperience dx = doctorService.getDiagnoseExperienceById(Integer.parseInt(diaExpId));
+		DiagnoseExperience diaexp = new DiagnoseExperience();
+		diaexp.setId(Integer.parseInt(diaExpId));
+		diaexp.setRemarkCount(dx.getRemarkCount()+1);
+		doctorService.updateDiagnoseExp(diaexp);
 		return success();
 	}
-	@RequestMapping(value = "/diagnose_experience/detail", method = RequestMethod.POST)
+	@RequestMapping(value = "/diagnose_experience/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public String getDiagnoseExperienceDetail(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
 		String diaExpId = request.getParameter("diaExpId"); 
 		DiagnoseExperience diagnoseExperience = doctorService.getDiagnoseExperienceDetail(Integer.parseInt(diaExpId));
+		List<DiagnoseExperienceRemark>  remarkList = diagnoseExperience.getRemarkList();
+		if(diagnoseExperience!=null && remarkList!=null && remarkList.size()>0){
+			for(DiagnoseExperienceRemark remark : remarkList){
+				remark.setProfileImage(ConstantUtil.DOMAIN+remark.getProfileImage());
+			}
+		}
 		List<DiagnoseExperienceImage> images = doctorService.getDiagnoseExperienceImageByDiaExpId(Integer.parseInt(diaExpId));
 		if(images!=null&&images.size()>0){
 			for(DiagnoseExperienceImage image : images){
@@ -137,10 +173,16 @@ public class DoctorController extends BaseController{
 		diagnoseExperience.setDiagnoseExpImgList(images);
 		return JsonUtil.object2String(diagnoseExperience);
 	}
-	@RequestMapping(value = "/diagnose_experience/list", method = RequestMethod.POST)
+	@RequestMapping(value = "/diagnose_experience/list", method = RequestMethod.GET)
 	@ResponseBody
 	public String getDiagnoseExperienceList(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -158,10 +200,17 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/heartcircle/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String addHeartCircle(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		u = userService.getUserById(u.getId());
 		String[] imageBase64s=request.getParameterValues("imageBase64s");
 		String content = request.getParameter("content");
 		if(ValidateUtil.isEmpty(content)){
@@ -176,24 +225,22 @@ public class DoctorController extends BaseController{
 		circle.setContent(content);
 		circle.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		circle.setDoctorId(u.getId());
-		Doctor d = new Doctor();
-		d.setId(u.getId());
-		List<Doctor> dlist = doctorService.getDoctorList(d);
-		if(dlist!=null&&dlist.size()>0){
-			d = dlist.get(0);
-			circle.setDoctorName(d.getName());
-		}
 		circle.setProfileImage(u.getProfileImageUrl());
 		circle.setRemarkCount(0);
 		
 		doctorService.addHeartCircle(circle,imageUrls);
-		
 		return success();
 	}
-	@RequestMapping(value = "/heartcircle/detail", method = RequestMethod.POST)
+	@RequestMapping(value = "/heartcircle/detail", method = RequestMethod.GET)
 	@ResponseBody
 	public String getHeartCircleDetail(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){ 
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -202,15 +249,38 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e11301);
 		}
 		HeartCircle circle = doctorService.getHeartCircleDetail(Integer.parseInt(id));
-		return success();
+		if(circle!=null&&!ValidateUtil.isEmpty(circle.getProfileImage())){
+			circle.setProfileImage(ConstantUtil.DOMAIN+circle.getProfileImage());
+			List<HeartCircleRemark> remarkList = circle.getRemarkList();
+			if(remarkList!=null&&remarkList.size()>0){
+				for(HeartCircleRemark remark : remarkList){
+					remark.setProfileImage(ConstantUtil.DOMAIN+remark.getProfileImage());
+				}
+			}
+			List<HeartCircleImage> imageList = doctorService.getHeartCircleImageListByHeartCircleId(Integer.parseInt(id));
+			if(imageList!=null&&imageList.size()>0){
+				for(HeartCircleImage image : imageList){
+					image.setImageUrl(ConstantUtil.DOMAIN+image.getImageUrl());
+				}
+			}
+			circle.setImageList(imageList);
+		}
+		return JsonUtil.object2String(circle);
 	}
 	@RequestMapping(value = "/heartcircle/remark", method = RequestMethod.POST)
 	@ResponseBody
 	public String addHeartCircleRemark(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		u = userService.getUserById(u.getId());
 		String heartCircleId = request.getParameter("heartCircleId");
 		String remark = request.getParameter("remark");
 		if(ValidateUtil.isEmpty(heartCircleId)){
@@ -220,17 +290,10 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e11302);
 		}
 		HeartCircleRemark heartCircleRemark = new HeartCircleRemark();
-		Doctor d = new Doctor();
-		d.setId(u.getId());
-		List<Doctor> dlist = doctorService.getDoctorList(d);
-		if(dlist!=null&&dlist.size()>0){
-			d = dlist.get(0);
-			heartCircleRemark.setDoctorName(d.getName());
-		}
+		
 		heartCircleRemark.setDoctorId(u.getId());
 		heartCircleRemark.setRemark(remark);
 		heartCircleRemark.setHeartCircleId(Integer.parseInt(heartCircleId));
-		heartCircleRemark.setProfileImage(u.getProfileImageUrl());
 		heartCircleRemark.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		doctorService.addHeartCircleRemark(heartCircleRemark);
 		return success();
@@ -238,7 +301,13 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/heartcircle/remark/list", method = RequestMethod.POST)
 	@ResponseBody
 	public String getHeartCircleRemarkList(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -254,22 +323,25 @@ public class DoctorController extends BaseController{
 		return JsonUtil.object2String(list);
 	}
 	
-	@RequestMapping(value = "/heartcircle/list", method = RequestMethod.POST)
+	@RequestMapping(value = "/heartcircle/list", method = RequestMethod.GET)
 	@ResponseBody
 	public String getHeartCircleList(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
 		List<HeartCircle> list = doctorService.getHeartCircleList();
-//		if(list!=null&&list.size()>0){
-//			for(HeartCircleRemark circleRemark : list){
-//				circleRemark.setProfileImage(ConstantUtil.DOMAIN+circleRemark.getProfileImage());
-//				Date beforeDate = DateUtil.parse(circleRemark.getCreTime(), DateUtil.DATETIME_PATTERN); 
-//				Date afterDate  = new Date();
-//				circleRemark.setCreTime(DateUtil.timeDiffer(beforeDate, afterDate));
-//			}
-//		}
+		if(list!=null&&list.size()>0){
+			for(HeartCircle circle : list){
+				circle.setProfileImage(ConstantUtil.DOMAIN+circle.getProfileImage());
+			}
+		}
 		return JsonUtil.object2String(list);
 	}
 	
@@ -279,7 +351,13 @@ public class DoctorController extends BaseController{
 	public String uploadVerify(HttpSession session,HttpServletRequest request) throws IOException{
 		String[] crtWithPhoto=request.getParameterValues("crtWithPhoto");
 		String[] crtWithName=request.getParameterValues("crtWithName");
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -304,13 +382,17 @@ public class DoctorController extends BaseController{
 		return success();
 	}
 	
-	
-	
 	//修改医生个人资料
 	@RequestMapping(value = "/profile/update", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateProfile(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -339,7 +421,9 @@ public class DoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(department)){
 			doctor.setDepartment(department);
 		}
-		doctorService.updateDoctor(doctor);
+		if(!ValidateUtil.isEmpty(hospital) || !ValidateUtil.isEmpty(technicalTitle) || !ValidateUtil.isEmpty(teachingTitle) || !ValidateUtil.isEmpty(department)){
+			doctorService.updateDoctor(doctor);
+		}
 		
 		//t_user
 		User user = new User();
@@ -353,14 +437,34 @@ public class DoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(birthday)){
 			user.setBirthday(birthday);
 		}
-		userService.updateUser(user);
+		String[] imageBase64s=request.getParameterValues("imageBase64s");
+		List<String> imageUrls = null;
+		if(!ValidateUtil.isEmpty(imageBase64s)){
+			imageUrls =upload(session,request,imageBase64s);
+		}
+		String imageUrl = "";
+		if(imageUrls!=null&&imageUrls.size()>0){
+			imageUrl = imageUrls.get(0);
+		}
+		if(!ValidateUtil.isEmpty(imageUrl)){
+			user.setProfileImageUrl(imageUrl);
+		}
+		if(!ValidateUtil.isEmpty(name) || !ValidateUtil.isEmpty(agender) || !ValidateUtil.isEmpty(birthday) || !ValidateUtil.isEmpty(imageUrl)){
+			userService.updateUser(user);
+		}
 		return success();
 	}
 	//医生发布公告
 	@RequestMapping(value = "/announcement/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String addAnnouncement(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -378,11 +482,17 @@ public class DoctorController extends BaseController{
 		doctorService.addAnnouncement(announcement);
 		return success();
 	}
-	//医生更改公告转台
+	//医生更改公告状态
 	@RequestMapping(value = "/announcement/delete/{id}", method = RequestMethod.POST)
 	@ResponseBody
 	public String deleteAnnouncement(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -390,7 +500,7 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e11210);
 		}
 		Announcement announcement = new Announcement();
-		announcement.setDoctorId(u.getId());
+		announcement.setId(Integer.parseInt(id));
 		announcement.setDelFlag(1);
 		doctorService.updateAnnouncement(announcement);
 		return success();
@@ -399,7 +509,13 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/announcement/list/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String getAnnouncementListByDoctorId(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -415,7 +531,13 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/bind/list", method = RequestMethod.GET)
 	@ResponseBody
 	public String getBindList(HttpSession session,HttpServletRequest request) throws IOException{
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
@@ -429,7 +551,13 @@ public class DoctorController extends BaseController{
 	public String bindAcceptOrNot(HttpSession session,HttpServletRequest request) throws IOException{
 		String id = request.getParameter("id");
 		String acceptOrNot = request.getParameter("acceptOrNot");//0拒绝  1接受
-		User u = (User) session.getAttribute("u");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}

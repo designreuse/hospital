@@ -34,6 +34,9 @@
 			</if>
 		</where>
 	</select>
+	<select id="getUserById" parameterType="java.lang.Integer" resultType="user">
+		select * from t_user where id = #{0}
+	</select>
 	
 	<update id="updateUser" parameterType="user">
 		update t_user 
@@ -43,7 +46,7 @@
 			<if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
 			<if test="name != null and name != ''">name = #{name},</if>
 			<if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
-			<if test="profileImageUrl != null and profileImageUrl != ''">profileImageUrl = #{profileImageUrl},</if>
+			<if test="profileImageUrl != null and profileImageUrl != ''">profileImageUrl = #{profileImageUrl}</if>
 		</set>
 		where id = #{id}
 	</update>

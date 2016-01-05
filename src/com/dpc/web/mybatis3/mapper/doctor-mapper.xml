@@ -114,6 +114,7 @@
   	</set>
   	<where>
   		<if test="id != null">id=#{id}</if>
+  		<if test="userId != null">userId=#{userId}</if>
   	</where>
   </update>
   

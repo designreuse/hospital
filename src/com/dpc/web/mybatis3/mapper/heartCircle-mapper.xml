@@ -3,13 +3,20 @@
 <mapper namespace="com.dpc.web.mybatis3.mapper.HeartCircleMapper" >
   <resultMap id="BaseResultMap" type="heartCircle" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="profileImage" property="profileImage" jdbcType="VARCHAR" />
-    <result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
+    <result column="postUserProfileImageUrl" property="profileImage" jdbcType="VARCHAR" />
+    <result column="postUserName" property="doctorName" jdbcType="VARCHAR" />
     <result column="doctorId" property="doctorId" jdbcType="INTEGER" />
     <result column="images" property="images" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
-    <result column="creTime" property="creTime" jdbcType="TIMESTAMP" />
+    <result column="postTime" property="creTime" jdbcType="TIMESTAMP" />
+    <collection property="remarkList" ofType="heartCircleRemark">
+    	<id column="id" property="id" jdbcType="INTEGER" />
+    	<result column="remarkUserName" property="doctorName" jdbcType="VARCHAR" />
+    	<result column="remarkUserProfileImageUrl" property="profileImage" jdbcType="VARCHAR" />
+    	<result column="remark" property="remark" jdbcType="VARCHAR" />
+    	<result column="remarkTime" property="creTime" jdbcType="TIMESTAMP" />
+    </collection>
   </resultMap>
   <sql id="Base_Column_List" >
     id, profileImage, doctorId,doctorName, images, content, remarkCount, creTime
@@ -38,8 +45,8 @@
       <if test="profileImage != null" >
         profileImage,
       </if>
-      <if test="doctorName != null" >
-        doctorName,
+      <if test="doctorId != null" >
+        doctorId,
       </if>
       <if test="images != null" >
         images,
@@ -58,8 +65,8 @@
       <if test="profileImage != null" >
         #{profileImage,jdbcType=VARCHAR},
       </if>
-      <if test="doctorName != null" >
-        #{doctorName,jdbcType=VARCHAR},
+      <if test="doctorId != null" >
+        #{doctorId},
       </if>
       <if test="images != null" >
         #{images,jdbcType=VARCHAR},
@@ -127,12 +134,6 @@
       <if test="doctorId != null" >
         doctorId,
       </if>
-      <if test="doctorName != null" >
-        doctorName,
-      </if>
-      <if test="profileImage != null" >
-        profileImage,
-      </if>
       <if test="creTime != null" >
         creTime,
       </if>
@@ -147,26 +148,46 @@
       <if test="doctorId != null" >
         #{doctorId},
       </if>
-      <if test="doctorName != null" >
-        #{doctorName},
-      </if>
-      <if test="profileImage != null" >
-       #{profileImage},
-      </if>
       <if test="creTime != null" >
         #{creTime},
       </if>
     </trim>
   </insert>
   
-  <select id="getHeartCircleDetail" parameterType="java.lang.Integer" resultType="heartCircle">
-  	
+  <select id="getHeartCircleDetail" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	SELECT 
+  		hc.id,
+  		hc.content,
+		hc.name as postUserName,
+		hc.profileImageUrl as postUserProfileImageUrl,
+		hc.content,
+		hc.remarkCount,
+		date_format(hc.creTime, '%Y-%m-%d %k:%i') as postTime,
+		hr.`name` as remarkUserName,
+		hr.profileImageUrl as remarkUserProfileImageUrl,
+		date_format(hr.creTime, '%Y-%m-%d %k:%i') as remarkTime,
+		hr.remark
+ 	from (SELECT a.id,a.content,a.creTime,u.`name`,u.profileImageUrl,a.remarkCount from d_heart_circle a LEFT JOIN t_user u on a.doctorId=u.id) hc 
+	left join (SELECT a.heartCircleId,a.remark,a.creTime,u.name,u.profileImageUrl from d_heartcircle_remark a LEFT JOIN t_user u on a.doctorId=u.id) hr on hc.id = hr.heartCircleId
+	where hc.id = #{0}
   </select>
   
-  <select id="getHeartCircleList" resultType="heartCircle">
-  	select * from d_heart_circle order by creTime desc
+  <select id="getHeartCircleList" resultMap="BaseResultMap">
+  	select 
+  		hc.id,
+		hc.content,
+		date_format(hc.creTime, '%Y-%m-%d %k:%i') as postTime,
+		hc.remarkCount,
+		u.`name` as postUserName,
+		u.profileImageUrl as postUserProfileImageUrl,
+		hci.imageUrl
+	 from d_heart_circle hc
+	LEFT JOIN t_user u on hc.doctorId=u.id
+	LEFT JOIN d_heart_circle_image hci on hc.id=hci.heartCircleId
   </select>
   
-  
+  <select id="getHeartCircleImageListByHeartCircleId"  parameterType="java.lang.Integer" resultType="heartCircleImage">
+  	select * from d_heart_circle_image where heartCircleId = #{0} and delFlag = 0 order by id 
+  </select>
   
 </mapper>

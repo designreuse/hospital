@@ -1,5 +1,6 @@
 package com.dpc.web.service;
 
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.mybatis3.domain.User;
 
 public interface IUserService {
@@ -9,5 +10,9 @@ public interface IUserService {
 	User getUser(User user);
 
 	void updateUser(User u);
+
+	MemSession getSessionByAccessToken(String accessToken);
+
+	User getUserById(Integer id);
 	
 }

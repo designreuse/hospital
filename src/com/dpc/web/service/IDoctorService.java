@@ -10,6 +10,7 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
+import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 
 public interface IDoctorService {
@@ -51,6 +52,12 @@ public interface IDoctorService {
 	void bindAcceptOrNot(int parseInt, int parseInt2);
 
 	List<DoctorVO> getAllDoctorList();
+
+	void updateDiagnoseExp(DiagnoseExperience diaexp);
+
+	DiagnoseExperience getDiagnoseExperienceById(int id);
+
+	List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int parseInt);
 
 	
 }

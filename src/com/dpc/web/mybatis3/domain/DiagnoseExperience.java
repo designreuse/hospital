@@ -31,14 +31,31 @@ public class DiagnoseExperience {
     
     //
     private Integer remainScore;
+    private String profileImage;
     private List<DiagnoseExperienceRemark> remarkList;
     private List<DiagnoseExperienceImage> diagnoseExpImgList;
     
     private Integer start;
     private Integer limit;
+    private Integer score;
     
     
-    
+	public Integer getScore() {
+		return score;
+	}
+
+	public void setScore(Integer score) {
+		this.score = score;
+	}
+
+	public String getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+	}
+
 	public Integer getStart() {
 		return start;
 	}

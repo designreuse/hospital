@@ -16,6 +16,10 @@
 		<h1>添加诊后心得</h1>
 		<form id="interfaceForm" action="${ctx }/doctor/diagnose_experience/add" enctype="multipart/form-data" method="post">
 			<div class="form-group">
+				<label for="illType">授权码</label> 
+				<input type="text" class="form-control" id="accessToken" name="accessToken">
+			</div>
+			<div class="form-group">
 				<label for="illType">患者类型</label> 
 				<input type="text" class="form-control" id="illType" name="illType">
 			</div>

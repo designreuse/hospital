@@ -3,6 +3,8 @@ package com.dpc.web.mybatis3.domain;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class HeartCircleRemark {
     private Integer id;
 

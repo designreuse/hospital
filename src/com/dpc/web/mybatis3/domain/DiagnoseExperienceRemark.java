@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class DiagnoseExperienceRemark {
     private Integer id;
 
-    private Integer doctorId;
+    private Integer userId;
 
     private Integer diaExpId;
 
@@ -30,15 +30,15 @@ public class DiagnoseExperienceRemark {
         this.id = id;
     }
 
-    public Integer getDoctorId() {
-        return doctorId;
-    }
+    public Integer getUserId() {
+		return userId;
+	}
 
-    public void setDoctorId(Integer doctorId) {
-        this.doctorId = doctorId;
-    }
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
-    public Integer getDiaExpId() {
+	public Integer getDiaExpId() {
         return diaExpId;
     }
 

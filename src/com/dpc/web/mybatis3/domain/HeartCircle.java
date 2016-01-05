@@ -1,8 +1,9 @@
 package com.dpc.web.mybatis3.domain;
 
+import java.util.List;
 
-import java.util.Date;
-
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class HeartCircle {
     private Integer id;
 
@@ -19,9 +20,26 @@ public class HeartCircle {
     private String creTime;
     
     private Integer doctorId;
-
     
-    public Integer getDoctorId() {
+    private List<HeartCircleRemark> remarkList;
+    private List<HeartCircleImage> imageList;
+    public List<HeartCircleRemark> getRemarkList() {
+		return remarkList;
+	}
+
+	public void setRemarkList(List<HeartCircleRemark> remarkList) {
+		this.remarkList = remarkList;
+	}
+
+	public List<HeartCircleImage> getImageList() {
+		return imageList;
+	}
+
+	public void setImageList(List<HeartCircleImage> imageList) {
+		this.imageList = imageList;
+	}
+
+	public Integer getDoctorId() {
 		return doctorId;
 	}
 

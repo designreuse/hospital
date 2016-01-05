@@ -28,4 +28,6 @@ public interface DiagnoseExperienceMapper {
 	List<DiagnoseExperienceImage> getDiagnoseExperienceImageByDiaExpId(int id);
 
 	List<DiagnoseExperience> getDiagnoseExperienceList();
+
+	DiagnoseExperience getDiagnoseExperienceById(int id);
 }
