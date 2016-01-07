@@ -14,9 +14,7 @@
     <result column="type" property="type" jdbcType="TINYINT" />
     <result column="illType" property="illType" jdbcType="TINYINT" />
     <result column="delFlag" property="delFlag" jdbcType="TINYINT" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="article" extends="BaseResultMap" >
-    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+	<result column="content" property="content" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, title, category, resource, linkType, videoUrl, H5Url, coverImageUrl, postTime, 
@@ -25,14 +23,6 @@
   <sql id="Blob_Column_List" >
     content
   </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from t_article
-    where id = #{id,jdbcType=INTEGER}
-  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     update t_article set delFlag=1 where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -208,7 +198,14 @@
   </update>
   
   <select id="getArticlePagerByType" resultType="article">
-  	select * from t_article 
+  	select 
+  		id,
+  		category,
+  		title,
+  		coverImageUrl,
+  		date_format(postTime, '%Y-%m-%d') as postTime,
+  		delFlag
+  	from t_article 
   	<where>
  	 	<if test="article.delFlag != null">
  	 		and delFlag = #{article.delFlag}
@@ -246,6 +243,20 @@
   
   <select id="getArticleByTypeAndCategory" parameterType="java.lang.Integer" resultType="article">
   	select * from t_article where delFlag = 0 and type=#{0} and category=#{1}
+  </select>
+  
+   <select id="getArticlesByIllType" parameterType="java.lang.Integer" resultType="article">
+  	select * from t_article where delFlag = 0 and type=2 and category=7 and illType = #{0}
+  </select>
+  
+
+   <select id="getHeartVedioList"  resultType="article">
+  	select * from t_article where delFlag = 0 and type=2 and category=6
+  </select>
+  
+  
+   <select id="getCartoonList" resultType="article">
+  	select * from t_article where delFlag = 0 and type=2 and category=5
   </select>
   
 </mapper>

@@ -172,7 +172,20 @@ public class DoctorServiceImpl implements IDoctorService {
 	public List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int hcId) {
 		return heartCircleMapper.getHeartCircleImageListByHeartCircleId(hcId);
 	}
-	
-	
+
+	@Override
+	public HeartCircle getHeartCircleById(int id) {
+		return heartCircleMapper.getHeartCircleById(id);
+	}
+
+	@Override
+	public void updateHeartCircle(HeartCircle circle) {
+		heartCircleMapper.updateByPrimaryKey(circle);
+	}
+
+	@Override
+	public Doctor getDoctorById(Integer id) {
+		return doctorMapper.getDoctorById(id);
+	}
 	
 }

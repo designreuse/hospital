@@ -24,5 +24,11 @@ public interface IArticleService {
 
 	List<Article> getArticleByTypeAndCategory(int type, int category);
 
+	List<Article> getArticlesByIllType(int parseInt);
+
+	List<Article> getHeartVedioList();
+
+	List<Article> getCartoonList();
+
 	
 }

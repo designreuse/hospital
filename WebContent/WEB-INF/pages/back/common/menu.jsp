@@ -56,6 +56,7 @@
 	                        <ul class="nav nav-second-level collapse">
 	                            <li><a href="toastr_notifications.html">修改密码</a></li>
 	                            <li><a href="${ctx }/back/feedback/list">意见反馈</a></li>
+	                            <li><a href="${ctx }/back/hopital/import/view">添加医院</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>

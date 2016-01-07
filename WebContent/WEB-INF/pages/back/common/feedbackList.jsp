@@ -28,6 +28,12 @@
 					<div class="ibox float-e-margins">
                         <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/feedback/list">
                        		<div class="col-lg-12">
+                       			<label class="col-lg-1 control-label">用户名：</label>
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group date">
+	                                    <input type="text" class="form-control" name="username" />
+	                                </div>
+	                            </div>
                        			<label class="col-lg-1 control-label">开始时间：</label>
 	                          	<div class="form-group col-lg-2" id="startDate">
 	                                <div class="input-group date">
@@ -42,7 +48,17 @@
 	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
 	                                </div>
 	                            </div>
-	                          	<div class="form-group col-lg-2" id="endDate">
+	                          	<label class="col-lg-1 control-label">操作状态：</label>
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                    <select class="form-control" name="status">
+	                                    	<option value="-1">全部</option>
+	                                    	<option value="0">待回复</option>
+	                                    	<option value="1">已回复</option>
+	                                    </select>
+	                                </div>
+	                            </div>
+	                          	<div class="form-group col-lg-1" id="endDate">
 	                                <button class="btn btn-success col-md-offset-3" type="submit">查询</button>
 	                            </div>
                        		</div>
@@ -58,8 +74,7 @@
 							<th width="2%">ID</th>
 							<th width="5%">用户名</th>
 							<th width="15%">反馈内容</th>
-							<th width="8%">手机号</th>
-							<th width="8%">邮箱</th>
+							<th width="8%">联系方式</th>
 							<th width="10%">反馈时间</th>
 							<th width="5%">操作状态</th>
 							<th width="10%">回复内容</th>
@@ -71,8 +86,7 @@
 								<td>${item.id}</td>
 								<td>${item.username}</td>
 								<td>${item.content}</td>
-								<td>${item.mobile}</td>
-								<td></td>
+								<td>${item.contact}</td>
 								<td>${item.feedBackTime}</td>
 								<td id="replyStatus${item.id}">
 									<c:if test="${item.status==0}">待回复</c:if>

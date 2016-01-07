@@ -1,33 +1,46 @@
 package com.dpc.web.controller.back;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
+import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
-import com.dpc.utils.PageEntity;
-import com.dpc.utils.PageResult;
 import com.dpc.utils.ValidateUtil;
-import com.dpc.web.VO.DoctorVO;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
-import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.City;
+import com.dpc.web.mybatis3.domain.County;
+import com.dpc.web.mybatis3.domain.DistrictList;
 import com.dpc.web.mybatis3.domain.FeedBack;
+import com.dpc.web.mybatis3.domain.Hospital;
+import com.dpc.web.mybatis3.domain.Province;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.service.IBackDoctorService;
 import com.dpc.web.service.ICoreService;
-import com.google.gson.Gson;
+import com.dpc.web.service.IDistrictService;
+import com.dpc.web.service.IUserService;
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 @Controller
 @RequestMapping(value="/back",produces = {"application/json;charset=UTF-8"})
@@ -37,6 +50,10 @@ public class CoreController extends BaseController{
 	IBackDoctorService backDoctorService;
 	@Autowired
 	ICoreService coreService;
+	@Autowired
+	IUserService userService;
+	@Autowired
+	IDistrictService districtService;
 	
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(HttpSession session,HttpServletRequest request) throws IOException{
@@ -59,7 +76,7 @@ public class CoreController extends BaseController{
 		if(!ValidateUtil.isEmpty(username)){
 			feedBack.setUsername(username);
 		}
-		if(!ValidateUtil.isEmpty(status)){
+		if(!ValidateUtil.isEmpty(status) && !status.equals("-1")){
 			feedBack.setStatus(Integer.parseInt(status));
 		}
 		
@@ -72,17 +89,26 @@ public class CoreController extends BaseController{
 	@RequestMapping(value = "/feedback/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String addFeedBack(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
 		String content = request.getParameter("content");
-		User u = (User) session.getAttribute("u");
+		String contact = request.getParameter("contact");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		
 		if(ValidateUtil.isEmpty(content)){
 			return error(ErrorCodeUtil.e11700);
 		}
 		FeedBack feedBack = new FeedBack();
 		feedBack.setContent(content);
 		feedBack.setUserId(u.getId());
+		feedBack.setContact(contact);
 		feedBack.setFeedBackTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		feedBack.setStatus(0);
 		coreService.addFeedBack(feedBack);
@@ -102,5 +128,123 @@ public class CoreController extends BaseController{
 		feedBack.setStatus(1);
 		coreService.updateFeedBack(feedBack);
 		return success();
+	}
+	
+	@RequestMapping(value = "/district/init", method = RequestMethod.GET)
+	@ResponseBody
+	public String initDistrict(HttpSession session,HttpServletRequest request) throws IOException{
+
+		Document doc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/index.html").post();
+		Elements pros = doc.getElementsByClass("provincetr");
+		for(Element e : pros){
+			Elements provinceList = e.select("a[href]");
+			for(Element a : provinceList){
+				String ahref = a.attr("href");
+				String code = ahref.substring(0,2);
+				String name = a.text();
+				Province province = new Province();
+				province.setCode(code);
+				province.setName(name);
+				districtService.addProvince(province);
+				Document cityDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/"+ahref).post();
+				Elements citys = cityDoc.getElementsByClass("citytr");
+				for(Element city : citys){
+					Elements cityA = city.select("a");
+					String cityhref = cityA.attr("href");
+					String cityCode = cityA.get(0).text();
+					String cityName = cityA.get(1).text();
+					City c = new City();
+					c.setCode(cityCode);
+					c.setName(cityName);
+					c.setPid(province.getId());
+					districtService.addCity(c);
+					Document countyDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/"+cityhref).post();
+					Elements countys = countyDoc.getElementsByClass("countytr");
+					for(Element county : countys){
+						Elements countyA = county.select("a");
+						if(countyA.size()>0){
+							String countyACode = countyA.get(0).text();
+							String countyAName = countyA.get(1).text();
+							County cc = new County();
+							cc.setCode(countyACode);
+							cc.setName(countyAName);
+							cc.setPid(c.getId());
+							districtService.addCounty(cc);
+						}
+					}
+				}
+			}
+		}
+	
+		return success();
+	}
+	
+	@RequestMapping(value = "/hopital/import/view", method = RequestMethod.GET)
+	public String importHospitalView(HttpServletRequest request) throws IOException{
+		return "/back/common/importHospital";
+	}
+	
+	@RequestMapping(value = "/hopital/import", method = RequestMethod.POST)
+	public String importHospital(HttpServletRequest request) throws IOException{
+		MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+		List<MultipartFile> files = req.getFiles("file");
+		Map<String,String> map = new HashMap<String, String>();
+		if(files!=null&&files.size()>0){
+			for(MultipartFile file : files){
+				InputStream is = new FileInputStream(Thread.currentThread().getContextClassLoader().getResource("aa.xls").getPath());
+			    try{
+		            Workbook rwb = Workbook.getWorkbook(is);  
+		            Sheet st = rwb.getSheet("Sheet1");  
+		            int rs = st.getColumns();  
+		            int rows = st.getRows();  
+	                for(int k=1;k<rows;k++){//行  
+                        Cell hospitalCell = st.getCell(0,k);  
+                        Cell locateCell = st.getCell(1,k);  
+                        String hopital = hospitalCell.getContents();
+                        String locate = locateCell.getContents();
+                        
+                        map.put(hopital, locate);
+	                }
+		            rwb.close();  
+		        }  
+		        catch(Exception e){  
+		            e.printStackTrace();  
+		        } 
+			}
+		}
+		for(Entry<String,String> entry : map.entrySet()){
+			String locate = entry.getValue();
+			String hospital = entry.getKey();
+			
+			String[] districtArray = locate.split(",");
+			String province = districtArray[0];
+			String city = districtArray[1];
+			if(districtArray.length==2){
+				DistrictList idList = districtService.getunFullIdByName(province,city);
+				Hospital h = new Hospital();
+				h.setHospital(hospital);
+				h.setLocate(idList.getPid()+"-"+idList.getCid());
+				districtService.addHospital(h);
+			}
+			if(districtArray.length==3){
+				String county = districtArray[2];
+				System.out.println(province+city+county);
+				DistrictList idList = districtService.getFullIdByName(province,city,county);
+				if(idList==null){
+					Hospital h = new Hospital();
+					h.setHospital(hospital);
+					h.setLocate("+"+province+city+county);
+					districtService.addHospital(h);
+				}else{
+					Hospital h = new Hospital();
+					h.setHospital(hospital);
+					h.setLocate(idList.getPid()+"-"+idList.getCid()+"-"+idList.getCyid());
+					districtService.addHospital(h);
+				}
+				
+			}
+			
+		}
+		return "/back/common/importHospital";
 	}
 }

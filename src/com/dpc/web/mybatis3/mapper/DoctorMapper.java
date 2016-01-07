@@ -37,6 +37,7 @@ public interface DoctorMapper{
 	List<DoctorVO> getAuthenticationListWithPager(@Param("doctor") DoctorVO doctor, @Param("start") Integer start, @Param("limit") Integer limit);
 	Integer getAllAuthenticationCount(@Param("doctor") DoctorVO doctor);
 	List<DoctorVO> getDoctorListExport();
+	Doctor getDoctorById(Integer id);
 	
 }
 

@@ -36,5 +36,10 @@
 		<typeAlias alias="academicSupport" type="com.dpc.web.mybatis3.domain.AcademicSupport"/>
 		<typeAlias alias="doctorPatientRelation" type="com.dpc.web.mybatis3.domain.DoctorPatientRelation"/>
 		<typeAlias alias="feedBack" type="com.dpc.web.mybatis3.domain.FeedBack"/>
+		<typeAlias alias="province" type="com.dpc.web.mybatis3.domain.Province"/>
+		<typeAlias alias="city" type="com.dpc.web.mybatis3.domain.City"/>
+		<typeAlias alias="county" type="com.dpc.web.mybatis3.domain.County"/>
+		<typeAlias alias="hospital" type="com.dpc.web.mybatis3.domain.Hospital"/>
+		<typeAlias alias="districtList" type="com.dpc.web.mybatis3.domain.DistrictList"/>
 	</typeAliases>
 </configuration>

@@ -22,7 +22,7 @@
 				<div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-content">
-                            <form class="form-horizontal" id="articleform" method="post" action="${ctx }/back/article/doctor/update" enctype="multipart/form-data">
+                            <form class="form-horizontal" id="articleform" method="post" action="${ctx }/back/article/update" enctype="multipart/form-data">
                                 <input type="hidden" name="id" value="${id }"/>
                                 <div class="form-group">
                                 	<label class="col-lg-2 control-label">疾病分类</label>
@@ -89,7 +89,7 @@
                                    	
                                    	</div>
                                    	<input type="hidden" id="content" name="content"/>
-                                   	<input type="hidden" id="type" name="type"/>
+                                   	<input type="hidden" id="type" name="type" value="${article.type }"/>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-offset-2 col-lg-10">

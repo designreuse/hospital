@@ -18,12 +18,29 @@ public class Doctor implements Serializable{
 	private String crtWithNameUrl;//认证证件有姓名的页
 	private Integer totalPatient;//名下的患者数量
 	private String crtOperTime;//认证操作时间
+	private String doctorIdentity;
+	private String doctorIdentityPlain;
 	
 	//非持久化字段
 	private String username;
 	private String mobile;
 	private String name;
 	private String registerTime;
+	private String profileImageUrl;
+	private String relation;//患者与该医生的关系
+	
+	public String getRelation() {
+		return relation;
+	}
+	public void setRelation(String relation) {
+		this.relation = relation;
+	}
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -37,6 +54,18 @@ public class Doctor implements Serializable{
 		this.userId = userId;
 	}
 	
+	public String getDoctorIdentity() {
+		return doctorIdentity;
+	}
+	public void setDoctorIdentity(String doctorIdentity) {
+		this.doctorIdentity = doctorIdentity;
+	}
+	public String getDoctorIdentityPlain() {
+		return doctorIdentityPlain;
+	}
+	public void setDoctorIdentityPlain(String doctorIdentityPlain) {
+		this.doctorIdentityPlain = doctorIdentityPlain;
+	}
 	public String getCrtOperTime() {
 		return crtOperTime;
 	}

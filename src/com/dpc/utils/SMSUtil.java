@@ -15,7 +15,8 @@ public class SMSUtil {
 	private static final String APP_ID = "8a48b5514acda26e014ae12746b508a6";
 	private static final String TEMPLATEID = "11362";
 	
-	public static String sendSMS(String mobile){
+	public static String[] sendSMS(String mobile){
+		String[] ret = new String[2];
 		HashMap<String, Object> result = null;
 		CCPRestSDK restAPI = new CCPRestSDK();
 		restAPI.init(PRO_BASE_URL, PORT);// 初始化服务器地址和端口，格式如下，服务器地址不需要写https://
@@ -24,12 +25,9 @@ public class SMSUtil {
 		String randomCode = createRandom(mobile,true,4);
 		result = restAPI.sendTemplateSMS(mobile,TEMPLATEID ,new String[]{randomCode,"10"});
 		String code = result.get("statusCode").toString();
-		if(code.equals("000000")){
-			//存入session
-			MemSession session = MemSession.getSession(mobile,true,"ten_min");
-			session.setAttribute("verifycode", randomCode, "ten_min");
-		}
-		return code;
+		ret[0] = code;
+		ret[1] = randomCode;
+		return ret;
 	}
 	
 	public static String createRandom(String mobile,boolean numberFlag, int length){  

@@ -68,6 +68,22 @@ public class ArticleServiceImpl implements IArticleService {
 		return articleMapper.getArticleByTypeAndCategory(type,category);
 	}
 
+	@Override
+	public List<Article> getArticlesByIllType(int illType) {
+		
+		return articleMapper.getArticlesByIllType(illType);
+	}
+
+	@Override
+	public List<Article> getHeartVedioList() {
+		return articleMapper.getHeartVedioList();
+	}
+
+	@Override
+	public List<Article> getCartoonList() {
+		return articleMapper.getCartoonList();
+	}
+
 	
 	
 }

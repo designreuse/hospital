@@ -41,6 +41,9 @@
       <if test="status != null" >
         status,
       </if>
+      <if test="contact != null" >
+        contact,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -54,6 +57,9 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=TINYINT},
+      </if>
+      <if test="contact != null" >
+        #{contact},
       </if>
     </trim>
   </insert>
@@ -80,7 +86,7 @@
   </update>
   
   <select id="getFeedBackListWithPager" resultType="feedBack">
-  		select f.id,u.username,f.content,f.reply,u.mobile,feedBackTime,f.status from t_feedback f inner join t_user u on f.userId = u.id
+  		select f.id,u.username,f.content,f.contact,f.reply,u.mobile,date_format(feedBackTime, '%Y-%m-%d %k:%i:%s') as feedBackTime,f.status from t_feedback f inner join t_user u on f.userId = u.id
   		<where>
   			<if test="feedBack.username != null">u.username = #{feedBack.username}</if>
   			<if test="feedBack.startDate != null and  feedBack.endDate != null">

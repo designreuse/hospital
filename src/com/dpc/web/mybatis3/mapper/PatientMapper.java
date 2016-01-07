@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Discovery;
+import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.Wish;
@@ -57,4 +59,18 @@ public interface PatientMapper {
 	List<Discovery> getDiscoveryList(@Param("discovery") Discovery d, @Param("start") Integer start, @Param("limit") Integer limit);
 
 	Integer getAllDiscoveryCount(@Param("discovery") Discovery d);
+
+	Discovery getDiscoveryById(int id);
+
+	void updateDiscovery(Discovery d);
+
+	List<Doctor> getMyDoctors(Integer id);
+
+	Doctor getMyDoctorDetail(int id);
+
+	void unBindRelation(Integer pid, Integer did);
+
+	List<Announcement> getMydoctorAnnouncements(Integer id);
+
+	DoctorPatientRelation getDoctorPatientRelationById(int id);
 }

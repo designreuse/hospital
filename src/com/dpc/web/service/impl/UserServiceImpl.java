@@ -56,8 +56,12 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public User getUserById(Integer id) {
-		// TODO Auto-generated method stub
 		return userMapper.getUserById(id);
+	}
+
+	@Override
+	public User getDoctorByDoctorIdentity(String doctorIdentity) {
+		return userMapper.getDoctorByDoctorIdentity(doctorIdentity);
 	}
 	
 }

@@ -50,4 +50,9 @@
 		</set>
 		where id = #{id}
 	</update>
+	
+	<select id="getDoctorByDoctorIdentity" resultType="user">
+		select u.* from t_user u inner join t_doctor d on u.id=d.userId and d.doctorIdentityPlain = #{0}
+	</select>
+	
 </mapper>

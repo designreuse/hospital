@@ -32,6 +32,7 @@ import com.dpc.web.mybatis3.domain.MedicalDynamic;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.service.IArticleService;
 import com.dpc.web.service.IDoctorService;
+import com.dpc.web.service.IPatientService;
 import com.dpc.web.service.IUserService;
 
 @Controller
@@ -44,6 +45,9 @@ public class DoctorController extends BaseController{
 	@Autowired
 	IArticleService articleService;
 
+	@Autowired
+	IPatientService patientService;
+	
 	@Autowired
 	IUserService userService;
 	//添加诊后心得
@@ -60,7 +64,9 @@ public class DoctorController extends BaseController{
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
-		
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
 		String isAnonymous = request.getParameter("isAnonymous"); 
 		String experience = request.getParameter("experience"); 
 		String status = request.getParameter("status"); 
@@ -211,6 +217,9 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e10002);
 		}
 		u = userService.getUserById(u.getId());
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
 		String[] imageBase64s=request.getParameterValues("imageBase64s");
 		String content = request.getParameter("content");
 		if(ValidateUtil.isEmpty(content)){
@@ -296,6 +305,12 @@ public class DoctorController extends BaseController{
 		heartCircleRemark.setHeartCircleId(Integer.parseInt(heartCircleId));
 		heartCircleRemark.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		doctorService.addHeartCircleRemark(heartCircleRemark);
+		
+		HeartCircle heartCircle = doctorService.getHeartCircleById(Integer.parseInt(heartCircleId));
+		HeartCircle circle = new HeartCircle();
+		circle.setId(Integer.parseInt(heartCircleId));
+		circle.setRemarkCount(heartCircle.getRemarkCount()+1);
+		doctorService.updateHeartCircle(circle);
 		return success();
 	}
 	@RequestMapping(value = "/heartcircle/remark/list", method = RequestMethod.POST)
@@ -361,6 +376,9 @@ public class DoctorController extends BaseController{
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
 		List<String> crtWithPhotoUrls;
 		List<String> crtWithNameUrls;
 		if(!ValidateUtil.isEmpty(crtWithPhoto) && crtWithPhoto.length==1 && !ValidateUtil.isEmpty(crtWithName) && crtWithName.length==1){
@@ -396,6 +414,9 @@ public class DoctorController extends BaseController{
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
 		Doctor doctor = new Doctor();
 		doctor.setUserId(u.getId());
 		
@@ -407,6 +428,7 @@ public class DoctorController extends BaseController{
 		String name = request.getParameter("name");
 		String agender = request.getParameter("agender");
 		String birthday = request.getParameter("birthday");
+		String mobile = request.getParameter("mobile");
 		
 		//t_doctor
 		if(!ValidateUtil.isEmpty(hospital)){
@@ -437,6 +459,12 @@ public class DoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(birthday)){
 			user.setBirthday(birthday);
 		}
+		if(!ValidateUtil.isEmpty(mobile)){
+			if(!ValidateUtil.isMobile(mobile)){
+				return error(ErrorCodeUtil.e11002);
+			}
+			user.setMobile(mobile);
+		}
 		String[] imageBase64s=request.getParameterValues("imageBase64s");
 		List<String> imageUrls = null;
 		if(!ValidateUtil.isEmpty(imageBase64s)){
@@ -449,7 +477,7 @@ public class DoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(imageUrl)){
 			user.setProfileImageUrl(imageUrl);
 		}
-		if(!ValidateUtil.isEmpty(name) || !ValidateUtil.isEmpty(agender) || !ValidateUtil.isEmpty(birthday) || !ValidateUtil.isEmpty(imageUrl)){
+		if(!ValidateUtil.isEmpty(name) || !ValidateUtil.isEmpty(agender) || !ValidateUtil.isEmpty(mobile) || !ValidateUtil.isEmpty(birthday) || !ValidateUtil.isEmpty(imageUrl)){
 			userService.updateUser(user);
 		}
 		return success();
@@ -467,6 +495,9 @@ public class DoctorController extends BaseController{
 		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
+		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
 		}
 		String content = request.getParameter("content");
 		if(ValidateUtil.isEmpty(content)){
@@ -495,6 +526,9 @@ public class DoctorController extends BaseController{
 		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
+		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
 		}
 		if(ValidateUtil.isEmpty(id)){
 			return error(ErrorCodeUtil.e11210);
@@ -561,7 +595,30 @@ public class DoctorController extends BaseController{
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		//检查是否已经存在关系
+		DoctorPatientRelation doctorPatientRelation = patientService.getDoctorPatientRelationById(Integer.parseInt(id));
+		if(doctorPatientRelation!=null&&doctorPatientRelation.getRelation()==2&&doctorPatientRelation.getChecked()==1){
+			return error(ErrorCodeUtil.e11601);
+		}
+		if(doctorPatientRelation!=null&&doctorPatientRelation.getRelation()==1&&doctorPatientRelation.getChecked()==1){
+			return error(ErrorCodeUtil.e11602);
+		}
 		doctorService.bindAcceptOrNot(Integer.parseInt(id),Integer.parseInt(acceptOrNot));
+		
+		if(Integer.parseInt(acceptOrNot) == 1){
+			//更新医生表的totalPatient
+			Doctor d = doctorService.getDoctorById(u.getId());
+			Integer totalPatient = d.getTotalPatient();
+			Integer doctorId = d.getId();
+			d = new Doctor();
+			d.setId(doctorId);
+			d.setTotalPatient(totalPatient+1);
+			doctorService.updateDoctor(d);
+		}
+		
 		return success();
 	}
 }

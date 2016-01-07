@@ -26,4 +26,10 @@ public interface ArticleMapper {
 	List<Article> getArticlePagerByType(@Param("article") Article article, @Param("start") Integer start, @Param("limit") Integer limit );
 
 	List<Article> getArticleByTypeAndCategory(int type, int category);
+
+	List<Article> getArticlesByIllType(int illType);
+
+	List<Article> getHeartVedioList();
+
+	List<Article> getCartoonList();
 }

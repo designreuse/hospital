@@ -12,6 +12,8 @@ public interface UserMapper{
 	void updateUser(User u);
 
 	User getUserById(Integer id);
+
+	User getDoctorByDoctorIdentity(String doctorIdentity);
 	
 }
 

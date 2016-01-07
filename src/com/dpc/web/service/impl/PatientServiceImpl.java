@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
@@ -143,6 +144,41 @@ public class PatientServiceImpl implements IPatientService {
 	@Override
 	public void updatePatient(Patient patient) {
 		patientMapper.updateByPrimaryKeySelective(patient);
+	}
+
+	@Override
+	public Discovery getDiscoveryById(int id) {
+		return patientMapper.getDiscoveryById(id);
+	}
+
+	@Override
+	public void updateDiscovery(Discovery d) {
+		patientMapper.updateDiscovery(d);
+	}
+
+	@Override
+	public List<Doctor> getMyDoctors(Integer id) {
+		return patientMapper.getMyDoctors(id);
+	}
+
+	@Override
+	public Doctor getMyDoctorDetail(int id) {
+		return patientMapper.getMyDoctorDetail(id);
+	}
+
+	@Override
+	public void unBindRelation(Integer pid, Integer did) {
+		patientMapper.unBindRelation(pid,did);
+	}
+
+	@Override
+	public List<Announcement> getMydoctorAnnouncements(Integer id) {
+		return patientMapper.getMydoctorAnnouncements(id);
+	}
+
+	@Override
+	public DoctorPatientRelation getDoctorPatientRelationById(int id) {
+		return patientMapper.getDoctorPatientRelationById(id);
 	}
 	
 	

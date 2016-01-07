@@ -59,5 +59,11 @@ public interface IDoctorService {
 
 	List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int parseInt);
 
+	HeartCircle getHeartCircleById(int id);
+
+	void updateHeartCircle(HeartCircle circle);
+
+	Doctor getDoctorById(Integer id);
+
 	
 }

@@ -84,21 +84,13 @@ $(document).ready(function(){
 	
 	//搜索操作
 	$('#search_btn').click(function(){
-		var lock = "";
-		if($("#lock").is(':checked')){
-			lock = "2";
-		}else{
-			lock = "1";
-		}
 		var rows = $("#table_userList").jqGrid('getGridParam', 'rowNum');
 		var content = $('#search_content').val();
-		var value = document.all.selectItem.value;
 		var postData = {};
 		var params = {};
-		params[value] = content;
+		params["name"] = content;
 		postData.page = 1;
 		postData.rows = rows;
-		postData.lock = lock;
 		postData["params"] = JSON.stringify(params);
 		$("#table_userList").jqGrid('setGridParam', {
 			datatype : 'json',

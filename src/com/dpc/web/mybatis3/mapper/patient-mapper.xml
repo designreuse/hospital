@@ -326,4 +326,63 @@
  	</where>
  </select>
  
+ <select id="getDiscoveryById" parameterType="java.lang.Integer" resultType="discovery">
+ 	select * from p_discovery where id = #{0} and delFlag = 0
+ </select>
+ 
+ <update id="updateDiscovery" parameterType="discovery">
+ 	update p_discovery
+    <set >
+      <if test="remarkCount != null" >
+        remarkCount = #{remarkCount,jdbcType=INTEGER},
+      </if>
+    </set>
+    <where>
+    	<if test="id != null">id = #{id,jdbcType=INTEGER}</if>
+    </where>
+ </update>
+ 
+ <select id="getMyDoctors" parameterType="java.lang.Integer" resultType="doctor">
+ 	select 
+		d.id,
+ 		d.hospital,
+		u.name,
+		u.profileImageUrl,
+		d.department,
+		dp.relation
+    from t_doctor_patient dp inner join t_doctor d on dp.doctorId=d.userId  LEFT JOIN t_user u on d.userId=u.id
+	where dp.patientId = #{0} and dp.checked in (1,4)
+ </select>
+ <select id="getMyDoctorDetail" parameterType="java.lang.Integer" resultType="doctor">
+ 	 	select 
+			u.id,
+			d.department,
+			d.technicalTitle,
+			d.teachingTitle,
+			d.hospital,
+			u.name,
+		  	u.profileImageUrl
+		from t_doctor d INNER JOIN t_user u on d.userid=u.id
+		where d.id = #{0} 
+ </select>
+ 
+ <delete id="unBindRelation" parameterType="java.lang.Integer">
+ 	delete from t_doctor_patient where doctorId = #{1} and patientId = #{0} and relation = 2 
+ </delete>
+ 
+ <select id="getMydoctorAnnouncements" parameterType="java.lang.Integer" resultType="announcement">
+	 	SELECT 
+			u.name,
+			u.profileImageUrl imageUrl,
+			date_format(b.postTime, '%Y-%m-%d %k:%i:%s') as postTime,
+			b.content
+		from t_doctor_patient  a INNER JOIN p_announcement b on a.doctorId=b.doctorId
+		LEFT JOIN t_user u on u.id=a.doctorId
+		where a.patientId = #{0} and a.relation in (1,2) and a.checked in (1,4)
+		ORDER BY b.postTime DESC
+ </select>
+ 
+ <select id="getDoctorPatientRelationById" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
+ 		select * from t_doctor_patient where id=#{0}
+ </select>
 </mapper>

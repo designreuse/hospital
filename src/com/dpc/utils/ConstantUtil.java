@@ -31,6 +31,13 @@ public class ConstantUtil {
 		public final static Integer HEART_KNOWLEDGE  = 7;	//7：心知识
 	}
 	
+	public static class IllType{
+		public final static Integer SAN_GAO        = 1;	//三高
+		public final static Integer GUAN_XIN_BING  = 2;	//冠心病
+		public final static Integer XIN_GENG       = 3;	//心梗
+		public final static Integer XIN_SHUAI      = 4;	//心衰
+	}
+	
 	//session过期类型---单位：分钟
 	public static class SessionExpireType{
 		public final static long DEFAULT = 30*24*60;//授权码-30天

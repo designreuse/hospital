@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
+import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
@@ -51,6 +52,20 @@ public interface IPatientService {
 	Wish getWishListById(int parseInt);
 
 	void updatePatient(Patient patient);
+
+	Discovery getDiscoveryById(int parseInt);
+
+	void updateDiscovery(Discovery d);
+
+	List<Doctor> getMyDoctors(Integer id);
+
+	Doctor getMyDoctorDetail(int id);
+
+	void unBindRelation(Integer pid, Integer did);
+
+	List<Announcement> getMydoctorAnnouncements(Integer id);
+
+	DoctorPatientRelation getDoctorPatientRelationById(int parseInt);
 
 
 }

@@ -38,7 +38,7 @@
 		</where>
 	</select>
 	
-	<insert id="addDoctor" parameterType="doctor" >
+	<insert id="addDoctor" parameterType="doctor" useGeneratedKeys="true" keyProperty="id">
 	    insert into t_doctor
 	    <trim prefix="(" suffix=")" suffixOverrides="," >
 	      <if test="userId != null" >
@@ -108,9 +108,12 @@
   		<if test="hospital != null and hospital != ''">hospital=#{hospital},</if>
   		<if test="technicalTitle != null and technicalTitle != ''">technicalTitle=#{technicalTitle},</if>
   		<if test="teachingTitle != null and teachingTitle != ''">teachingTitle=#{teachingTitle},</if>
+  		<if test="totalPatient != null and totalPatient != ''">totalPatient=#{totalPatient},</if>
   		<if test="department != null and department != ''">department=#{department},</if>
   		<if test="crtOperTime != null and crtOperTime != ''">crtOperTime=#{crtOperTime},</if>
   		<if test="verifyed != null and verifyed != ''">verifyed=#{verifyed},</if>
+  		<if test="doctorIdentity != null and doctorIdentity != ''">doctorIdentity=#{doctorIdentity},</if>
+  		<if test="doctorIdentityPlain != null and doctorIdentityPlain != ''">doctorIdentityPlain=#{doctorIdentityPlain},</if>
   	</set>
   	<where>
   		<if test="id != null">id=#{id}</if>
@@ -120,10 +123,10 @@
   
   <!-- 医生发布广告语 -->
  <insert id="addAnnouncement" parameterType="announcement">
- 	insert into p_announcement(doctorId,content,imageUrl,delFlag,postTime) values(#{doctorId},#{content},)#{imageUrl},#{delFlag},#{postTime}
+ 	insert into p_announcement(doctorId,content,imageUrl,delFlag,postTime) values(#{doctorId},#{content},#{imageUrl},#{delFlag},#{postTime})
  </insert>
  <select id="getAnnouncementByDoctorId" parameterType="java.lang.Integer" resultType="announcement">
- 	select * from p_announcement where doctorId = #{0} and delFlag = 0
+ 	select * from p_announcement where doctorId = #{0} and delFlag = 0 order by postTime desc
  </select>
  <update id="delAnnouncement" parameterType="java.lang.Integer">
  	update p_announcement set delFlag = 1 where doctorId = #{0}
@@ -392,6 +395,10 @@
 		d.technicalTitle,
 		u.registerTime
  	from t_doctor d left join t_user u on d.userId=u.id
+ </select>
+ 
+ <select id="getDoctorById" parameterType="java.lang.Integer" resultType="doctor">
+ 	select * from t_doctor where userId = #{0}
  </select>
  
 </mapper>

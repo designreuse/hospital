@@ -14,5 +14,7 @@ public interface IUserService {
 	MemSession getSessionByAccessToken(String accessToken);
 
 	User getUserById(Integer id);
+
+	User getDoctorByDoctorIdentity(String doctorIdentity);
 	
 }

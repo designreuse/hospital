@@ -13,6 +13,7 @@ public class FeedBack {
     private String reply;
 
     private String feedBackTime;
+    private String contact;
 
     private Integer status;
     
@@ -25,7 +26,14 @@ public class FeedBack {
     private Integer limit;
     
     
-    
+	public String getContact() {
+		return contact;
+	}
+
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
+
 	public String getReply() {
 		return reply;
 	}

@@ -3,6 +3,8 @@ package com.dpc.web.mybatis3.domain;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Announcement {
     private Integer id;
 
@@ -15,6 +17,8 @@ public class Announcement {
     private Integer delFlag;
 
     private String postTime;
+    
+    private String name;
 
 	public Integer getId() {
 		return id;
@@ -42,6 +46,14 @@ public class Announcement {
 
 	public String getImageUrl() {
 		return imageUrl;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setImageUrl(String imageUrl) {

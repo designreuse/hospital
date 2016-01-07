@@ -90,7 +90,15 @@
 						<c:forEach var="item" items="${page.datas}" varStatus="st">
 							<tr>
 								<td>${st.index+1}</td>
-								<td>${item.category}</td>
+								<td>
+									<c:if test="${item.category == 1}">首页轮播图</c:if>
+									<c:if test="${item.category == 2}">医疗动态</c:if>
+									<c:if test="${item.category == 3}">轻松一刻</c:if>
+									<c:if test="${item.category == 4}">首页H5链接</c:if>
+									<c:if test="${item.category == 5}">心漫画</c:if>
+									<c:if test="${item.category == 6}">心视频</c:if>
+									<c:if test="${item.category == 7}">心知识</c:if>
+								</td>
 								<td>${item.title}</td>
 								<td>
 									<img width="100" height="100" src="${item.coverImageUrl}">

@@ -19,6 +19,7 @@ import com.dpc.utils.ErrorCodeProperties;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.MD5Encoder;
+import com.dpc.utils.RandomNumberGenerator;
 import com.dpc.utils.SMSUtil;
 import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
@@ -50,12 +51,16 @@ public class UserController extends BaseController{
 		if(ValidateUtil.isEmpty(mobile)){
 			return error(ErrorCodeUtil.e11001);
 		}
-		String errorCode = SMSUtil.sendSMS(mobile);
-		if(!errorCode.equals("000000")){
+		String[] ret = SMSUtil.sendSMS(mobile);
+		if(!ret[0].equals("000000")){
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("error_code", errorCode);
-			map.put("error", pro.getProperties(errorCode));
+			map.put("error_code", ret[0]);
+			map.put("error", pro.getProperties(ret[0]));
 			return JsonUtil.object2String(map);
+		}else{
+			//存入session
+			MemSession session = MemSession.getSession(mobile,true,"ten_min");
+			session.setAttribute("verifycode", ret[1], "ten_min");
 		}
 		return success();
 	}
@@ -120,6 +125,12 @@ public class UserController extends BaseController{
 			doctor.setTotalPatient(0);
 			doctor.setVerifyed(0);
 			doctorService.addDoctorWithRegister(doctor);
+			
+			Doctor d = new Doctor();
+			d.setId(doctor.getId());
+			d.setDoctorIdentityPlain(doctor.getUserId().toString()+RandomNumberGenerator.generateNumber(3));
+			d.setDoctorIdentity(MD5Encoder.encrypt(doctor.getUserId().toString()+RandomNumberGenerator.generateNumber(3)));
+			doctorService.updateDoctor(d);
 		}
 		if(registerType.equals("2")){
 			//病人
@@ -162,6 +173,74 @@ public class UserController extends BaseController{
 		userService.updateUser(u);
 		return success();
 	}
+	
+	@RequestMapping(value = "/pwd/forget/verifycode", method = RequestMethod.GET)
+	@ResponseBody
+	public String getVerifyCodeGetPwd(HttpServletRequest request) throws IOException{
+		ErrorCodeProperties pro = ErrorCodeProperties.getInstance();
+		String mobile = request.getParameter("mobile");
+		if(ValidateUtil.isEmpty(mobile)){
+			return error(ErrorCodeUtil.e11001);
+		}
+		String[] ret = SMSUtil.sendSMS(mobile);
+		if(!ret[0].equals("000000")){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("error_code", ret[0]);
+			map.put("error", pro.getProperties(ret[0]));
+			return JsonUtil.object2String(map);
+		}else{
+			//存入session
+			MemSession session = MemSession.getSession("fgtpwd"+mobile,true,"ten_min");
+			session.setAttribute("verifycode", ret[1], "ten_min");
+		}
+		return success();
+	}
+	@RequestMapping(value = "/pwd/forget", method = RequestMethod.POST)
+	@ResponseBody
+	public String forgetPwd(HttpServletRequest request) throws IOException{
+		String verifycode = request.getParameter("verifycode");
+		String mobile = request.getParameter("mobile");
+		String newPwd = request.getParameter("newPwd");
+		String confirmPwd = request.getParameter("confirmPwd");
+		if(ValidateUtil.isEmpty(newPwd)){
+			return error(ErrorCodeUtil.e11003);
+		}
+		if(ValidateUtil.isEmpty(confirmPwd)){
+			return error(ErrorCodeUtil.e11009);
+		}
+		if(!confirmPwd.equals(newPwd)){
+			return error(ErrorCodeUtil.e11010);
+		}
+		User user = new User();
+		user.setMobile(mobile);
+		User u = userService.getUser(user);
+		Integer uid = u.getId();
+		String salt = u.getSalt();
+		//短信验证码校验
+		MemSession s = MemSession.getSession("fgtpwd"+mobile,false,"ten_min");
+		if(s == null){
+			return error(ErrorCodeUtil.e11006);
+		}
+		if(s.getMap() == null){
+			return error(ErrorCodeUtil.e11006);
+		}
+		if(s.getAttribute("verifycode")!=null){
+			String randomCode = s.getAttribute("verifycode").toString();
+			if(!randomCode.equals(verifycode)){
+				return error(ErrorCodeUtil.e11007);
+			}
+		}else{
+			return error(ErrorCodeUtil.e11006);
+		}
+		u = new User();
+		u.setId(uid);
+		u.setPassword(MD5Encoder.encrypt(newPwd, salt));
+		userService.updateUser(u);
+		
+		return success();
+	}
+	
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public String login(HttpServletRequest request) throws IOException{
@@ -206,6 +285,8 @@ public class UserController extends BaseController{
 				
 		return success(result);
 	}
+	
+	
 	
 	@RequestMapping(value = "/view/login", method = RequestMethod.GET)
 	public String loginView(HttpSession session,HttpServletRequest request) throws IOException{

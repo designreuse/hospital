@@ -30,4 +30,6 @@ public interface HeartCircleMapper {
 	List<HeartCircle> getHeartCircleList();
 
 	List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int hcId);
+
+	HeartCircle getHeartCircleById(int id);
 }

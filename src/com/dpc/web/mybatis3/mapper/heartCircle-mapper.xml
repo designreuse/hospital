@@ -88,12 +88,6 @@
       <if test="profileImage != null" >
         profileImage = #{profileImage,jdbcType=VARCHAR},
       </if>
-      <if test="doctorName != null" >
-        doctorName = #{doctorName,jdbcType=VARCHAR},
-      </if>
-      <if test="images != null" >
-        images = #{images,jdbcType=VARCHAR},
-      </if>
       <if test="content != null" >
         content = #{content,jdbcType=VARCHAR},
       </if>
@@ -109,8 +103,6 @@
   <update id="updateByPrimaryKey" parameterType="heartCircle" >
     update d_heart_circle
     set profileImage = #{profileImage,jdbcType=VARCHAR},
-      doctorName = #{doctorName,jdbcType=VARCHAR},
-      images = #{images,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
       remarkCount = #{remarkCount,jdbcType=INTEGER},
       creTime = #{creTime,jdbcType=TIMESTAMP}
@@ -189,5 +181,10 @@
   <select id="getHeartCircleImageListByHeartCircleId"  parameterType="java.lang.Integer" resultType="heartCircleImage">
   	select * from d_heart_circle_image where heartCircleId = #{0} and delFlag = 0 order by id 
   </select>
+  
+  <select id="getHeartCircleById"  parameterType="java.lang.Integer" resultType="heartCircle">
+  	select * from d_heart_circle where id = #{0}
+  </select>
+  
   
 </mapper>
