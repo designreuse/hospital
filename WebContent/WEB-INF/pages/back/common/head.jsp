@@ -9,10 +9,15 @@
 				<span class="m-r-sm text-muted welcome-message">当前登录用户：admin</span>
 			</li>
 			<li>
-               	<a href="${_base}/page/user/login.jsp" onclick="loginout()">
+               	<a href="#" onclick="loginout()">
                    	<i class="fa fa-sign-out"></i> 退出
                	</a>
            	</li>
 		</ul>
 	</nav>
 </div>
+<script type="text/javascript">
+	function loginout(){
+		window.location.href = "${ctx}/back/manager/logout";
+	}
+</script>

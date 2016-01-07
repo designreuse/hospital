@@ -41,5 +41,6 @@
 		<typeAlias alias="county" type="com.dpc.web.mybatis3.domain.County"/>
 		<typeAlias alias="hospital" type="com.dpc.web.mybatis3.domain.Hospital"/>
 		<typeAlias alias="districtList" type="com.dpc.web.mybatis3.domain.DistrictList"/>
+		<typeAlias alias="admin" type="com.dpc.web.mybatis3.domain.Admin"/>
 	</typeAliases>
 </configuration>

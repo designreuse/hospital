@@ -8,7 +8,9 @@ import com.dpc.utils.Base64;
 import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
+import com.dpc.web.mybatis3.domain.Admin;
 import com.dpc.web.mybatis3.domain.User;
+import com.dpc.web.mybatis3.mapper.AdminMapper;
 import com.dpc.web.mybatis3.mapper.UserMapper;
 import com.dpc.web.service.IUserService;
 
@@ -18,7 +20,8 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private UserMapper userMapper;
-	
+	@Autowired
+	private AdminMapper adminMapper;
 	@Override
 	public void register(User u) {
 		userMapper.addUser(u);
@@ -62,6 +65,18 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public User getDoctorByDoctorIdentity(String doctorIdentity) {
 		return userMapper.getDoctorByDoctorIdentity(doctorIdentity);
+	}
+
+	@Override
+	public void addAdmin(Admin admin) {
+		adminMapper.insertSelective(admin);
+		
+	}
+
+	@Override
+	public Admin getAdmin(Admin admin) {
+		
+		return adminMapper.getAdmin(admin);
 	}
 	
 }

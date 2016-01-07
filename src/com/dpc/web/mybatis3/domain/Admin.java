@@ -1,5 +1,8 @@
 package com.dpc.web.mybatis3.domain;
 
+
+import java.util.Date;
+
 public class Admin {
     private Integer id;
 
@@ -7,37 +10,87 @@ public class Admin {
 
     private String password;
 
+    private String salt;
+
     private String name;
+    private String profileImageUrl;
 
-    public Integer getId() {
-        return id;
-    }
+    private Integer level;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private String creTime;
 
-    public String getUsername() {
-        return username;
-    }
+    private Integer delFlag;
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
-    }
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+	public String getCreTime() {
+		return creTime;
+	}
+
+	public void setCreTime(String creTime) {
+		this.creTime = creTime;
+	}
+
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
+	}
+
 }

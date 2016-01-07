@@ -15,13 +15,13 @@
                             <div class="ibox-tools"></div>
                         </div>
                         <div class="ibox-content">
-                            <form class="form-horizontal">
+                            <form class="form-horizontal" method="get" action="${ctx }/back/manager/login">
                                 <div class="form-group"><label class="col-lg-2 control-label">用户名</label>
-                                    <div class="col-lg-8"><input type="email" placeholder="请输入用户名" class="form-control">
+                                    <div class="col-lg-8"><input type="text" name="username" placeholder="请输入用户名" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">密码</label>
-                                    <div class="col-lg-8"><input type="password" placeholder="请输入密码" class="form-control"></div>
+                                    <div class="col-lg-8"><input type="password" name="password" placeholder="请输入密码" class="form-control"></div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-offset-3 col-lg-6">
@@ -37,4 +37,12 @@
 	        </div>
         </div>
 	</body>
+	<script type="text/javascript">
+		$(function(){
+			var msg = '${msg}';
+			if(msg!=""){
+				alert(msg);
+			}
+		});
+	</script>
 </html>

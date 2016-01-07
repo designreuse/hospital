@@ -16,14 +16,6 @@
 
 	<mvc:annotation-driven />
 
-	<!-- SpringMVC访问静态资源 -->
-	<mvc:resources location="/static/css/" mapping="/static/css/**" />
-	<mvc:resources location="/static/font-awesome/" mapping="/static/font-awesome/**" />
-	<mvc:resources location="/static/fonts/" mapping="/static/fonts/**" />
-	<mvc:resources location="/static/img/" mapping="/static/img/**" />
-	<mvc:resources location="/static/js/" mapping="/static/js/**" />
-	<mvc:resources location="/upload/" mapping="/upload/**" />
-
 	<!-- 让classpath下的文件能以${xxx}的形式被访问 -->
 	<context:property-placeholder location="classpath:dbconfig.properties" />
 
@@ -158,4 +150,19 @@
 	<bean id="localeResolver"
 		class="org.springframework.web.servlet.i18n.SessionLocaleResolver" /><!-- 
 		session级别的国际化 -->
+		
+	<!-- SpringMVC访问静态资源 -->
+	<mvc:resources location="/static/css/" mapping="/static/css/**" />
+	<mvc:resources location="/static/font-awesome/" mapping="/static/font-awesome/**" />
+	<mvc:resources location="/static/fonts/" mapping="/static/fonts/**" />
+	<mvc:resources location="/static/img/" mapping="/static/img/**" />
+	<mvc:resources location="/static/js/" mapping="/static/js/**" />
+	<mvc:resources location="/upload/" mapping="/upload/**" />
+	
+	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/back/**"/>
+            <bean id="loginInterceptor" class="com.dpc.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

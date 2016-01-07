@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -21,12 +22,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.dpc.utils.Base64;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
+import com.dpc.utils.MD5;
+import com.dpc.utils.MD5Encoder;
+import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.Admin;
 import com.dpc.web.mybatis3.domain.City;
 import com.dpc.web.mybatis3.domain.County;
 import com.dpc.web.mybatis3.domain.DistrictList;
@@ -58,6 +65,88 @@ public class CoreController extends BaseController{
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(HttpSession session,HttpServletRequest request) throws IOException{
 		return "/back/index";
+	}
+	@RequestMapping(value = "/manager/view", method = RequestMethod.GET)
+	public String managerView(HttpSession session,HttpServletRequest request) throws IOException{
+		return "/back/manager";
+	}
+	@RequestMapping(value = "/manager/add/view", method = RequestMethod.GET)
+	public String addManagerView(HttpSession session,HttpServletRequest request) throws IOException{
+		return "/back/addManager";
+	}
+	@RequestMapping(value = "/manager/login/view", method = RequestMethod.GET)
+	public String managerLoginView(HttpSession session,HttpServletRequest request) throws IOException{
+		return "/login";
+	}
+	@RequestMapping(value = "/manager/login", method = RequestMethod.GET)
+	public String managerLogin(HttpSession session,HttpServletRequest request) throws IOException{
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		Admin admin = new Admin();
+		admin.setUsername(username);
+		String msg = "";
+		boolean flag = true;
+		admin = userService.getAdmin(admin);
+		//用户不存在
+		if (admin == null){
+			msg = "用户名不存在";
+			flag = false;
+		}		
+		//获得密码
+		String pwd = admin.getPassword();
+		password =MD5Encoder.encrypt(password, admin.getSalt());
+		
+		//比对密码
+		if (!pwd.equals(password)) {
+			msg = "密码不正确";
+			flag = false;
+		}
+		if(flag){
+			session.setAttribute("admin", admin);
+			return "/back/index";
+		}else{
+			request.setAttribute("msg", msg);
+			return "login";
+		}
+	}
+	@RequestMapping(value = "/manager/logout", method = RequestMethod.GET)
+	public String managerLogout(HttpSession session,HttpServletRequest request) throws IOException{
+		request.getSession().invalidate();
+		return "/login";
+	}
+	@RequestMapping(value = "/manager/add", method = RequestMethod.POST)
+	public String addManager(HttpSession session,HttpServletRequest request) throws IOException{
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String cfmPwd = request.getParameter("cfmPwd");
+		String name = request.getParameter("name");
+		
+		List<MultipartFile> images = null;
+		List<String> imageUrls = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("profileImageUrl");
+			if(images!=null&&images.size()>0){
+				for(MultipartFile file : images){
+					imageUrls = upload(session,request,file);
+				}
+			}
+		}
+		String salt = UUID.randomUUID().toString();
+		Admin admin = new Admin();
+		admin.setSalt(salt);
+		admin.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		admin.setDelFlag(0);
+		admin.setLevel(1);
+		admin.setName(name);
+		admin.setPassword(MD5Encoder.encrypt(password, salt));
+		admin.setUsername(username);
+		if(imageUrls!=null&&imageUrls.size()>0){
+			admin.setProfileImageUrl(imageUrls.get(0));
+		}
+		
+		userService.addAdmin(admin);
+		return "/back/addManager";
 	}
 	
 	//用户反馈列表
@@ -220,6 +309,7 @@ public class CoreController extends BaseController{
 			String province = districtArray[0];
 			String city = districtArray[1];
 			if(districtArray.length==2){
+				System.out.println(province+city);
 				DistrictList idList = districtService.getunFullIdByName(province,city);
 				Hospital h = new Hospital();
 				h.setHospital(hospital);
