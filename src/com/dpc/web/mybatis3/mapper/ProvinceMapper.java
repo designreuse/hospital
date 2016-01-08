@@ -1,5 +1,7 @@
 package com.dpc.web.mybatis3.mapper;
 
+import java.util.List;
+
 import com.dpc.web.mybatis3.domain.Province;
 
 public interface ProvinceMapper {
@@ -16,4 +18,6 @@ public interface ProvinceMapper {
     int updateByPrimaryKey(Province record);
 
 	Integer getProvinceIdByName(String province);
+
+	List<Province> getAllProvinces();
 }

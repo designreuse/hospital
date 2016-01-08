@@ -55,5 +55,21 @@ public class DistrictServiceImpl implements IDistrictService {
 	public DistrictList getFullIdByName(String province, String city, String county) {
 		return countyMapper.getFullIdByName(province,city,county);
 	}
+	@Override
+	public List<Hospital> getHospitalByIDs(String ids) {
+		return hospitalMapper.getHospitalByIDs(ids);
+	}
+	@Override
+	public List<Province> getAllProvinces() {
+		return provinceMapper.getAllProvinces();
+	}
+	@Override
+	public List<City> getCitysByPid(int pid) {
+		return cityMapper.getCitysByPid(pid);
+	}
+	@Override
+	public List<County> getCountysByPid(int pid) {
+		return countyMapper.getCountysByPid(pid);
+	}
 	
 }

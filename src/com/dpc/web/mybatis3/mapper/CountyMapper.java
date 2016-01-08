@@ -23,4 +23,6 @@ public interface CountyMapper {
 	DistrictList getunFullIdByName(String province, String city);
 
 	DistrictList getFullIdByName(String province, String city, String county);
+
+	List<County> getCountysByPid(int pid);
 }

@@ -69,4 +69,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   
+  <select id="getAllProvinces" resultType="province">
+  	select * from t_province
+  </select>
 </mapper>

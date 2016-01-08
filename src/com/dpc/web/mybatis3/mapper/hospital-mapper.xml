@@ -68,4 +68,8 @@
       locate = #{locate,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="getHospitalByIDs" resultType="hospital">
+  	select id,hospital from t_hospital where locate = #{0}
+  </select>
 </mapper>

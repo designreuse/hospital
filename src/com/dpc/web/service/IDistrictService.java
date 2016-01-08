@@ -22,4 +22,12 @@ public interface IDistrictService {
 
 	DistrictList getFullIdByName(String province, String city, String county);
 
+	List<Hospital> getHospitalByIDs(String ids);
+
+	List<Province> getAllProvinces();
+
+	List<City> getCitysByPid(int parseInt);
+
+	List<County> getCountysByPid(int parseInt);
+
 }

@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.dpc.utils.Base64;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
+import com.dpc.utils.JsonUtil;
 import com.dpc.utils.MD5;
 import com.dpc.utils.MD5Encoder;
 import com.dpc.utils.StringUtil;
@@ -223,7 +224,7 @@ public class CoreController extends BaseController{
 	@ResponseBody
 	public String initDistrict(HttpSession session,HttpServletRequest request) throws IOException{
 
-		Document doc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/index.html").post();
+		Document doc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html").timeout(3000000).post();
 		Elements pros = doc.getElementsByClass("provincetr");
 		for(Element e : pros){
 			Elements provinceList = e.select("a[href]");
@@ -235,7 +236,7 @@ public class CoreController extends BaseController{
 				province.setCode(code);
 				province.setName(name);
 				districtService.addProvince(province);
-				Document cityDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/"+ahref).post();
+				Document cityDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/"+ahref).timeout(3000000).post();
 				Elements citys = cityDoc.getElementsByClass("citytr");
 				for(Element city : citys){
 					Elements cityA = city.select("a");
@@ -247,7 +248,7 @@ public class CoreController extends BaseController{
 					c.setName(cityName);
 					c.setPid(province.getId());
 					districtService.addCity(c);
-					Document countyDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2010/"+cityhref).post();
+					Document countyDoc = Jsoup.connect("http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/"+cityhref).timeout(3000000).post();
 					Elements countys = countyDoc.getElementsByClass("countytr");
 					for(Element county : countys){
 						Elements countyA = county.select("a");
@@ -280,7 +281,7 @@ public class CoreController extends BaseController{
 		Map<String,String> map = new HashMap<String, String>();
 		if(files!=null&&files.size()>0){
 			for(MultipartFile file : files){
-				InputStream is = new FileInputStream(Thread.currentThread().getContextClassLoader().getResource("aa.xls").getPath());
+				InputStream is = new FileInputStream(Thread.currentThread().getContextClassLoader().getResource("bb.xls").getPath());
 			    try{
 		            Workbook rwb = Workbook.getWorkbook(is);  
 		            Sheet st = rwb.getSheet("Sheet1");  
@@ -336,5 +337,56 @@ public class CoreController extends BaseController{
 			
 		}
 		return "/back/common/importHospital";
+	}
+	
+	@RequestMapping(value = "/district/hospitals", method = RequestMethod.GET)
+	@ResponseBody
+	public String getHospitals(HttpSession session,HttpServletRequest request) throws IOException{
+		String provinceId = request.getParameter("provinceId");
+		String cityId = request.getParameter("cityId");
+		String countyId = request.getParameter("countyId");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(ValidateUtil.isEmpty(provinceId)){
+			return error(ErrorCodeUtil.e11900);
+		}
+		String ids = provinceId+"-"+cityId+"-"+countyId;
+		List<Hospital> hospitals = districtService.getHospitalByIDs(ids);
+		return JsonUtil.object2String(hospitals);
+	}
+	@RequestMapping(value = "/district/get", method = RequestMethod.GET)
+	@ResponseBody
+	public String getDistrict(HttpSession session,HttpServletRequest request) throws IOException{
+		String orgId = request.getParameter("orgId");
+		String type = request.getParameter("type");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(ValidateUtil.isEmpty(type)){
+			return error(ErrorCodeUtil.e11902);
+		}
+		if(type.equals("1")){
+			//获得省份
+			List<Province> provinces = districtService.getAllProvinces();
+			return JsonUtil.object2String(provinces);
+		}
+		if(type.equals("2")){
+			//获得城市
+			List<City> citys = districtService.getCitysByPid(Integer.parseInt(orgId));
+			return JsonUtil.object2String(citys);
+		}
+		if(type.equals("3")){
+			//获得区县
+			List<County> Countys = districtService.getCountysByPid(Integer.parseInt(orgId));
+			return JsonUtil.object2String(Countys);
+		}
+		return null;
 	}
 }

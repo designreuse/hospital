@@ -90,5 +90,7 @@
   	from  t_city c left join t_province p on c.pid=p.id where p.name = #{0} and c.name = #{1} 
   </select>
   
-  
+   <select id="getCountysByPid" parameterType="java.lang.Integer" resultType="county">
+  	select * from t_county where pid = #{0}
+  </select>
 </mapper>

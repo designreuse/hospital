@@ -91,7 +91,9 @@ public class ErrorCodeUtil
 	public static final String e11801 = "11801";//医生号码不存在
 	public static final String e11802 = "11802";//医生主键不能为空
 	
-	
+	public static final String e11900 = "11900";//省份ID不能为空
+	public static final String e11901 = "11901";//机构ID不能为空
+	public static final String e11902 = "11902";//获取机构类型不能为空
 	
 	public static String errorMsg(Map<String, Object> map, String errorCode) {
 		map.put("error_code", errorCode);

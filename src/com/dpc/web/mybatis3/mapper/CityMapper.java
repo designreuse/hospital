@@ -1,5 +1,7 @@
 package com.dpc.web.mybatis3.mapper;
 
+import java.util.List;
+
 import com.dpc.web.mybatis3.domain.City;
 
 public interface CityMapper {
@@ -16,4 +18,6 @@ public interface CityMapper {
     int updateByPrimaryKey(City record);
 
 	Integer getCityIdByName(String province, String city);
+
+	List<City> getCitysByPid(int pid);
 }
