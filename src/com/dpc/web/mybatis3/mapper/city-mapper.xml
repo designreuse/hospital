@@ -83,4 +83,7 @@
   <select id="getCitysByPid" parameterType="java.lang.Integer" resultType="city">
   	select * from t_city where pid = #{0}
   </select>
+  
+  
+  
 </mapper>

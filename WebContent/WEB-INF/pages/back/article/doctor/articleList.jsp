@@ -4,6 +4,9 @@
 <html>
 <head>
 <title>文章上传（医生）</title>
+<style type="text/css">
+	table tr td{text-align: center;}
+</style>
 </head>
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
@@ -90,7 +93,7 @@
 								</td>
 								<td>${item.title}</td>
 								<td>
-									<img width="100" height="100" src="${item.coverImageUrl}">
+									<img width="200" height="100" src="${item.coverImageUrl}">
 								</td>
 								<td>${item.postTime}</td>
 								<td>

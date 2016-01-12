@@ -29,6 +29,8 @@ public class ErrorCodeUtil
 	public static final String e10004 = "10004";   // 性别不能为空
 	public static final String e10005 = "10005";   // 生日不能为空
 	public static final String e10006 = "10006";   // 姓名不能为空
+	public static final String e10007 = "10007";   // 授权码不能为空
+	public static final String e10008 = "10008";   // 授权码不合法
 	
 	//注册
 	public static final String e11001 = "11001";   //手机号不能为空
@@ -64,6 +66,9 @@ public class ErrorCodeUtil
 	public static final String e11300 = "11300";   //心血管发表内容不能为空
 	public static final String e11301 = "11301";   //心血管主键标识不能为空
 	public static final String e11302 = "11302";   //心血管评论内容不能为空
+	public static final String e11303 = "11303";   //用户积分不够
+	public static final String e11304 = "11304";   //已兑换积分，可参会
+	public static final String e11305 = "11305";   //尚未兑换，请兑换
 	
 	//患者端---发现
 	public static final String e11401 = "11401";   //发表说说不能为空

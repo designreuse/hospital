@@ -101,7 +101,7 @@
 								</td>
 								<td>${item.title}</td>
 								<td>
-									<img width="100" height="100" src="${item.coverImageUrl}">
+									<img width="200" height="100" src="${item.coverImageUrl}">
 								</td>
 								<td>${item.postTime}</td>
 								<td>

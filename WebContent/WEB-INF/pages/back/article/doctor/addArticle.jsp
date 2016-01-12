@@ -3,7 +3,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>文章上传(医生)</title>
+<title>文章列表(医生)</title>
 </head>
 <style type="text/css">
 	#content{}
@@ -14,7 +14,7 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>文章上传(医生)</h2>
+             <h2>文章列表(医生)</h2>
          </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -27,11 +27,11 @@
                                 	<label class="col-lg-2 control-label">文章分类</label>
                                     <div class="col-lg-2">
                                     	<select class="form-control m-b" name="category">
-	                                        <option value="-1">-请选择-</option>
+	                                       <option value="-1">-请选择-</option>
 	                                        <option value="1">首页轮播图</option>
 	                                        <option value="2">医疗动态</option>
 	                                        <option value="3">轻松一刻</option>
-	                                        <option value="4">首页H5链接</option>
+	                                        <option value="4">首页H6连接</option>
 	                                    </select>
                                     </div>
                                 	<label class="col-lg-1 control-label">发布时间</label>

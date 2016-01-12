@@ -8,7 +8,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.dpc.web.mybatis3.domain.Admin;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-	private static final String[] IGNORE_URI = {"/back/manager/login","/back/manager/logout","/login.jsp"};
+	private static final String[] IGNORE_URI = {"/back/manager/login","/back/manager/logout","/login.jsp",
+			"/back/article/list","/back/feedback/add","/back/district/hospitals","/back/district/get"};
 	 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

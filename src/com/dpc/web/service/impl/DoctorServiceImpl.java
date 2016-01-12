@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -16,10 +17,12 @@ import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
+import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
 import com.dpc.web.mybatis3.mapper.DiagnoseExperienceMapper;
 import com.dpc.web.mybatis3.mapper.DoctorMapper;
 import com.dpc.web.mybatis3.mapper.HeartCircleMapper;
 import com.dpc.web.mybatis3.mapper.MedicalDynamicMapper;
+import com.dpc.web.mybatis3.mapper.TakeAcademicSupportMapper;
 import com.dpc.web.service.IDoctorService;
 
 @Service
@@ -34,6 +37,9 @@ public class DoctorServiceImpl implements IDoctorService {
 	
 	@Autowired
 	private HeartCircleMapper heartCircleMapper;
+	
+	@Autowired
+	private TakeAcademicSupportMapper takeAcademicSupportMapper;
 	
 	
 	@Autowired
@@ -187,5 +193,26 @@ public class DoctorServiceImpl implements IDoctorService {
 	public Doctor getDoctorById(Integer id) {
 		return doctorMapper.getDoctorById(id);
 	}
-	
+
+	@Override
+	public List<AcademicSupport> getAcademicSupportList() {
+		return doctorMapper.getAcademicSupportList();
+	}
+
+	@Override
+	public AcademicSupport getAcademicSupportDetail(int id) {
+		return doctorMapper.getAcademicSupportDetail(id);
+	}
+
+	@Override
+	public void takePartActivity(TakeAcademicSupport takeAcademicSupport) {
+		takeAcademicSupportMapper.insertSelective(takeAcademicSupport);
+		
+	}
+
+	@Override
+	public TakeAcademicSupport getTakeAcademicSupport(TakeAcademicSupport t) {
+		return takeAcademicSupportMapper.getTakeAcademicSupport(t);
+	}
+
 }

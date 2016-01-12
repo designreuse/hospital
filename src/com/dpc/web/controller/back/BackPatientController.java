@@ -28,6 +28,7 @@ import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.service.IBackDoctorService;
 import com.dpc.web.service.IBackPatientService;
+import com.dpc.web.service.IPatientService;
 import com.google.gson.Gson;
 
 @Controller
@@ -36,34 +37,43 @@ public class BackPatientController extends BaseController{
 	
 	@Autowired
 	IBackPatientService backPatientService;
+	@Autowired
+	IPatientService patientService;
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String register(HttpSession session,HttpServletRequest request) throws IOException{
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
-		String delFlag = request.getParameter("delFlag");
-		String category = request.getParameter("category");
-		String illType = request.getParameter("illType");
-		Article article = new Article();
-		if(!ValidateUtil.isEmpty(startDate)){
-			article.setStartDate(startDate);
-		}
-		if(!ValidateUtil.isEmpty(endDate)){
-			article.setEndDate(endDate);
-		}
-		if(!ValidateUtil.isEmpty(delFlag) && !delFlag.equals("-1")){
-			article.setDelFlag(Integer.parseInt(delFlag));
-		}
-		if(!ValidateUtil.isEmpty(category) && !category.equals("-1")){
-			article.setCategory(Integer.parseInt(category));
-		}
-		if(!ValidateUtil.isEmpty(illType) && !illType.equals("-1")){
-			article.setIllType(Integer.parseInt(illType));
-		}
+		String startScore = request.getParameter("startScore");
+		String endScore = request.getParameter("endScore");
+		String username = request.getParameter("username");
+		String name = request.getParameter("name");
 		PatientVO p = new PatientVO();
+		if(!ValidateUtil.isEmpty(startDate) && !ValidateUtil.isEmpty(endDate)){
+			p.setStartDate(startDate);
+			p.setEndDate(endDate);
+		}
+		if(!ValidateUtil.isEmpty(startScore) && !ValidateUtil.isEmpty(endScore)){
+			p.setStartScore(Integer.parseInt(startScore));
+			p.setEndScore(Integer.parseInt(endScore));
+		}
+		if(!ValidateUtil.isEmpty(username)){
+			p.setUsername(username);
+		}
+		if(!ValidateUtil.isEmpty(name)){
+			p.setName(name);
+		}
 		Pager<PatientVO> page = backPatientService.findByPaginaton(p);
 		request.setAttribute("page", page);
 		return "/back/patient/list";
+	}
+	@RequestMapping(value = "/detail", method = RequestMethod.GET)
+	public String getPatientDetail(HttpSession session,HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+	
+		PatientVO p = patientService.getProfile(Integer.parseInt(id));
+		request.setAttribute("p", p);
+		return "/back/patient/detail";
 	}
 	
 	@RequestMapping(value = "/wish/list", method = RequestMethod.GET)

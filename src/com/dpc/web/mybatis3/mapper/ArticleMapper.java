@@ -32,4 +32,5 @@ public interface ArticleMapper {
 	List<Article> getHeartVedioList();
 
 	List<Article> getCartoonList();
+	List<Article> getArticlesLately();
 }

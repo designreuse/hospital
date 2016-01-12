@@ -5,9 +5,6 @@
 <head>
 <title>文章上传(医生)</title>
 </head>
-<style type="text/css">
-	#content{}
-</style>
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
 <%@ include file="/WEB-INF/pages/back/common/menu.jsp"%>
@@ -28,12 +25,11 @@
                                 	<label class="col-lg-2 control-label">文章分类</label>
                                     <div class="col-lg-2">
                                     	<select class="form-control m-b" name="category" id="category">
-	                                        <option value="0">-请选择-</option>
-	                                        <option value="1">不跳转</option>
-	                                        <option value="2">首页轮播图</option>
-	                                        <option value="3">医疗动态</option>
-	                                        <option value="4">轻松一刻</option>
-	                                        <option value="5">首页H6连接</option>
+	                                        <option value="-1">-请选择-</option>
+	                                        <option value="1">首页轮播图</option>
+	                                        <option value="2">医疗动态</option>
+	                                        <option value="3">轻松一刻</option>
+	                                        <option value="4">首页H6连接</option>
 	                                    </select>
                                     </div>
                                 	<label class="col-lg-1 control-label">发布时间</label>
@@ -76,7 +72,7 @@
 	                                 </div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-2 control-label">正文</label>
-                                   	<div class="col-lg-6" id="contentDiv">
+                                   	<div class="col-lg-9" id="contentDiv">
                                    	
                                    	</div>
                                    	<input type="hidden" id="content" name="content"/>
@@ -97,19 +93,13 @@
 </body>
 <script type="text/javascript">
 	$(function(){
-		
-		UE.getEditor('contentDiv',{
-	         //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-	         toolbars:[['FullScreen', 'Undo', 'Redo','Bold','underline','fontsize','fontfamily','forecolor','insertimage','indent','lineheight','ertorderedlist','insertunorderedlist','link','unlink','rowspacing','date','time']],
-	         //focus时自动清空初始化时的内容
-	         autoClearinitialContent:true,
-	         //关闭字数统计
-	         wordCount:true,
-	         //关闭elementPath
-	         elementPathEnabled:false,
-	         //默认的编辑区域高度
-	         initialFrameHeight:500
+		 var ue = UE.getEditor('contentDiv',{
+	         initialFrameHeight:800
 	     });
+		 ue.addListener("ready", function () {
+	        ue.setContent('${article.content }');
+	     });
+		
 		$('#datePick .input-group.date').datepicker({
             todayBtn: "linked",
             keyboardNavigation: true,
@@ -131,7 +121,7 @@
 			}
 		});
 		$("#category").find("option").each(function(){
-			if($(this).val()==linkType){
+			if($(this).val()==category){
 				$(this).attr("selected",true);
 			}
 		});

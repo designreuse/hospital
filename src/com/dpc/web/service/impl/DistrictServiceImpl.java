@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.utils.PageEntity;
+import com.dpc.utils.PageResult;
 import com.dpc.web.mybatis3.domain.City;
 import com.dpc.web.mybatis3.domain.County;
 import com.dpc.web.mybatis3.domain.DistrictList;
 import com.dpc.web.mybatis3.domain.Hospital;
+import com.dpc.web.mybatis3.domain.Interface;
 import com.dpc.web.mybatis3.domain.Province;
 import com.dpc.web.mybatis3.mapper.CityMapper;
 import com.dpc.web.mybatis3.mapper.CountyMapper;

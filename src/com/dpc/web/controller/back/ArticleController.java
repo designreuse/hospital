@@ -116,8 +116,11 @@ public class ArticleController extends BaseController{
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public String delArticle(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		Article article = articleService.getArticleById(Integer.parseInt(id));
+		Integer type = article.getType();
 		articleService.delArticle(Integer.parseInt(id));
-		return "redirect:/back/article/doctor/list/1";
+		return "redirect:/back/article/list/"+type;
+		
 	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -159,7 +162,7 @@ public class ArticleController extends BaseController{
 		article.setDelFlag(0);
 		articleService.update(article);
 		
-		return "redirect:/back/article/doctor/list/1";
+		return "redirect:/back/article/list/1";
 	}
 	
 	

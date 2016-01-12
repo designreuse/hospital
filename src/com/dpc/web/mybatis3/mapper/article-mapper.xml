@@ -17,12 +17,14 @@
 	<result column="content" property="content" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, title, category, resource, linkType, videoUrl, H5Url, coverImageUrl, postTime, 
+    id, title, category, resource, linkType, videoUrl, H5Url, coverImageUrl, postTime,content,
     type, illType, delFlag
   </sql>
-  <sql id="Blob_Column_List" >
-    content
-  </sql>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="article">
+  	select * from t_article where id = #{0} and delFlag=0
+  
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     update t_article set delFlag=1 where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -246,17 +248,20 @@
   </select>
   
    <select id="getArticlesByIllType" parameterType="java.lang.Integer" resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=7 and illType = #{0}
+  	select * from t_article where delFlag = 0 and type=2 and category=7 and illType = #{0} order by postTime desc
+  </select>
+   <select id="getArticlesLately" resultType="article">
+  	select * from t_article where delFlag = 0 and type=2 and category=7 order by postTime desc
   </select>
   
 
    <select id="getHeartVedioList"  resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=6
+  	select * from t_article where delFlag = 0 and type=2 and category=6 order by postTime desc
   </select>
   
   
    <select id="getCartoonList" resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=5
+  	select * from t_article where delFlag = 0 and type=2 and category=5 order by postTime desc
   </select>
   
 </mapper>

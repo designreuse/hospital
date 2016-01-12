@@ -20,7 +20,7 @@
          </div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
-   	   <form role="form" class="form-inline" id="meetingform" action="${ctx }/back/doctor/academicSupport/add" method="post">
+   	   <form class="form-inline" enctype="multipart/form-data" id="meetingform" action="${ctx }/back/doctor/academicSupport/add" method="post">
 	       <div class="row">
 	          <div class="col-lg-12" id="meeting">
 	          	  <div class="row">
@@ -31,18 +31,30 @@
 	                  <div class="form-group" style="margin-left: 100px;">
 	                      <label for="exampleInputPassword2">会议状态：</label>
 	                      <select class="form-control" name="type">
-	                      	<option value="-1">全部</option>
 	                      	<option value="0">近期会议</option>
 	                      	<option value="1">往期会议</option>
 	                      </select>
 	                  </div>
                   </div>
 	          	  <div class="row">
-	                  <div class="form-group">
-	                      <label >新建时间：</label>
-	                      <input type="text" name="creTime" class="form-control">
-	                  </div>
+   	  				<label>新建时间：</label>
+                    <div class="form-group" id=datePick>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                             <input type="text" name="creTime" class="form-control">
+                        </div>
+                    </div>
                   </div>
+                  
+                  <div class="row">
+   	  				<label>宣传图片：</label>
+                    <div class="form-group">
+                        <div class="input-group">
+                             <input type="file" name="promoteImage" class="form-control">
+                        </div>
+                    </div>
+                  </div>
+                  
 	          	  <div class="row">
 	                  <div class="form-group">
 	                      <label >参会积分：</label>

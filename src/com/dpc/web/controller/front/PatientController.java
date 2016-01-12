@@ -617,7 +617,48 @@ public class PatientController extends BaseController{
 		String ret = JsonUtil.object2String(result);
 		return ret;
 	}
-	
-	
+	//养心讲堂
+	@RequestMapping(value = "/saveHeart/lecture", method = RequestMethod.GET)
+	@ResponseBody
+	public String getSaveHeartLecture(HttpSession session,HttpServletRequest request) throws IOException{
+		Map<String, Object> result = new HashMap<String, Object>();
+		//获取疾病下文章列表
+		List<Article> articleList = articleService.getArticlesLately();
+				
+		//获取心视频列表
+		List<Article> vedioList = articleService.getHeartVedioList();
+		
+		//获取心漫画列表
+		List<Article> cartoonList = articleService.getCartoonList();
+		Integer a = 0;
+		Integer b = 0;
+		Integer c = 0;
+		if(articleList!=null&&articleList.size()>0){
+			a= articleList.size();
+		}
+		if(vedioList!=null&&vedioList.size()>=0){
+			b=vedioList.size();
+		}
+		if(cartoonList!=null&&cartoonList.size()>=0){
+			c=cartoonList.size();
+		}
+		if(articleList!=null&&articleList.size()>=3){
+			result.put("heart_knowledge", articleList.subList(0, 3));
+		}else if(articleList!=null&&articleList.size()<3){
+			result.put("heart_knowledge", articleList.subList(0, a));
+		}
+		if(vedioList!=null&&vedioList.size()>=3){
+			result.put("heart_vedio", vedioList.subList(0, 3));
+		}else if(vedioList!=null&&vedioList.size()<3){
+			result.put("heart_vedio", vedioList.subList(0, b));
+		}
+		if(cartoonList!=null&&cartoonList.size()>=3){
+			result.put("heart_cartoon", cartoonList.subList(0, 3));
+		}else if(cartoonList!=null&&cartoonList.size()<3){
+			result.put("heart_cartoon", cartoonList.subList(0, c));
+		}
+		String ret = JsonUtil.object2String(result);
+		return ret;
+	}
 	
 }

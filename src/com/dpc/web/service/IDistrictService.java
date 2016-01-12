@@ -2,6 +2,8 @@ package com.dpc.web.service;
 
 import java.util.List;
 
+import com.dpc.utils.PageEntity;
+import com.dpc.utils.PageResult;
 import com.dpc.web.mybatis3.domain.City;
 import com.dpc.web.mybatis3.domain.County;
 import com.dpc.web.mybatis3.domain.DistrictList;

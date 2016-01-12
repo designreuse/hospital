@@ -30,5 +30,7 @@ public interface IArticleService {
 
 	List<Article> getCartoonList();
 
+	List<Article> getArticlesLately();
+
 	
 }

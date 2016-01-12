@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
@@ -172,16 +174,54 @@ public class BackDoctorController extends BaseController{
 	@RequestMapping(value = "/academicSupport/add/view", method = RequestMethod.GET)
 	public String addAcademicSupportView(HttpSession session,HttpServletRequest request) throws IOException{
 		
-		
 		return "/back/doctor/addAcademicSupport";
 	}
 	//添加学术活动
 	@RequestMapping(value = "/academicSupport/add", method = RequestMethod.POST)
-	public String addAcademicSupport(HttpSession session,HttpServletRequest request,AcademicSupport academicSupport) throws IOException{
-		backDoctorService.addAcademicSupport(academicSupport);
+	public String addAcademicSupport(HttpSession session,HttpServletRequest request) throws IOException{
+		String title = request.getParameter("title");
+		String creTime = request.getParameter("creTime");
+		String score = request.getParameter("score");
+		String content = request.getParameter("content");
+		AcademicSupport academicSupport = new AcademicSupport();
+		academicSupport.setTitle(title);
+		academicSupport.setCreTime(creTime);
+		academicSupport.setScore(Integer.parseInt(score));
+		academicSupport.setContent(content);
+		List<MultipartFile> images = null;
+		List<String> imageUrls = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("promoteImage");
+			if(images!=null&&images.size()>0){
+				for(MultipartFile file : images){
+					imageUrls = upload(session,request,file);
+				}
+			}
+		}
+		if(!ValidateUtil.isEmpty(imageUrls)){
+			academicSupport.setPromoteImage(imageUrls.get(0));
+		}
 		academicSupport.setDelFlag(0);
+		backDoctorService.addAcademicSupport(academicSupport);
 		return "/back/doctor/addAcademicSupport";
 	}
+	@RequestMapping(value = "/academicSupport/detail", method = RequestMethod.GET)
+	public String academicSupportDetail(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		AcademicSupport academicSupport = backDoctorService.getAcademicSupportDetail(Integer.parseInt(id));
+		request.setAttribute("academic", academicSupport);
+		return "/back/doctor/academicSupportDetail";
+	}
+	@RequestMapping(value = "/academicSupport/del", method = RequestMethod.GET)
+	public ModelAndView delAcademicSupport(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		backDoctorService.delAcademicSupport(Integer.parseInt(id));
+		return new ModelAndView("redirect:/back/doctor/academicSupport/list");
+	}
+	
+	
+	
 	@RequestMapping(value = "/academicSupport/list", method = RequestMethod.GET)
 	public String getAcademicSupportList(HttpSession session,HttpServletRequest request,AcademicSupport academicSupport) throws IOException{
 		String title = request.getParameter("title");
@@ -192,7 +232,7 @@ public class BackDoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(title)){
 			support.setTitle(title);
 		}
-		if(!ValidateUtil.isEmpty(type)){
+		if(!ValidateUtil.isEmpty(type) && !type.equals("-1")){
 			support.setType(Integer.parseInt(type));
 		}
 		if(!ValidateUtil.isEmpty(creTime)){

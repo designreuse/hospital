@@ -24,7 +24,6 @@
 	                            <li><a href="${ctx }/back/doctor/list">医生列表</a></li>
 	                            <li><a href="${ctx }/back/doctor/diaexp/list">诊后心得</a></li>
 	                            <li><a href="${ctx }/back/doctor/academicSupport/list">学术支持</a></li>
-	                            <li><a href="${ctx }/back/doctor/academicSupport/add/view">新建学术活动</a></li>
 	                            <li><a href="toastr_notifications.html">病例精析</a></li>
 	                            <li><a href="toastr_notifications.html">新建病例精析</a></li>
 	                        </ul>

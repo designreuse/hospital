@@ -20,5 +20,9 @@ public interface IBackDoctorService {
 	Pager<AcademicSupport> findAcademicSupportByPaginaton(AcademicSupport support);
 
 	Pager<DoctorVO> findAuthenticationByPaginaton(DoctorVO doctor);
+
+	AcademicSupport getAcademicSupportDetail(int parseInt);
+
+	void delAcademicSupport(int id);
 	
 }

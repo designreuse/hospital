@@ -98,9 +98,5 @@ public class BackPatientServiceImpl implements IBackPatientService {
 		
 		return pager;
 	}
-
-	
-	
-	
 	
 }

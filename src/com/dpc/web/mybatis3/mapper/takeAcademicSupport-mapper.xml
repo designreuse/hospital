@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dpc.web.mybatis3.mapper.TakeAcademicSupportMapper">
+  <resultMap id="BaseResultMap" type="takeAcademicSupport">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="academicSupId" jdbcType="INTEGER" property="academicSupId" />
+    <result column="userId" jdbcType="INTEGER" property="userId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="exchangeStatus" jdbcType="TINYINT" property="exchangeStatus" />
+    <result column="exchangeTime" jdbcType="TIMESTAMP" property="exchangeTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, academicSupId, userId, name, mobile, address, exchangeStatus, exchangeTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from d_take_academicsupinfo
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from d_take_academicsupinfo
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="takeAcademicSupport">
+    insert into d_take_academicsupinfo (id, academicSupId, userId, 
+      name, mobile, address, 
+      exchangeStatus, exchangeTime)
+    values (#{id,jdbcType=INTEGER}, #{academicSupId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{name,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{exchangeStatus,jdbcType=TINYINT}, #{exchangeTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="takeAcademicSupport">
+    insert into d_take_academicsupinfo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="academicSupId != null">
+        academicSupId,
+      </if>
+      <if test="userId != null">
+        userId,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="exchangeStatus != null">
+        exchangeStatus,
+      </if>
+      <if test="exchangeTime != null">
+        exchangeTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="academicSupId != null">
+        #{academicSupId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeStatus != null">
+        #{exchangeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="exchangeTime != null">
+        #{exchangeTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="takeAcademicSupport">
+    update d_take_academicsupinfo
+    <set>
+      <if test="academicSupId != null">
+        academicSupId = #{academicSupId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        userId = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="exchangeStatus != null">
+        exchangeStatus = #{exchangeStatus,jdbcType=TINYINT},
+      </if>
+      <if test="exchangeTime != null">
+        exchangeTime = #{exchangeTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="takeAcademicSupport">
+    update d_take_academicsupinfo
+    set academicSupId = #{academicSupId,jdbcType=INTEGER},
+      userId = #{userId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      exchangeStatus = #{exchangeStatus,jdbcType=TINYINT},
+      exchangeTime = #{exchangeTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getTakeAcademicSupport" parameterType="takeAcademicSupport" resultType="takeAcademicSupport">
+  	select   <include refid="Base_Column_List" /> from d_take_academicsupinfo
+    <where>
+    	<if test="academicSupId != null">academicSupId=#{academicSupId}</if>
+    	<if test="userId != null"> and userId=#{userId}</if>
+    </where>
+  </select>
+  
+</mapper>

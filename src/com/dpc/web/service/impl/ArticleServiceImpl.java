@@ -84,6 +84,11 @@ public class ArticleServiceImpl implements IArticleService {
 		return articleMapper.getCartoonList();
 	}
 
+	@Override
+	public List<Article> getArticlesLately() {
+		return articleMapper.getArticlesLately();
+	}
+
 	
 	
 }

@@ -40,7 +40,7 @@ public interface PatientMapper {
 
 	List<PatientVO> getPatientListWithPager(@Param("patient") PatientVO patient, @Param("start") Integer start, @Param("limit") Integer limit);
 	
-	Integer getAllPatientCount(PatientVO p);
+	Integer getAllPatientCount(@Param("patient") PatientVO patient);
 
 	Integer hasRelationshipWithDoctor(DoctorPatientRelation doctorPatientRelation);
 
@@ -73,4 +73,5 @@ public interface PatientMapper {
 	List<Announcement> getMydoctorAnnouncements(Integer id);
 
 	DoctorPatientRelation getDoctorPatientRelationById(int id);
+
 }

@@ -18,8 +18,8 @@ import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
-import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
@@ -29,6 +29,7 @@ import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
+import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.service.IArticleService;
 import com.dpc.web.service.IDoctorService;
@@ -424,6 +425,7 @@ public class DoctorController extends BaseController{
 		String technicalTitle = request.getParameter("technicalTitle");
 		String teachingTitle = request.getParameter("teachingTitle");
 		String department = request.getParameter("department");
+		String address = request.getParameter("address");
 		
 		String name = request.getParameter("name");
 		String agender = request.getParameter("agender");
@@ -443,7 +445,10 @@ public class DoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(department)){
 			doctor.setDepartment(department);
 		}
-		if(!ValidateUtil.isEmpty(hospital) || !ValidateUtil.isEmpty(technicalTitle) || !ValidateUtil.isEmpty(teachingTitle) || !ValidateUtil.isEmpty(department)){
+		if(!ValidateUtil.isEmpty(address)){
+			doctor.setAddress(address);
+		}
+		if(!ValidateUtil.isEmpty(hospital) || !ValidateUtil.isEmpty(technicalTitle) || !ValidateUtil.isEmpty(teachingTitle) || !ValidateUtil.isEmpty(department) || !ValidateUtil.isEmpty(address)){
 			doctorService.updateDoctor(doctor);
 		}
 		
@@ -619,6 +624,155 @@ public class DoctorController extends BaseController{
 			doctorService.updateDoctor(d);
 		}
 		
+		return success();
+	}
+	
+	//获取学术支持列表
+	@RequestMapping(value = "/academicSupport/list", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAcademicSupportList(HttpServletRequest request) throws IOException{
+		List<AcademicSupport> list = doctorService.getAcademicSupportList();
+		if(list!=null&&list.size()>0){
+			for(AcademicSupport support : list){
+				if(!ValidateUtil.isEmpty(support.getPromoteImage())){
+					support.setPromoteImage(ConstantUtil.DOMAIN+support.getPromoteImage());
+				}
+			}
+		}
+		return JsonUtil.object2String(list);
+	}
+	
+	//获取学术支持详情
+	@RequestMapping(value = "/academicSupport/detail", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAcademicSupportDetail(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String accessToken = request.getParameter("accessToken");
+		Integer userScore = null;
+		if(!ValidateUtil.isEmpty(accessToken)){
+			MemSession memSession = userService.getSessionByAccessToken(accessToken);
+			User u  = (User) memSession.getAttribute("user");
+			//已经登录，需要获取该用户的当前积分
+			Doctor d = new Doctor();
+			d.setUserId(u.getId());
+			List<Doctor> dlist = doctorService.getDoctorList(d);
+			userScore = dlist.get(0).getScore();
+		}
+		AcademicSupport support = doctorService.getAcademicSupportDetail(Integer.parseInt(id));
+		if(support!=null){
+			if(!ValidateUtil.isEmpty(support.getPromoteImage())){
+				support.setPromoteImage(ConstantUtil.DOMAIN+support.getPromoteImage());
+			}
+			if(userScore!=null){
+				support.setUserScore(userScore);
+			} 
+			return JsonUtil.object2String(support);
+		}
+		return JsonUtil.object2String(null);
+	}
+	
+	//参加学术会议
+	@RequestMapping(value = "/academicSupport/takepart", method = RequestMethod.POST)
+	@ResponseBody
+	public String takePartActivity(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String accessToken = request.getParameter("accessToken");
+		if(!ValidateUtil.isEmpty(accessToken)){
+			MemSession memSession = userService.getSessionByAccessToken(accessToken);
+			if(memSession==null){
+				return error(ErrorCodeUtil.e10008);
+			}
+			User u = (User) memSession.getAttribute("user");
+			//是否已经参会成功
+			TakeAcademicSupport t = new TakeAcademicSupport();
+			t.setAcademicSupId(Integer.parseInt(id));
+			t.setUserId(u.getId());
+			t = doctorService.getTakeAcademicSupport(t);
+			if(t!=null){
+				if(t.getExchangeStatus() == 0){
+					return error(ErrorCodeUtil.e11305);
+				}
+				if(t.getExchangeStatus() == 1){
+					return error(ErrorCodeUtil.e11304);
+				}
+			}
+			//查看当前积分
+			Doctor d = new Doctor();
+			d.setUserId(u.getId());
+			List<Doctor> dlist = doctorService.getDoctorList(d);
+			Integer userScore = dlist.get(0).getScore();
+			Integer     score = doctorService.getAcademicSupportDetail(Integer.parseInt(id)).getScore();
+			if(userScore >= score){
+				//用户积分够，直接扣除，参会成功
+				TakeAcademicSupport takeAcademicSupport = new TakeAcademicSupport();
+				takeAcademicSupport.setAcademicSupId(Integer.parseInt(id));
+				takeAcademicSupport.setExchangeStatus(1);
+				takeAcademicSupport.setUserId(u.getId());
+				takeAcademicSupport.setExchangeTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+				doctorService.takePartActivity(takeAcademicSupport);
+				
+				//扣除积分
+				Doctor doctor = new Doctor();
+				doctor.setScore(userScore-score);
+				doctor.setUserId(u.getId());
+				doctorService.updateDoctor(doctor);
+			}else{
+				//用户积分不够，暂存
+				TakeAcademicSupport takeAcademicSupport = new TakeAcademicSupport();
+				takeAcademicSupport.setAcademicSupId(Integer.parseInt(id));
+				takeAcademicSupport.setExchangeStatus(0);
+				takeAcademicSupport.setUserId(u.getId());
+				doctorService.takePartActivity(takeAcademicSupport);
+			}
+		}else{
+			//系统外参会
+			
+			String name = request.getParameter("name");
+			String mobile = request.getParameter("mobile");
+			String address = request.getParameter("address");
+			if(ValidateUtil.isEmpty(name)){
+				return error(ErrorCodeUtil.e10006);
+			}
+			if(ValidateUtil.isEmpty(mobile)){
+				return error(ErrorCodeUtil.e11001);
+			}
+			if(!ValidateUtil.isMobile(mobile)){
+				return error(ErrorCodeUtil.e11002);
+			}
+			TakeAcademicSupport takeAcademicSupport = new TakeAcademicSupport();
+			takeAcademicSupport.setAcademicSupId(Integer.parseInt(id));
+			takeAcademicSupport.setExchangeStatus(0);
+			takeAcademicSupport.setName(name);
+			takeAcademicSupport.setMobile(mobile);
+			takeAcademicSupport.setAddress(address);
+			doctorService.takePartActivity(takeAcademicSupport);
+		}
+		
+		return success();
+	}
+	//去兑换
+	@RequestMapping(value = "/academicSupport/toExchange", method = RequestMethod.GET)
+	@ResponseBody
+	public String toExchange(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String accessToken = request.getParameter("accessToken");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		//查看当前积分
+		Doctor d = new Doctor();
+		d.setUserId(u.getId());
+		List<Doctor> dlist = doctorService.getDoctorList(d);
+		Integer userScore = dlist.get(0).getScore();
+		Integer     score = doctorService.getAcademicSupportDetail(Integer.parseInt(id)).getScore();
+		if(userScore < score){
+			return error(ErrorCodeUtil.e11303);
+		}
 		return success();
 	}
 }

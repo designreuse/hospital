@@ -112,5 +112,16 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 		
 		return pager;
 	}
+
+	@Override
+	public AcademicSupport getAcademicSupportDetail(int id) {
+		return doctorMapper.getAcademicSupportDetail(id);
+	}
+
+	@Override
+	public void delAcademicSupport(int id) {
+		doctorMapper.delAcademicSupport(id);
+		
+	}
 	
 }

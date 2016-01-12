@@ -35,6 +35,9 @@
 			<if test="mobile!=null">
 				mobile = #{mobile}
 			</if>
+			<if test="userId!=null">
+				userId = #{userId}
+			</if>
 		</where>
 	</select>
 	
@@ -106,6 +109,8 @@
   		<if test="crtWithPhotoUrl != null">crtWithPhotoUrl=#{crtWithPhotoUrl},</if>
   		<if test="crtWithNameUrl != null">crtWithNameUrl=#{crtWithNameUrl},</if>
   		<if test="hospital != null and hospital != ''">hospital=#{hospital},</if>
+  		<if test="score != null">score=#{score},</if>
+  		<if test="address != null and address != ''">address=#{address},</if>
   		<if test="technicalTitle != null and technicalTitle != ''">technicalTitle=#{technicalTitle},</if>
   		<if test="teachingTitle != null and teachingTitle != ''">teachingTitle=#{teachingTitle},</if>
   		<if test="totalPatient != null and totalPatient != ''">totalPatient=#{totalPatient},</if>
@@ -307,34 +312,37 @@
 	    </trim>
  </insert>
  <select id="getAcademicSupportListWithPager" parameterType="academicSupport" resultType="academicSupport">
- 	select  
- 	  	id,
-		title,
-		content,
-		type,
-		score,
-		promoteImage,
-		delFlag,
-		date_format(creTime, '%Y-%m-%d %k:%i') as creTime 
-	from d_academic_support 
+	 SELECT
+	 	c.bid as id,
+		d.title,
+		d.content,
+		d.type,
+		d.score,
+		date_format(d.creTime, '%Y-%m-%d %k:%i') as creTime,
+		c.totalTakePart	 
+	 from d_academic_support d INNER JOIN 
+	(SELECT a.id as bid,count(*) as totalTakePart from d_academic_support a LEFT JOIN d_take_academicsupinfo b on a.id=b.academicSupId where a.delFlag=0 GROUP BY bid) c
+	on c.bid = d.id
   	<where>
+  		delFlag = 0
  	 	<if test="support.title != null">
- 	 		and title = #{support.title}
+ 	 		and d.title = #{support.title}
  	 	</if>
  	 	<if test="support.type != null">
- 	 		and type = #{support.type}
+ 	 		and d.type = #{support.type}
  	 	</if>
  	 	<if test="support.creTime != null">
- 	 		and creTime = #{dia.creTime}
+ 	 		and creTime = #{support.creTime}
  	 	</if>
  	</where>
  	order by creTime DESC
  	limit #{start},#{limit}
  </select>
  
- <select id="getAllAcademicSupportCount" parameterType="diagnoseExperience" resultType="java.lang.Integer">
+ <select id="getAllAcademicSupportCount" parameterType="academicSupport" resultType="java.lang.Integer">
  	select count(*) from d_academic_support 
   	<where>
+  		delFlag = 0 
  	 	<if test="support.title != null">
  	 		and title = #{support.title}
  	 	</if>
@@ -342,7 +350,7 @@
  	 		and type = #{support.type}
  	 	</if>
  	 	<if test="support.creTime != null">
- 	 		and creTime = #{dia.creTime}
+ 	 		and creTime = #{support.creTime}
  	 	</if>
  	</where>
  </select>
@@ -399,6 +407,20 @@
  
  <select id="getDoctorById" parameterType="java.lang.Integer" resultType="doctor">
  	select * from t_doctor where userId = #{0}
+ </select>
+ 
+ <select id="getAcademicSupportDetail" parameterType="java.lang.Integer" resultType="academicSupport">
+ 	select title,content,score,date_format(creTime, '%Y-%m-%d %k:%i') as creTime,promoteImage  from d_academic_support where id = #{0} and delFlag = 0
+ </select>
+ 
+ <update id="delAcademicSupport" parameterType="java.lang.Integer">
+ 	update d_academic_support set delFlag = 1 where id = #{0}
+ </update>
+ 
+ <select id="getAcademicSupportList" resultType="academicSupport">
+ 	select id,title,promoteImage,date_format(creTime, '%Y-%m-%d') as creTime,type from d_academic_support 
+ 	where delFlag = 0
+ 	order by type,creTime desc
  </select>
  
 </mapper>

@@ -5,6 +5,7 @@
 <head>
 <title>医生列表</title>
 </head>
+<meta charset="UTF-8">
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
 <%@ include file="/WEB-INF/pages/back/common/menu.jsp"%>
@@ -25,21 +26,48 @@
        <div class="row">
           <div class="col-lg-12">
 				<div class="ibox float-e-margins">
-					<%-- <div class="ibox-title">
-						<button type="button" class="btn btn-w-m btn-success" id="flush_btn">刷新</button>
-						<div class="ibox-tools">
-							<a href="${ctx}/u/topstars" style="margin-right: 20px">查看明星推荐</a>
-							<input type="checkbox" name="lock" id="lock" style="margin-top: -2px;vertical-align: middle;"/> <label for="lock" style="margin-right: 20px;">是否锁定</label>
-							<select id="selectItem">
-								<option value="mobile">手机号</option>
-								<option value="nickname">昵称</option>
-								<option value="id">ID</option>
-							</select>         						
-							<input type="text" style="width:200px;height:32px"id="search_content">
-                       	 	<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">搜索</button> 
-						</div>
-					</div> --%>
-				</div>
+                       <form role="form" class="form-inline" method="GET" action="${ctx }/back/patient/list">
+                         	 <div class="row show-grid">
+                         	 	<div class="form-group col-lg-3">
+	                         	 	<div class="form-group" style="margin-left: 39px;">
+		                                 <label for="">用户名：</label>
+		                                 <input type="text" name="username" class="form-control">
+		                             </div>
+                         	 	</div>
+                         	 	<div class="form-group col-lg-3" style="margin-left: -65px;">
+		                             <div class="form-group">
+		                                 <label for="">姓名：</label>
+		                                 <input type="text" name="name" class="form-control">
+		                             </div>
+		                         </div>
+		                         <div class="form-group col-lg-3"  id="startDate" style="margin-left: -108px;>
+	                                 <label for="">注册起始时间：</label>
+	                                 <div class="input-group date">
+	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
+	                                </div>
+	                             </div>
+	                             <div class="form-group col-lg-3"  id="endDate">
+	                                 <label for="">注册终止时间：</label>
+	                                 <div class="input-group date">
+	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
+	                                </div>
+	                             </div>
+                             </div>
+                             <div class="row show-grid" style="margin-left: 26px;">
+                             	<div class="form-group col-lg-5">
+	                                 <label for="">可用积分：</label>
+	                                 <input type="text" id="" name="startScore" class="form-control"> --
+	                                 <input type="text" id="" name="endScore" class="form-control">
+	                             </div>
+	                             <div class="form-group col-lg-3">	
+									<button type="submit" style="width: 150px" class="btn btn-primary">查询</button>	                             
+									<button type="button" style="width: 150px" class="btn btn-primary" onclick="exportDoctor()">导出</button>	
+								</div>
+                             </div>
+                         </form>
+                </div>
            </div>
            <div class="col-lg-12">
            		 <div class="panel-body">
@@ -49,38 +77,34 @@
 							<th>序号</th>
 							<th>用户名</th>
 							<th>姓名</th>
-							<!-- <th>医院名称</th>
-							<th>科室</th>
-							<th>所在地</th>
-							<th>技术职称</th>
-							<th>医生积分</th>
-							<th>医生验证</th>
+							<th>性别</th>
+							<th>出生日期</th>
+							<th>手机号</th>
 							<th>注册时间</th>
-							<th>操作</th> -->
+							<th>患者积分</th>
+							<th>详情</th>
 						</tr>
 						<c:forEach var="item" items="${page.datas}" varStatus="st">
 							<tr>
 								<td>${st.index+1}</td>
 								<td>${item.username}</td>
 								<td>${item.name}</td>
-								<%-- <td>${item.hospital}</td>
-								<td>${item.department}</td>
-								<td>${item.address}</td>
-								<td>${item.technicalTitle}</td>
-								<td>${item.score}</td> --%>
-								<%-- <td>
-									<c:if test="${item.verifyed == 0}">未通过</c:if>
-									<c:if test="${item.verifyed == 1}">通过</c:if>
-								</td>
-								<td>${item.registerTime}</td> --%>
 								<td>
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" id="search_btn">查看详情</button> 
+									<c:if test="${item.agender == 1}">男</c:if>
+									<c:if test="${item.agender == 2}">女</c:if>
+								</td>
+								<td>${item.birthday}</td>
+								<td>${item.mobile}</td>
+								<td>${item.registerTime}</td>
+								<td>${item.score}</td>
+								<td>
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="detail('${item.userId}')">查看详情</button> 
 								</td>
 							</tr>
 						</c:forEach>
 					</table>
 					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/article/doctor/list/1" name="url" />
+						<jsp:param value="${ctx}/back/article/list/2" name="url" />
 					</jsp:include>
 				</div>
            </div>
@@ -89,6 +113,25 @@
 </div>
 </body>
 <script type="text/javascript">
-
+	$(function(){
+		$('#startDate .input-group.date').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: true,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+        });
+		
+		$('#endDate .input-group.date').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: true,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true
+        });
+	});
+	function detail(id){
+		window.location.href = "${ctx }/back/patient/detail?id="+id;
+	}
 </script>
 </html>

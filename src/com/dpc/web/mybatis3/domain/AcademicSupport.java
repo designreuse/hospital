@@ -1,8 +1,8 @@
 package com.dpc.web.mybatis3.domain;
 
 
-import java.util.Date;
-
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class AcademicSupport {
     private Integer id;
 
@@ -20,9 +20,10 @@ public class AcademicSupport {
 
     private Integer delFlag;
     
-    
+    private Integer userScore;//跳转活动详情，显示当前用户积分
     private Integer start;
     private Integer limit;
+    private Integer totalTakePart;
     
 	public Integer getStart() {
 		return start;
@@ -35,9 +36,24 @@ public class AcademicSupport {
 	public Integer getLimit() {
 		return limit;
 	}
+	public Integer getUserScore() {
+		return userScore;
+	}
+
+	public void setUserScore(Integer userScore) {
+		this.userScore = userScore;
+	}
 
 	public void setLimit(Integer limit) {
 		this.limit = limit;
+	}
+
+	public Integer getTotalTakePart() {
+		return totalTakePart;
+	}
+
+	public void setTotalTakePart(Integer totalTakePart) {
+		this.totalTakePart = totalTakePart;
 	}
 
 	public Integer getId() {

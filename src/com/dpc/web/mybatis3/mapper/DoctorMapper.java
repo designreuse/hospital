@@ -38,6 +38,9 @@ public interface DoctorMapper{
 	Integer getAllAuthenticationCount(@Param("doctor") DoctorVO doctor);
 	List<DoctorVO> getDoctorListExport();
 	Doctor getDoctorById(Integer id);
+	AcademicSupport getAcademicSupportDetail(int id);
+	void delAcademicSupport(int id);
+	List<AcademicSupport> getAcademicSupportList();
 	
 }
 

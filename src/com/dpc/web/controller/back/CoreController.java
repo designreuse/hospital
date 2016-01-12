@@ -24,11 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.dpc.utils.Base64;
+import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.MD5;
 import com.dpc.utils.MD5Encoder;
+import com.dpc.utils.PageEntity;
+import com.dpc.utils.PageResult;
 import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
@@ -40,12 +43,15 @@ import com.dpc.web.mybatis3.domain.County;
 import com.dpc.web.mybatis3.domain.DistrictList;
 import com.dpc.web.mybatis3.domain.FeedBack;
 import com.dpc.web.mybatis3.domain.Hospital;
+import com.dpc.web.mybatis3.domain.Interface;
 import com.dpc.web.mybatis3.domain.Province;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.service.IBackDoctorService;
 import com.dpc.web.service.ICoreService;
 import com.dpc.web.service.IDistrictService;
 import com.dpc.web.service.IUserService;
+import com.google.gson.Gson;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -69,11 +75,38 @@ public class CoreController extends BaseController{
 	}
 	@RequestMapping(value = "/manager/view", method = RequestMethod.GET)
 	public String managerView(HttpSession session,HttpServletRequest request) throws IOException{
+		List<Admin> list = coreService.getAllManagerList();
+		if(list!=null&&list.size()>0){
+			for(Admin a : list){
+				if(!ValidateUtil.isEmpty(a.getProfileImageUrl())){
+					a.setProfileImageUrl(ConstantUtil.DOMAIN+a.getProfileImageUrl());
+				}
+			}
+		}
+		request.setAttribute("list", list);
 		return "/back/manager";
 	}
 	@RequestMapping(value = "/manager/add/view", method = RequestMethod.GET)
 	public String addManagerView(HttpSession session,HttpServletRequest request) throws IOException{
 		return "/back/addManager";
+	}
+	@RequestMapping(value = "/manager/updatePwd", method = RequestMethod.POST)
+	public String updatePwd(HttpSession session,HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String password = request.getParameter("password");
+		Admin admin = coreService.getAdminById(Integer.parseInt(id));
+		String salt = admin.getSalt();
+		Admin a = new Admin();
+		a.setId(Integer.parseInt(id));
+		a.setPassword(MD5Encoder.encrypt(password,salt));
+		coreService.updateAdmin(a);
+		return "redirect:/back/manager/view";
+	}
+	@RequestMapping(value = "/manager/resetpwd/view", method = RequestMethod.GET)
+	public String resetpwd(HttpSession session,HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		request.setAttribute("id", id);
+		return "/back/resetpwd";
 	}
 	@RequestMapping(value = "/manager/login/view", method = RequestMethod.GET)
 	public String managerLoginView(HttpSession session,HttpServletRequest request) throws IOException{
@@ -271,7 +304,24 @@ public class CoreController extends BaseController{
 	
 	@RequestMapping(value = "/hopital/import/view", method = RequestMethod.GET)
 	public String importHospitalView(HttpServletRequest request) throws IOException{
+		//获取省
+		List<Province> plist = coreService.getAllProvinceList();
+		request.setAttribute("plist", plist);
 		return "/back/common/importHospital";
+	}
+	@RequestMapping(value = "/getCity", method = RequestMethod.POST)
+	@ResponseBody
+	public String getCity(HttpServletRequest request) throws IOException{
+		String p = request.getParameter("p");
+		List<City> clist = coreService.getCityListByProvinceId(Integer.parseInt(p));
+		return JsonUtil.object2String(clist);
+	}
+	@RequestMapping(value = "/getCounty", method = RequestMethod.POST)
+	@ResponseBody
+	public String getCounty(HttpServletRequest request) throws IOException{
+		String cid = request.getParameter("cid");
+		List<County> clist = coreService.getCountyListByCityId(Integer.parseInt(cid));
+		return JsonUtil.object2String(clist);
 	}
 	
 	@RequestMapping(value = "/hopital/import", method = RequestMethod.POST)
@@ -389,4 +439,34 @@ public class CoreController extends BaseController{
 		}
 		return null;
 	}
+	@RequestMapping(value = "/getHospital", method = RequestMethod.POST)
+	@ResponseBody
+	public String getHospital(HttpSession session,HttpServletRequest request) throws IOException{
+		String params = request.getParameter("params");
+		List<Hospital> hospitals = districtService.getHospitalByIDs(params);
+		return JsonUtil.object2String(hospitals);
+	}
+	@RequestMapping(value = "/addHospital", method = RequestMethod.GET)
+	public String addHospital(HttpSession session,HttpServletRequest request) throws IOException{
+		//获取省
+		List<Province> plist = coreService.getAllProvinceList();
+		request.setAttribute("plist", plist);
+		
+		return "/back/common/addHospital";
+	}
+	
+	@RequestMapping(value = "/saveHospital", method = RequestMethod.POST)
+	public String saveHospital(HttpSession session,HttpServletRequest request) throws IOException{
+		String hospital = request.getParameter("hospital");
+		String pid = request.getParameter("pSel");
+		String cid = request.getParameter("citySel");
+		String tid = request.getParameter("countySel");
+		Hospital h = new Hospital();
+		h.setHospital(hospital);
+		h.setLocate(pid+"-"+cid+"-"+tid);
+		districtService.addHospital(h);
+		return "redirect:/back/hopital/import/view";
+	}
+	
+	
 }

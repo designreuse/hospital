@@ -3,6 +3,7 @@ package com.dpc.web.service;
 import java.util.List;
 
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -12,6 +13,7 @@ import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
+import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
 
 public interface IDoctorService {
 
@@ -65,5 +67,12 @@ public interface IDoctorService {
 
 	Doctor getDoctorById(Integer id);
 
-	
+	List<AcademicSupport> getAcademicSupportList();
+
+	AcademicSupport getAcademicSupportDetail(int id);
+
+	void takePartActivity(TakeAcademicSupport takeAcademicSupport);
+
+	TakeAcademicSupport getTakeAcademicSupport(TakeAcademicSupport t);
+
 }

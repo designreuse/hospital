@@ -20,4 +20,5 @@ public interface CityMapper {
 	Integer getCityIdByName(String province, String city);
 
 	List<City> getCitysByPid(int pid);
+
 }

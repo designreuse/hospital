@@ -104,6 +104,9 @@
   
   <select id="getProfile" parameterType="java.lang.Integer" resultType="patientVO">
   		select 
+  			u.username,
+  			u.registerTime,
+  			p.score,
 			u.name,
 			u.mobile,
 			(CASE u.agender WHEN 1 THEN "男" WHEN "2" THEN "女" END) AS agender,
@@ -210,29 +213,47 @@
 		 left join (select wr.wishId,user.name remarkUserName,user.profileImageUrl remarkProfileImage,wr.remark,wr.remarkTime from p_wish_remark wr left join t_user user on wr.userId=user.id) b on a.id=b.wishId 
   </select>
   
-   <select id="getPatientListWithPager" parameterType="patient" resultType="patientVO">
- 	select u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime 
-	from t_user u left join t_patient p on u.id=p.userId order by registerTime
-	limit #{start},#{limit}
-<!--   	<where> -->
-<!--  	 	<if test="article.delFlag != null"> -->
-<!--  	 		and delFlag = #{article.delFlag} -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.startDate != null and article.endDate != null"> -->
-<!--  	 		and postTime >= #{article.startDate} and #{article.endDate} >= postTime -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.category != null"> -->
-<!--  	 		and category = #{article.category} -->
-<!--  	 	</if> -->
-<!--  	 	<if test="article.type != null"> -->
-<!--  	 		and type = #{article.type} -->
-<!--  	 	</if> -->
-<!--  	</where> -->
+   <select id="getPatientListWithPager" parameterType="patientVO" resultType="patientVO">
+ 	select p.id,u.id as userId, u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime,u.agender,u.mobile,p.score
+	from t_user u left join t_patient p on u.id=p.userId 
+  	<where>
+ 	 	<if test="patient.name != null">
+ 	 		and u.name = #{patient.name}
+ 	 	</if>
+ 	 	<if test="patient.username != null">
+ 	 		and u.username = #{patient.username}
+ 	 	</if>
+ 	 	<if test="patient.startDate != null and patient.endDate != null">
+ 	 		and u.registerTime >= #{patient.startDate} and #{patient.endDate} >= u.registerTime
+ 	 	</if>
+ 	 	<if test="patient.mobile != null">
+ 	 		and u.mobile = #{mobile}
+ 	 	</if>
+ 	 	<if test="patient.startScore != null and patient.endScore != null">
+ 	 		and p.score >= #{patient.startScore} and #{patient.endScore} >= p.score
+ 	 	</if>
+ 	</where>
+ 	order by u.registerTime
+ 	limit #{start},#{limit}
  </select>
  
- <select id="getAllPatientCount" parameterType="patient" resultType="java.lang.Integer">
- 	select  count(*)
-	from   t_patient
+ <select id="getAllPatientCount" parameterType="patientVO" resultType="java.lang.Integer">
+ 	select count(*)
+	from t_user u left join t_patient p on u.id=p.userId 
+  	<where>
+ 	 	<if test="patient.name != null">
+ 	 		and u.name = #{patient.name}
+ 	 	</if>
+ 	 	<if test="patient.startDate != null and patient.endDate != null">
+ 	 		and u.registerTime >= #{patient.startDate} and #{patient.endDate} >= u.registerTime
+ 	 	</if>
+ 	 	<if test="patient.mobile != null">
+ 	 		and u.mobile = #{mobile}
+ 	 	</if>
+ 	 	<if test="patient.startScore != null and patient.endScore != null">
+ 	 		and p.score >= #{patient.startScore} and #{patient.endScore} >= p.score
+ 	 	</if>
+ 	</where>
  </select>
   
  <select id="hasRelationshipWithDoctor" parameterType="doctorPatientRelation" resultType="java.lang.Integer">
@@ -385,4 +406,5 @@
  <select id="getDoctorPatientRelationById" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
  		select * from t_doctor_patient where id=#{0}
  </select>
+ 
 </mapper>
