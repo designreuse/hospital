@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.dpc.utils.PageContext;
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.VO.Pager;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Announcement;
@@ -179,6 +182,28 @@ public class PatientServiceImpl implements IPatientService {
 	@Override
 	public DoctorPatientRelation getDoctorPatientRelationById(int id) {
 		return patientMapper.getDoctorPatientRelationById(id);
+	}
+
+	@Override
+	public Pager<Discovery> findDiscoveryByPaginaton(Discovery d) {
+		Integer start = PageContext.getStart();
+		Integer limit = PageContext.getLimit();
+		d.setStart(start);
+		d.setLimit(limit);
+		List<Discovery> datas = discoveryMapper.findDiscoveryByPaginaton(d,start,limit);
+		Integer totalCount = discoveryMapper.findDiscoveryTotal(d);
+		Pager<Discovery> pager = new Pager<Discovery>();
+		pager.setPageOffset(start);
+		pager.setPageSize(limit);
+		pager.setTotal(totalCount);
+		pager.setDatas(datas);
+		
+		return pager;	
+	}
+
+	@Override
+	public Discovery getDiscoveryDetailById(int id) {
+		return discoveryMapper.getDiscoveryImageDetail(id);
 	}
 	
 	

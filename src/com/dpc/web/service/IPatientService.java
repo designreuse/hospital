@@ -2,19 +2,15 @@ package com.dpc.web.service;
 
 import java.util.List;
 
+import com.dpc.web.VO.Pager;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Announcement;
-import com.dpc.web.mybatis3.domain.DiagnoseExperience;
-import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
-import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
-import com.dpc.web.mybatis3.domain.HeartCircle;
-import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
@@ -66,6 +62,10 @@ public interface IPatientService {
 	List<Announcement> getMydoctorAnnouncements(Integer id);
 
 	DoctorPatientRelation getDoctorPatientRelationById(int parseInt);
+
+	Pager<Discovery> findDiscoveryByPaginaton(Discovery d);
+
+	Discovery getDiscoveryDetailById(int parseInt);
 
 
 }

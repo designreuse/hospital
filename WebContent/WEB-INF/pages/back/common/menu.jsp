@@ -32,16 +32,16 @@
 	                        <a href="#"><i class="fa fa-edit"></i><span class="nav-label">审核认证管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
 	                            <li><a href="${ctx }/back/doctor/authentication/list">医生认证审核</a></li>
-	                            <li><a href="toastr_notifications.html">银行绑定认证</a></li>
+<!-- 	                            <li><a href="toastr_notifications.html">银行绑定认证</a></li> -->
 	                        </ul>
 	                    </li>
 	                    <li>
 	                        <a href="#"><i class="fa fa-desktop"></i><span class="nav-label">帖子管理</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">帖子列表(患者)</a></li>
-	                            <li><a href="toastr_notifications.html">新建帖子(患者)</a></li>
-	                            <li><a href="toastr_notifications.html">帖子列表(医生)</a></li>
-	                            <li><a href="toastr_notifications.html">新建帖子(医生)</a></li>
+	                            <li><a href="${ctx }/back/post/patient/list/view">帖子列表(患者)</a></li>
+	                            <li><a href="${ctx }/back/post/patient/add/view">新建帖子(患者)</a></li>
+	                            <li><a href="${ctx }/back/post/doctor/list/view">帖子列表(医生)</a></li>
+	                            <li><a href="${ctx }/back/post/doctor/add/view">新建帖子(医生)</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>
@@ -53,10 +53,10 @@
 	                    <li>
 	                        <a href="#"><i class="fa fa-flask"></i><span class="nav-label">设置</span><span class="fa arrow"></span></a>
 	                        <ul class="nav nav-second-level collapse">
-	                            <li><a href="toastr_notifications.html">修改密码</a></li>
+	                            <li><a href="${ctx }/back/toModifyPwd">修改密码</a></li>
 	                            <li><a href="${ctx }/back/feedback/list">意见反馈</a></li>
-	                            <li><a href="${ctx }/back/hopital/import/view">添加医院</a></li>
-	                            <li><a href="${ctx }/back/manager/view">添加管理员</a></li>
+	                            <li><a href="${ctx }/back/hopital/import/view">医院管理</a></li>
+	                            <li><a href="${ctx }/back/manager/view">管理员管理</a></li>
 	                        </ul>
 	                    </li>
 	                    <li>

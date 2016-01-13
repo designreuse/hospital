@@ -22,7 +22,7 @@
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
-    	<form action="${ctx }/back/saveHospital" method="POST" > 
+    	<form action="${ctx }/back/saveHospital" method="POST" id="hospitalForm"> 
 	       <div class="row">
 	       		<div class="col-sm-1"><label style="margin-top: 9px;font-size: 16px;" class="control-label">选择区域：</label></div>
 		 		<div class="col-sm-2">
@@ -138,5 +138,20 @@
 			}
 	 	});
 	}
+	
+	$(function(){
+		//登录表单校验
+		$("#hospitalForm").validate({
+			rules: {
+				hospital: {required: true}
+			},
+		    messages: {
+		    	hospital: {required:"请输入医院名称"}
+		 	},
+		 	submitHandler:function(form){
+		 		form.submit();
+	        }
+		});
+	});
 </script>
 </html>

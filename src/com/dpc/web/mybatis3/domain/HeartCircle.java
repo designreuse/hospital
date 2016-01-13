@@ -20,9 +20,15 @@ public class HeartCircle {
     private String creTime;
     
     private Integer doctorId;
+    private Integer delFlag;
     
     private List<HeartCircleRemark> remarkList;
     private List<HeartCircleImage> imageList;
+    
+    private Integer start;
+    private Integer limit;
+    private String name;
+    private String username;
     public List<HeartCircleRemark> getRemarkList() {
 		return remarkList;
 	}
@@ -33,6 +39,14 @@ public class HeartCircle {
 
 	public List<HeartCircleImage> getImageList() {
 		return imageList;
+	}
+
+	public Integer getDelFlag() {
+		return delFlag;
+	}
+
+	public void setDelFlag(Integer delFlag) {
+		this.delFlag = delFlag;
 	}
 
 	public void setImageList(List<HeartCircleImage> imageList) {
@@ -101,6 +115,38 @@ public class HeartCircle {
 
 	public void setCreTime(String creTime) {
 		this.creTime = creTime;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }

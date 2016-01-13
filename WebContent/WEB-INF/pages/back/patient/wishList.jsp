@@ -44,16 +44,16 @@
                          	 	<div class="form-group col-lg-3">
 		                             <div class="form-group"  style="margin-left: 50px;">
 		                                 <label for="">心愿状态：</label>
-		                                 <select class="form-group" name="isComeTrue">
+		                                 <select class="form-control" name="isComeTrue">
 		                                 	<option value="-1">请选择</option>
 		                                 	<option value="1">已实现</option>
-		                                 	<option value="">未实现</option>
+		                                 	<option value="0">未实现</option>
 		                                 </select>
 		                             </div>
 		                         </div>
-                         	 	<div class="form-group col-lg-3">
-		                             <div class="form-group"  style="margin-left: 50px;">
-		                                 <button type="submit" class="btn btn-primary">查询</button>	          
+                         	 	<div class="form-group">
+		                             <div class="form-group" >
+		                                 <button type="submit" class="btn btn-w-m  btn-primary">查询</button>	          
 		                             </div>
 		                         </div>
                              </div>

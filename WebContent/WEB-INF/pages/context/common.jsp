@@ -56,6 +56,8 @@
 <script src="${ctx }/static/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
 <script src="${ctx }/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script src="${ctx }/static/js/common.js"></script>
+<script src="${ctx }/static/js/plugins/validate/jquery.validate.min.js"></script>
+<script src="${ctx }/static/js/plugins/My97DatePicker/WdatePicker.js"></script>
 
 
 <script type="text/javascript" charset="utf-8" src="${ctx }/static/js/plugins/UEditor/ueditor.config.js"></script>

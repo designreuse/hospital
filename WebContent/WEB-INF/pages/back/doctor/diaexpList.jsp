@@ -18,7 +18,6 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -26,7 +25,7 @@
           <div class="col-lg-12">
 				<div class="ibox float-e-margins">
 					<div class="ibox-content">
-                         <form role="form" class="form-inline" method="GET" action="${ctx }/back/doctor/list">
+                         <form role="form" class="form-inline" method="GET" action="${ctx }/back/doctor/diaexp/list">
                          	 <div class="row show-grid">
                          	 	<div class="form-group col-lg-3">
 	                         	 	<div class="form-group" style="margin-left: 39px;">
@@ -43,7 +42,8 @@
                          	 	<div class="form-group col-lg-3">
 		                             <div class="form-group"  style="margin-left: 50px;">
 		                                 <label for="">发表时间：</label>
-		                                 <input type="text" name="name" class="form-control">
+		                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+		                                 <input type="text" name="name" class="form-control" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 		                             </div>
 		                         </div>
                          	 	<div class="form-group col-lg-3">

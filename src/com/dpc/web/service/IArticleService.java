@@ -32,5 +32,7 @@ public interface IArticleService {
 
 	List<Article> getArticlesLately();
 
+	Article getArticleDetailById(int parseInt);
+
 	
 }

@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.utils.PageContext;
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
+import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.HeartCircle;
@@ -186,7 +189,7 @@ public class DoctorServiceImpl implements IDoctorService {
 
 	@Override
 	public void updateHeartCircle(HeartCircle circle) {
-		heartCircleMapper.updateByPrimaryKey(circle);
+		heartCircleMapper.updateByPrimaryKeySelective(circle);
 	}
 
 	@Override
@@ -215,4 +218,26 @@ public class DoctorServiceImpl implements IDoctorService {
 		return takeAcademicSupportMapper.getTakeAcademicSupport(t);
 	}
 
+	@Override
+	public Pager<HeartCircle> findHeartCircleByPaginaton(HeartCircle h) {
+		Integer start = PageContext.getStart();
+		Integer limit = PageContext.getLimit();
+		h.setStart(start);
+		h.setLimit(limit);
+		List<HeartCircle> datas = heartCircleMapper.findHeartCircleByPaginaton(h,start,limit);
+		Integer totalCount = heartCircleMapper.getHeartCircleCount(h);
+		Pager<HeartCircle> pager = new Pager<HeartCircle>();
+		pager.setPageOffset(start);
+		pager.setPageSize(limit);
+		pager.setTotal(totalCount);
+		pager.setDatas(datas);
+		
+		return pager;	
+	}
+
+	@Override
+	public HeartCircle getHeartCircleDetailById(int id) {
+		return heartCircleMapper.getHeartCircleImageDetail(id);
+	}
+	
 }

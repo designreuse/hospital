@@ -2,6 +2,9 @@ package com.dpc.web.mybatis3.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
@@ -32,4 +35,10 @@ public interface HeartCircleMapper {
 	List<HeartCircleImage> getHeartCircleImageListByHeartCircleId(int hcId);
 
 	HeartCircle getHeartCircleById(int id);
+	
+	List<HeartCircle> findHeartCircleByPaginaton(@Param("h") HeartCircle h, @Param("start") Integer start, @Param("limit") Integer limit);
+
+	Integer getHeartCircleCount(@Param("h") HeartCircle h);
+
+	HeartCircle getHeartCircleImageDetail(int id);
 }

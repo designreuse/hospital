@@ -3,7 +3,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>诊后心得列表</title>
+<title>意见反馈</title>
 </head>
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
@@ -11,14 +11,13 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>诊后心得</h2>
+             <h2>意见反馈</h2>
              <ol class="breadcrumb">
                  <li><a href="${ctx}/back/home">首页</a></li>
-                 <li class="active">诊后心得</li>
+                 <li class="active">意见反馈</li>
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -27,41 +26,42 @@
 				<div class="ibox float-e-margins">
 					<div class="ibox float-e-margins">
                         <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/feedback/list">
-                       		<div class="col-lg-12">
-                       			<label class="col-lg-1 control-label">用户名：</label>
-	                          	<div class="form-group col-lg-2">
-	                                <div class="input-group date">
-	                                    <input type="text" class="form-control" name="username" />
-	                                </div>
-	                            </div>
-                       			<label class="col-lg-1 control-label">开始时间：</label>
-	                          	<div class="form-group col-lg-2" id="startDate">
+                        <div class="row">
+                        	<div class="col-md-1 text-right">用户名：</div>
+                            <div class="col-md-2"><input type="text" class="form-control" name="username" /></div>
+                            <div class="col-md-1 text-right">开始时间：</div>
+                            <div class="col-md-2">
+                            	<div class="form-group" id="startDate">
 	                                <div class="input-group date">
 	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
 	                                </div>
 	                            </div>
-	                          	<label class="col-lg-1 control-label">结束时间：</label>
-	                          	<div class="form-group col-lg-2" id="endDate">
+                            </div>
+                            <div class="col-md-1 text-right">结束时间：</div>
+                            <div class="col-md-2">
+	                          	<div class="form-group" id="endDate">
 	                                <div class="input-group date">
 	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
 	                                </div>
-	                            </div>
-	                          	<label class="col-lg-1 control-label">操作状态：</label>
-	                          	<div class="form-group col-lg-2">
-	                                <div class="input-group">
-	                                    <select class="form-control" name="status">
-	                                    	<option value="-1">全部</option>
-	                                    	<option value="0">待回复</option>
-	                                    	<option value="1">已回复</option>
-	                                    </select>
-	                                </div>
-	                            </div>
-	                          	<div class="form-group col-lg-1" id="endDate">
-	                                <button class="btn btn-success col-md-offset-3" type="submit">查询</button>
-	                            </div>
-                       		</div>
+	                            </div>                            	
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 text-right">操作状态：</div>
+                            <div class="col-md-2">
+                            	 <select class="form-control" name="status">
+	                            	<option value="-1">全部</option>
+	                            	<option value="0">待回复</option>
+	                            	<option value="1">已回复</option>
+	                            </select>
+                            </div>
+                            <div class="col-md-2">
+                             	<div class="col-md-1 text-right"></div>
+                            	 <button type="submit" class="btn btn-w-m btn-success">查询</button>
+                            </div>
+                        </div>
                         </form>
                 </div>
 				</div>
@@ -93,7 +93,7 @@
 									<c:if test="${item.status==1}">已回复</c:if>
 								</td>
 								<td id="reply${item.id}">${item.reply}</td>
-								<td>手术费</td>
+								<td>${operator }</td>
 								<td><button  class="btn btn-success" onclick="preReply('${item.id}')">回复</button></td>
 							</tr>
 						</c:forEach>

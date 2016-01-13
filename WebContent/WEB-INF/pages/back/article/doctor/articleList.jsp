@@ -24,17 +24,17 @@
                         <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/article/list/1">
                        		<div class="col-lg-12">
                        			<label class="col-lg-1 control-label">开始时间：</label>
-	                          	<div class="form-group col-lg-2" id="startDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
 	                          	<label class="col-lg-1 control-label">结束时间：</label>
-	                          	<div class="form-group col-lg-2" id="endDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
                             <label class="col-lg-1 control-label">是否删除：</label>

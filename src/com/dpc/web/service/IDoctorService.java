@@ -3,6 +3,7 @@ package com.dpc.web.service;
 import java.util.List;
 
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
@@ -74,5 +75,9 @@ public interface IDoctorService {
 	void takePartActivity(TakeAcademicSupport takeAcademicSupport);
 
 	TakeAcademicSupport getTakeAcademicSupport(TakeAcademicSupport t);
+
+	Pager<HeartCircle> findHeartCircleByPaginaton(HeartCircle h);
+
+	HeartCircle getHeartCircleDetailById(int parseInt);
 
 }

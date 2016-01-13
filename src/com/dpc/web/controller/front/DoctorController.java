@@ -237,7 +237,7 @@ public class DoctorController extends BaseController{
 		circle.setDoctorId(u.getId());
 		circle.setProfileImage(u.getProfileImageUrl());
 		circle.setRemarkCount(0);
-		
+		circle.setDelFlag(0);
 		doctorService.addHeartCircle(circle,imageUrls);
 		return success();
 	}

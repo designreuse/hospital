@@ -305,6 +305,7 @@ public class PatientController extends BaseController{
 		discovery.setRemarkCount(0);
 		discovery.setDelFlag(0);
 		discovery.setUserId(u.getId());
+		discovery.setType(2);
 		discovery.setContent(content);
 		patientService.addDiscovery(discovery,imageUrls);
 		
@@ -603,13 +604,31 @@ public class PatientController extends BaseController{
 		Map<String, Object> result = new HashMap<String, Object>();
 		//获取疾病下文章列表
 		List<Article> articleList = articleService.getArticlesByIllType(Integer.parseInt(illType));
-		
+		if(articleList!=null&&articleList.size()>0){
+			for(Article a : articleList){
+				if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
+					a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+				}
+			}
+		}
 		//获取心视频列表
 		List<Article> vedioList = articleService.getHeartVedioList();
-		
+		if(vedioList!=null&&vedioList.size()>0){
+			for(Article a : vedioList){
+				if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
+					a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+				}
+			}
+		}
 		//获取心漫画列表
 		List<Article> cartoonList = articleService.getCartoonList();
-		
+		if(cartoonList!=null&&cartoonList.size()>0){
+			for(Article a : cartoonList){
+				if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
+					a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+				}
+			}
+		}
 		result.put("heart_knowledge", articleList);
 		result.put("heart_vedio", vedioList);
 		result.put("heart_cartoon", cartoonList);
@@ -634,12 +653,33 @@ public class PatientController extends BaseController{
 		Integer b = 0;
 		Integer c = 0;
 		if(articleList!=null&&articleList.size()>0){
+			if(cartoonList!=null&&cartoonList.size()>0){
+				for(Article article : cartoonList){
+					if(!ValidateUtil.isEmpty(article.getCoverImageUrl())){
+						article.setCoverImageUrl(ConstantUtil.DOMAIN+article.getCoverImageUrl());
+					}
+				}
+			}
 			a= articleList.size();
 		}
 		if(vedioList!=null&&vedioList.size()>=0){
+			if(vedioList!=null&&vedioList.size()>0){
+				for(Article article : vedioList){
+					if(!ValidateUtil.isEmpty(article.getCoverImageUrl())){
+						article.setCoverImageUrl(ConstantUtil.DOMAIN+article.getCoverImageUrl());
+					}
+				}
+			}
 			b=vedioList.size();
 		}
 		if(cartoonList!=null&&cartoonList.size()>=0){
+			if(cartoonList!=null&&cartoonList.size()>0){
+				for(Article article : cartoonList){
+					if(!ValidateUtil.isEmpty(article.getCoverImageUrl())){
+						article.setCoverImageUrl(ConstantUtil.DOMAIN+article.getCoverImageUrl());
+					}
+				}
+			}
 			c=cartoonList.size();
 		}
 		if(articleList!=null&&articleList.size()>=3){

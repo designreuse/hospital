@@ -31,7 +31,7 @@
                                    <div class="col-lg-6"><input type="text" name="username" class="form-control"></div>
                                </div>
                                <div class="form-group"><label class="col-lg-2 control-label">密码</label>
-                                   <div class="col-lg-6"><input type="password" name="password" class="form-control"></div>
+                                   <div class="col-lg-6"><input type="password" id="password" name="password" class="form-control"></div>
                                </div>
                                <div class="form-group"><label class="col-lg-2 control-label">确认密码</label>
                                    <div class="col-lg-6"><input type="password" name="cfmPwd" class="form-control"></div>
@@ -56,5 +56,24 @@
 </div>
 </body>
 <script type="text/javascript">
+
+$(function(){
+	//登录表单校验
+	$("#articleform").validate({
+		rules: {
+			username: {required: true},
+			password: {required: true},
+			cfmPwd: {required: true,equalTo:"#password"}
+		},
+	    messages: {
+	    	username: {required:"请输入用户名"},
+			password: {required:"请输入密码"},
+			cfmPwd: {required:"请输入确认密码",equalTo:"确认密码和密码不一致"}
+	 	},
+	 	submitHandler:function(form){
+	 		form.submit();
+        }
+	});
+});
 </script>
 </html>

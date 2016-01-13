@@ -32,10 +32,12 @@ public class ConstantUtil {
 	}
 	
 	public static class IllType{
-		public final static Integer SAN_GAO        = 1;	//三高
-		public final static Integer GUAN_XIN_BING  = 2;	//冠心病
-		public final static Integer XIN_GENG       = 3;	//心梗
-		public final static Integer XIN_SHUAI      = 4;	//心衰
+		public final static Integer BANNER_SLIDE   = 1; //首页轮播图 
+		public final static Integer H5_LINK        = 2; //首页H5链接
+		public final static Integer SAN_GAO        = 3;	//三高
+		public final static Integer GUAN_XIN_BING  = 4;	//冠心病
+		public final static Integer XIN_GENG       = 5;	//心梗
+		public final static Integer XIN_SHUAI      = 6;	//心衰
 	}
 	
 	//session过期类型---单位：分钟

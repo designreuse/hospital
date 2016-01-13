@@ -44,10 +44,10 @@
                             </div>
                             
                             <label>发表时间：</label>
-                            <div class="form-group" id="creTime">
-                                <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    <input type="text" class="form-control" name="creTime" value="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" name="creTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
                                 </div>
                             </div>
                             <div class="input-group">
@@ -114,14 +114,6 @@ function exchange(){
 	
 }
 $(function(){
-	$('#creTime .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: true,
-        forceParse: true,
-        calendarWeeks: true,
-        autoclose: true
-    });
-	
 	$("#addActivity").on("click",function(){
 		window.location.href = "${ctx }/back/doctor/academicSupport/add/view";
 	});

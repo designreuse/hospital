@@ -3,7 +3,7 @@
 <!DOCTYPE>
 <html>
 <head>
-<title>诊后心得列表</title>
+<title>医生认证审核列表</title>
 </head>
 <body>
 <%@ include file="/WEB-INF/pages/back/common/head.jsp"%>
@@ -11,10 +11,10 @@
 <div id="page-wrapper" class="gray-bg">
     <div class="row wrapper border-bottom white-bg page-heading">
          <div class="col-lg-10">
-             <h2>诊后心得</h2>
+             <h2>医生认证审核列表</h2>
              <ol class="breadcrumb">
                  <li><a href="${ctx}/back/home">首页</a></li>
-                 <li class="active">诊后心得</li>
+                 <li class="active">医生认证审核列表</li>
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
@@ -29,17 +29,17 @@
                         <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/doctor/authentication/list">
                        		<div class="col-lg-12">
                        			<label class="col-lg-1 control-label">开始时间：</label>
-	                          	<div class="form-group col-lg-2" id="startDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
 	                          	<label class="col-lg-1 control-label">结束时间：</label>
-	                          	<div class="form-group col-lg-2" id="endDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
 	                          	<div class="form-group col-lg-2" id="endDate">

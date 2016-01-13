@@ -94,10 +94,14 @@ public class ArticleController extends BaseController{
 	
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
 	public String getArticleDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
-		Article article = articleService.getArticleById(Integer.parseInt(id));
+		Article article = articleService.getArticleDetailById(Integer.parseInt(id));
 		article.setCoverImageUrl(ConstantUtil.DOMAIN+article.getCoverImageUrl());
 		request.setAttribute("article", article);
-		return "/back/article/doctor/articleDetail";
+		if(article.getType()==1){
+			return "/back/article/doctor/articleDetail";
+		}else{
+			return "/back/article/patient/articleDetail";
+		}
 	}
 	
 	
@@ -144,7 +148,7 @@ public class ArticleController extends BaseController{
 		return "redirect:/back/article/list/"+article.getType();
 	}
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String updateDoctorArticle(HttpSession session,HttpServletRequest request,Article article) throws IOException{
+	public String updateArticle(HttpSession session,HttpServletRequest request,Article article) throws IOException{
 		List<MultipartFile> images = null;
 		List<String> imageUrls = null;
 		if (request instanceof MultipartHttpServletRequest){
@@ -161,8 +165,7 @@ public class ArticleController extends BaseController{
 		}
 		article.setDelFlag(0);
 		articleService.update(article);
-		
-		return "redirect:/back/article/list/1";
+		return "redirect:/back/article/list/"+article.getType();
 	}
 	
 	

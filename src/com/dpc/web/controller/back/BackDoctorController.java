@@ -372,20 +372,20 @@ public class BackDoctorController extends BaseController{
 		//获取所有的医生
 		List<DoctorVO> list = doctorService.getAllDoctorList();
 		if(list!=null&&list.size()>0){
-			for(int i=1;i<list.size();i++){
+			for(int i=0;i<list.size();i++){
 				DoctorVO d = list.get(i);
-				sheet.addCell(new Label(0,i+1,d.getName()));
-				sheet.addCell(new Label(1,i+1,d.getMobile()));
-				sheet.addCell(new Label(2,i+1,"李明"));
-				sheet.addCell(new Label(3,i+1,"李明"));
-				sheet.addCell(new Label(4,i+1,"李明"));
-				sheet.addCell(new Label(5,i+1,"李明"));
-				sheet.addCell(new Label(6,i+1,"李明"));
-				sheet.addCell(new Label(7,i+1,"李明"));
-				sheet.addCell(new Label(8,i+1,"李明"));
-				sheet.addCell(new Label(9,i+1,"李明"));
-				sheet.addCell(new Label(10,i+1,"李明"));
-				sheet.addCell(new Label(11,i+1,"李明"));
+				sheet.addCell(new Label(0,i+2,d.getName()));
+				sheet.addCell(new Label(1,i+2,d.getMobile()));
+				sheet.addCell(new Label(2,i+2,d.getHospital()));
+				sheet.addCell(new Label(3,i+2,d.getDepartment()));
+				sheet.addCell(new Label(4,i+2,d.getTeachingTitle()));
+				sheet.addCell(new Label(5,i+2,"李明"));
+				sheet.addCell(new Label(6,i+2,"李明"));
+				sheet.addCell(new Label(7,i+2,"李明"));
+				sheet.addCell(new Label(8,i+2,"李明"));
+				sheet.addCell(new Label(9,i+2,d.getScore().toString()));
+				sheet.addCell(new Label(10,i+2,"李明"));
+				sheet.addCell(new Label(11,i+2,d.getRegisterTime()));
 			}
 		}
 		//将定义的工作表输出到之前指定的介质中（这里是客户端浏览器）

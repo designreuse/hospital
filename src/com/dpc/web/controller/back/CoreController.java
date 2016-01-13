@@ -205,6 +205,8 @@ public class CoreController extends BaseController{
 		
 		Pager<FeedBack> page = coreService.findFeedBackByPaginaton(feedBack);
 		request.setAttribute("page", page);
+		Admin a = (Admin) session.getAttribute("admin");
+		request.setAttribute("operator", a.getName());
 		return "/back/common/feedbackList";
 
 	}
@@ -466,6 +468,24 @@ public class CoreController extends BaseController{
 		h.setLocate(pid+"-"+cid+"-"+tid);
 		districtService.addHospital(h);
 		return "redirect:/back/hopital/import/view";
+	}
+	@RequestMapping(value = "/toModifyPwd", method = RequestMethod.GET)
+	public String toModifyPwd(HttpSession session,HttpServletRequest request) throws IOException{
+		
+		return "/back/common/modifyPwd";
+	}
+	
+	@RequestMapping(value = "/modifyPwd", method = RequestMethod.POST)
+	public String modifyPwd(HttpSession session,HttpServletRequest request) throws IOException{
+		Admin a = (Admin) session.getAttribute("admin");
+		String password = request.getParameter("newPwd");
+		Integer id = a.getId();
+		String salt = a.getSalt();
+		a = new Admin();
+		a.setId(id);
+		a.setPassword(MD5Encoder.encrypt(password, salt));
+		coreService.updateAdmin(a);
+		return "redirect:/back/toModifyPwd";
 	}
 	
 	

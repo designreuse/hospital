@@ -53,18 +53,18 @@
 	                             </div>
                              </div>
                              <div class="row show-grid">
-                             	<div class="form-group col-lg-3"  id="startDate">
+                             	<div class="form-group col-lg-3">
 	                                 <label for="">注册起始时间：</label>
-	                                 <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
+	                                 <div class="input-group">
+	                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                             </div>
-	                             <div class="form-group col-lg-3"  id="endDate">
+	                             <div class="form-group col-lg-3">
 	                                 <label for="">注册终止时间：</label>
-	                                 <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
+	                                 <div class="input-group">
+	                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                             </div>
                              	<div class="form-group col-lg-3">
@@ -156,22 +156,5 @@ function exchange(){
 function exchage_record(){
 	
 }
-$(function(){
-	$('#startDate .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: true,
-        forceParse: true,
-        calendarWeeks: true,
-        autoclose: true
-    });
-	
-	$('#endDate .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: true,
-        forceParse: true,
-        calendarWeeks: true,
-        autoclose: true
-    });
-});
 </script>
 </html>

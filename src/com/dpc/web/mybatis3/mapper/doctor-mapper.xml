@@ -401,7 +401,8 @@
 		d.hospital,
 		d.department,
 		d.technicalTitle,
-		u.registerTime
+		u.registerTime,
+		d.score
  	from t_doctor d left join t_user u on d.userId=u.id
  </select>
  

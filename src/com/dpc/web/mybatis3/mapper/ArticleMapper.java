@@ -33,4 +33,6 @@ public interface ArticleMapper {
 
 	List<Article> getCartoonList();
 	List<Article> getArticlesLately();
+
+	Article getArticleDetailById(int id);
 }

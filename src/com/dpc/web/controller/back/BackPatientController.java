@@ -85,7 +85,7 @@ public class BackPatientController extends BaseController{
 		if(!ValidateUtil.isEmpty(patientName)){
 			wish.setPatientName(patientName);
 		}
-		if(!ValidateUtil.isEmpty(isComeTrue)){
+		if(!ValidateUtil.isEmpty(isComeTrue) && !isComeTrue.equals("-1")){
 			wish.setIsComeTrue(Integer.parseInt(isComeTrue));
 		}
 		if(!ValidateUtil.isEmpty(mobile)){

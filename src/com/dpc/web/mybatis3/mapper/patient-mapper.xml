@@ -286,7 +286,7 @@
 		w.userId,
 		u.name patientName,
 		w.content,
-		date_format(w.postTime, '%Y-%m-%d %k:%i') as postTime,
+		date_format(w.postTime, '%Y-%m-%d %k:%i:%s') as postTime,
 		w.isComeTrue,
  		u.mobile,
  		wr.remark
@@ -302,7 +302,7 @@
  	select count(*)
  	from p_wish w left join t_user u on w.userId=u.id
  	<where>
- 		<if test="wish.patientName !=null">patientName = #{wish.patientName}</if>
+ 		<if test="wish.patientName !=null">u.name = #{wish.patientName}</if>
  		<if test="wish.isComeTrue !=null"> and isComeTrue = #{wish.isComeTrue}</if>
  		<if test="wish.mobile !=null"> and u.mobile = #{wish.mobile}</if>
  	</where>
@@ -356,6 +356,9 @@
     <set >
       <if test="remarkCount != null" >
         remarkCount = #{remarkCount,jdbcType=INTEGER},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag},
       </if>
     </set>
     <where>

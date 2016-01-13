@@ -89,6 +89,11 @@ public class ArticleServiceImpl implements IArticleService {
 		return articleMapper.getArticlesLately();
 	}
 
+	@Override
+	public Article getArticleDetailById(int id) {
+		return articleMapper.getArticleDetailById(id);
+	}
+
 	
 	
 }

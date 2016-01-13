@@ -20,6 +20,7 @@ public class Discovery {
     private String postTime;
 
     private Integer delFlag;
+    private Integer type;
     
     //非持久化字段
     private List<DiscoveryImage> imageList;
@@ -27,10 +28,19 @@ public class Discovery {
     private Integer start;
     private Integer limit;
     private String name;
+    private String username;
     private String profileImageUrl;
     
 	public String getName() {
 		return name;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public void setName(String name) {
@@ -131,6 +141,14 @@ public class Discovery {
 
 	public void setImageList(List<DiscoveryImage> imageList) {
 		this.imageList = imageList;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	

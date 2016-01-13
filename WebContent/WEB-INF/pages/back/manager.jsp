@@ -55,7 +55,7 @@
 		                                	<c:if test="${admin.level !=1}">普通管理员</c:if>
 		                                </td>
 		                                <td>
-		                                	<img alt="" src="${admin.profileImageUrl }">
+		                                	<img width="120" height="100" alt="" src="${admin.profileImageUrl }">
 		                                </td>
 		                                <td>
 		                                	<button type="button" class="btn btn-w-m btn-primary" onclick="resetpwd('${admin.id }')">密码重置</button>

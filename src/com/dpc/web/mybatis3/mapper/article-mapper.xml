@@ -1,45 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dpc.web.mybatis3.mapper.ArticleMapper" >
-  <resultMap id="BaseResultMap" type="article" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="title" property="title" jdbcType="VARCHAR" />
-    <result column="category" property="category" jdbcType="TINYINT" />
-    <result column="resource" property="resource" jdbcType="VARCHAR" />
-    <result column="linkType" property="linkType" jdbcType="TINYINT" />
-    <result column="videoUrl" property="videoUrl" jdbcType="VARCHAR" />
-    <result column="H5Url" property="h5Url" jdbcType="VARCHAR" />
-    <result column="coverImageUrl" property="coverImageUrl" jdbcType="VARCHAR" />
-    <result column="postTime" property="postTime" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="TINYINT" />
-    <result column="illType" property="illType" jdbcType="TINYINT" />
-    <result column="delFlag" property="delFlag" jdbcType="TINYINT" />
-	<result column="content" property="content" jdbcType="VARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, title, category, resource, linkType, videoUrl, H5Url, coverImageUrl, postTime,content,
-    type, illType, delFlag
-  </sql>
   
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="article">
   	select * from t_article where id = #{0} and delFlag=0
-  
   </select>
+  
+  <select id="getArticleDetailById" parameterType="java.lang.Integer" resultType="article">
+  	select * from t_article where id = #{0} 
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     update t_article set delFlag=1 where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="article" >
-    insert into t_article (id, title, category, 
-      resource, linkType, videoUrl, 
-      H5Url, coverImageUrl, postTime, 
-      type, illType, delFlag, 
-      content)
-    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{category,jdbcType=TINYINT}, 
-      #{resource,jdbcType=VARCHAR}, #{linkType,jdbcType=TINYINT}, #{videoUrl,jdbcType=VARCHAR}, 
-      #{h5Url,jdbcType=VARCHAR}, #{coverImageUrl,jdbcType=VARCHAR}, #{postTime,jdbcType=VARCHAR}, 
-      #{type,jdbcType=TINYINT}, #{illType,jdbcType=TINYINT}, #{delFlag,jdbcType=TINYINT}, 
-      #{content,jdbcType=LONGVARCHAR})
-  </insert>
+  
   <insert id="insertSelective" parameterType="article" >
     insert into t_article
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -58,11 +32,8 @@
       <if test="linkType != null" >
         linkType,
       </if>
-      <if test="videoUrl != null" >
-        videoUrl,
-      </if>
-      <if test="h5Url != null" >
-        H5Url,
+      <if test="linkUrl != null" >
+        linkUrl,
       </if>
       <if test="coverImageUrl != null" >
         coverImageUrl,
@@ -99,11 +70,8 @@
       <if test="linkType != null" >
         #{linkType,jdbcType=TINYINT},
       </if>
-      <if test="videoUrl != null" >
-        #{videoUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="h5Url != null" >
-        #{h5Url,jdbcType=VARCHAR},
+      <if test="linkUrl != null" >
+        #{linkUrl,jdbcType=VARCHAR},
       </if>
       <if test="coverImageUrl != null" >
         #{coverImageUrl,jdbcType=VARCHAR},
@@ -140,11 +108,8 @@
       <if test="linkType != null" >
         linkType = #{linkType,jdbcType=TINYINT},
       </if>
-      <if test="videoUrl != null" >
-        videoUrl = #{videoUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="h5Url != null" >
-        H5Url = #{h5Url,jdbcType=VARCHAR},
+      <if test="linkUrl != null" >
+        linkUrl = #{linkUrl,jdbcType=VARCHAR},
       </if>
       <if test="coverImageUrl != null" >
         coverImageUrl = #{coverImageUrl,jdbcType=VARCHAR},
@@ -183,29 +148,15 @@
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="article" >
-    update t_article
-    set title = #{title,jdbcType=VARCHAR},
-      category = #{category,jdbcType=TINYINT},
-      resource = #{resource,jdbcType=VARCHAR},
-      linkType = #{linkType,jdbcType=TINYINT},
-      videoUrl = #{videoUrl,jdbcType=VARCHAR},
-      H5Url = #{h5Url,jdbcType=VARCHAR},
-      coverImageUrl = #{coverImageUrl,jdbcType=VARCHAR},
-      postTime = #{postTime,jdbcType=VARCHAR},
-      type = #{type,jdbcType=TINYINT},
-      illType = #{illType,jdbcType=TINYINT},
-      delFlag = #{delFlag,jdbcType=TINYINT}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
   
   <select id="getArticlePagerByType" resultType="article">
   	select 
   		id,
+  		illType,
   		category,
   		title,
   		coverImageUrl,
-  		date_format(postTime, '%Y-%m-%d') as postTime,
+  		date_format(postTime, '%Y-%m-%d %H:%i:%s') as postTime,
   		delFlag
   	from t_article 
   	<where>
@@ -217,6 +168,9 @@
  	 	</if>
  	 	<if test="article.category != null">
  	 		and category = #{article.category}
+ 	 	</if>
+ 	 	<if test="article.illType != null">
+ 	 		and illType = #{article.illType}
  	 	</if>
  	 	<if test="article.type != null">
  	 		and type = #{article.type}

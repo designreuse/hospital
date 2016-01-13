@@ -18,6 +18,15 @@
     	<result column="remarkTime" property="creTime" jdbcType="TIMESTAMP" />
     </collection>
   </resultMap>
+  <resultMap id="heartCirclePageMap" type="heartCircle" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="creTime" property="creTime" jdbcType="TIMESTAMP" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <collection property="imageList" ofType="heartCircleImage">
+    	<result column="imageUrl" property="imageUrl" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
   <sql id="Base_Column_List" >
     id, profileImage, doctorId,doctorName, images, content, remarkCount, creTime
   </sql>
@@ -60,6 +69,9 @@
       <if test="creTime != null" >
         creTime,
       </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="profileImage != null" >
@@ -80,6 +92,9 @@
       <if test="creTime != null" >
         #{creTime,jdbcType=VARCHAR},
       </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="heartCircle" >
@@ -96,6 +111,9 @@
       </if>
       <if test="creTime != null" >
         creTime = #{creTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -186,5 +204,34 @@
   	select * from d_heart_circle where id = #{0}
   </select>
   
+  <select id="findHeartCircleByPaginaton" parameterType="heartCircle" resultMap="heartCirclePageMap">
+	  SELECT
+	  	 a.id,u.username,DATE_FORMAT(a.creTime, "%Y-%m-%d %l:%i:%s") creTime,a.content,b.imageUrl from d_heart_circle a 
+	  LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId  
+	  left join t_user u on u.id=a.doctorId 
+	  <where>
+	  	a.delFlag=0
+	  	<if test="h.username != null"> and u.username = #{h.username}</if>
+	  	<if test="h.creTime != null"> and DATE_FORMAT(a.creTime, "%Y-%m-%d") = #{h.creTime}</if>
+	  </where>
+	  order by a.creTime desc
+ 	  limit #{start},#{limit}
+  </select>
+  <select id="getHeartCircleCount" parameterType="heartCircle" resultType="java.lang.Integer">
+	 SELECT count(distinct(a.id)) from d_heart_circle a LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId 
+	 <where>
+	  	a.delFlag=0
+	  	<if test="h.username != null"> and u.username = #{h.username}</if>
+	  	<if test="h.creTime != null"> 
+	  		and DATE_FORMAT(a.creTime, "%Y-%m-%d") = #{h.creTime}
+	  	</if>
+	  </where>
+  </select>
+  
+  <select id="getHeartCircleImageDetail" parameterType="java.lang.Integer" resultMap="heartCirclePageMap">
+	   SELECT a.id,u.username,DATE_FORMAT(a.creTime, "%Y-%m-%d %l:%i:%s") creTime,a.content,b.imageUrl from d_heart_circle a 
+	   LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId  
+	   LEFT JOIN t_user u on u.id=a.doctorId  where a.id = #{0}
+  </select>
   
 </mapper>

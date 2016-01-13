@@ -21,17 +21,17 @@
                         <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/article/list/2">
                        		<div class="col-lg-12">
                        			<label class="col-lg-1 control-label">开始时间：</label>
-	                          	<div class="form-group col-lg-2" id="startDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="startDate" id="startDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
 	                          	<label class="col-lg-1 control-label">结束时间：</label>
-	                          	<div class="form-group col-lg-2" id="endDate">
-	                                <div class="input-group date">
-	                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="endDate" id="endDate" value="">
+	                          	<div class="form-group col-lg-2">
+	                                <div class="input-group">
+	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 	                                </div>
 	                            </div>
 	                            <label class="col-lg-1 control-label">是否删除：</label>
@@ -44,30 +44,30 @@
 	                            </div>
                        		</div>
                           	<div class="col-lg-12">
-                          		<label class="col-lg-1 control-label">文章分类：  </label>
+                          		<label class="col-lg-1 control-label">上传类别：  </label>
                           		<div class="form-group col-lg-2">
-                          			<select class="form-control m-b" name="category">
-	                                        <option value="-1">-请选择-</option>
-	                                        <option value="5">心漫画</option>
-	                                        <option value="6">心视野</option>
-	                                        <option value="7">心知识</option>
-	                                        <option value="8">首页轮播图</option>
-	                                        <option value="9">首页H5链接</option>
-	                                    </select>
+	                          		<select class="form-control m-b" name="illType">
+	                                   <option value="-1">-请选择-</option>
+	                                   <option value="1">首页轮播图</option>
+	                                   <option value="2">首页H5链接</option>
+	                                   <option value="3">三高</option>
+	                                   <option value="4">冠心病</option>
+	                                   <option value="5">心梗</option>
+	                                   <option value="6">心衰</option>
+	                               </select>
                           		</div>
-                          		<label class="col-lg-1 control-label">疾病分类：  </label>
-                          		<div class="form-group col-lg-2">
-                          			<select class="form-control m-b" name="illType">
-	                                        <option value="-1">-请选择-</option>
-	                                        <option value="1">三高</option>
-	                                        <option value="2">冠心病</option>
-	                                        <option value="3">心梗</option>
-	                                        <option value="4">心衰</option>
-	                                    </select>
-                          		</div>
+                          		<label class="col-lg-1 control-label">文章分类：</label>
+                                <div class="col-lg-2">
+	                              	<select class="form-control m-b" name="category">
+	                                   <option value="-1">全部</option>
+	                                   <option value="5">心漫画</option>
+	                                   <option value="6">心视频</option>
+	                                   <option value="7">心知识</option>
+	                                </select>
+                                </div>
                           		<div class="form-group col-lg-2">
                           			<label class="col-lg-1 control-label"></label>
-                          			<button class="btn btn-success" type="submit">查询</button>
+                          			<button class="btn btn-w-m  btn-success" type="submit">查询</button>
                           		</div>
                           	</div>
                         </form>
@@ -80,6 +80,7 @@
 						class="table table-striped table-bordered table-hover">
 						<tr>
 							<th>序号</th>
+							<th>上传类别</th>
 							<th>文章分类</th>
 							<th>文章标题</th>
 							<th>封面图片</th>
@@ -91,10 +92,14 @@
 							<tr>
 								<td>${st.index+1}</td>
 								<td>
-									<c:if test="${item.category == 1}">首页轮播图</c:if>
-									<c:if test="${item.category == 2}">医疗动态</c:if>
-									<c:if test="${item.category == 3}">轻松一刻</c:if>
-									<c:if test="${item.category == 4}">首页H5链接</c:if>
+									<c:if test="${item.illType == 1}">首页轮播图</c:if>
+									<c:if test="${item.illType == 2}">首页H5链接</c:if>
+									<c:if test="${item.illType == 3}">三高</c:if>
+									<c:if test="${item.illType == 4}">冠心病</c:if>
+									<c:if test="${item.illType == 5}">心梗</c:if>
+									<c:if test="${item.illType == 6}">心衰</c:if>
+								</td>
+								<td>
 									<c:if test="${item.category == 5}">心漫画</c:if>
 									<c:if test="${item.category == 6}">心视频</c:if>
 									<c:if test="${item.category == 7}">心知识</c:if>
@@ -110,8 +115,10 @@
 								</td>
 								<td>
 									<button class="btn btn-success" onclick="detail('${ctx}/back/article/detail/${item.id}')">详情</button>
-									<button class="btn btn-success" onclick="update('${ctx}/back/article/update/${item.id}')">修改</button>
-									<c:if test="${item.delFlag == 0	}"><button class="btn btn-success" onclick="del('${ctx}/back/article/delete/${item.id}')">删除</button></c:if>
+									<c:if test="${item.delFlag == 0	}">
+										<button class="btn btn-success" onclick="update('${ctx}/back/article/update/${item.id}')">修改</button>
+										<button class="btn btn-danger" onclick="del('${ctx}/back/article/delete/${item.id}')">删除</button>
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>
@@ -123,22 +130,5 @@
 </div>
 </body>
 <script type="text/javascript">
-	$(function(){
-		$('#startDate .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: true,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true
-        });
-		
-		$('#endDate .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: true,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true
-        });
-	});
 </script>
 </html>
