@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
 import com.dpc.utils.ValidateUtil;
@@ -25,10 +26,13 @@ import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.Patient;
+import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.service.IBackDoctorService;
 import com.dpc.web.service.IBackPatientService;
 import com.dpc.web.service.IPatientService;
+import com.dpc.web.service.IUserService;
 import com.google.gson.Gson;
 
 @Controller
@@ -39,6 +43,8 @@ public class BackPatientController extends BaseController{
 	IBackPatientService backPatientService;
 	@Autowired
 	IPatientService patientService;
+	@Autowired
+	IUserService userService;
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public String register(HttpSession session,HttpServletRequest request) throws IOException{
@@ -101,19 +107,40 @@ public class BackPatientController extends BaseController{
 		request.setAttribute("wish", wish);
 		return "/back/patient/wishDetail";
 	}
-	
-	
-	//获取患者帖子列表---对应发现
-	@RequestMapping(value = "/discovery/list", method = RequestMethod.GET)
-	public String getDiscoveryList(HttpSession session,HttpServletRequest request) throws IOException{
-		Discovery d = new Discovery();
-		Pager<Discovery> page = backPatientService.findDiscoveryByPaginaton(d);
-		return "/back/patient/wishDetail";
+	@RequestMapping(value = "/updatePatientView", method = RequestMethod.GET)
+	public String updatePatientView(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		
+		PatientVO p = patientService.getProfile(Integer.parseInt(id));
+		request.setAttribute("p", p);
+		return "/back/patient/updatePatient";
 	}
-	
-	//患者帖子详情
-	
-	//后台新建患者帖子
+	@RequestMapping(value = "/updatePatient", method = RequestMethod.POST)
+	public String updatePatient(HttpServletRequest request) throws IOException{
+		String userId = request.getParameter("userId");
+		String name = request.getParameter("name");
+		String agender = request.getParameter("agender");
+		String birthday = request.getParameter("birthday");
+		String mobile = request.getParameter("mobile");
+		String illProfile = request.getParameter("illProfile");
+		
+		String weight = request.getParameter("weight");
+		
+		User user = new User();
+		user.setId(Integer.parseInt(userId));
+		
+		user.setMobile(mobile);
+		user.setName(name);
+		user.setAgender(Integer.parseInt(agender));
+		user.setBirthday(birthday);
+		userService.updateUser(user);
+		Patient patient = new Patient();
+		patient.setUserId(Integer.parseInt(userId));
+		patient.setWeight(Double.parseDouble(weight));
+		patient.setIllProfile(illProfile);
+		patientService.updatePatient(patient);
+		return "redirect:/back/patient/list";
+	}
 	
 	
 }

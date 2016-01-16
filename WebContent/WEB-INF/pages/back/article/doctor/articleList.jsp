@@ -58,8 +58,8 @@
 	                            	 </select>
                           		</div>
                           		<div class="form-group col-lg-2">
-                          			<label class="col-lg-1 control-label"></label>
-                          			<button class="btn btn-success" type="submit">查询</button>
+                          			<label class="col-lg-2 control-label"></label>
+                          			<button class="btn btn-w-m btn-success" type="submit">查询</button>
                           		</div>
                           	</div>
                         </form>
@@ -87,9 +87,6 @@
 									<c:if test="${item.category == 2}">医疗动态</c:if>
 									<c:if test="${item.category == 3}">轻松一刻</c:if>
 									<c:if test="${item.category == 4}">首页H5链接</c:if>
-									<c:if test="${item.category == 5}">心漫画</c:if>
-									<c:if test="${item.category == 6}">心视频</c:if>
-									<c:if test="${item.category == 7}">心知识</c:if>
 								</td>
 								<td>${item.title}</td>
 								<td>
@@ -102,8 +99,10 @@
 								</td>
 								<td>
 									<button class="btn btn-success" onclick="detail('${ctx}/back/article/detail/${item.id}')">详情</button>
-									<button class="btn btn-success" onclick="update('${ctx}/back/article/update/${item.id}')">修改</button>
-									<c:if test="${item.delFlag == 0	}"><button class="btn btn-success" onclick="del('${ctx}/back/article/delete/${item.id}')">删除</button></c:if>
+									<c:if test="${item.delFlag == 0	}">
+										<button class="btn btn-success" onclick="update('${ctx}/back/article/update/${item.id}')">修改</button>
+										<button class="btn btn-danger" onclick="del('${ctx}/back/article/delete/${item.id}')">删除</button>
+									</c:if>
 								</td>
 							</tr>
 						</c:forEach>

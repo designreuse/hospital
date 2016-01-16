@@ -54,5 +54,11 @@
 	<select id="getDoctorByDoctorIdentity" resultType="user">
 		select u.* from t_user u inner join t_doctor d on u.id=d.userId and d.doctorIdentityPlain = #{0}
 	</select>
+	<select id="getUserList" parameterType="user" resultType="user">
+		select * from t_user 
+		<where>
+			<if test="registerType != null">registerType=#{registerType}</if>
+		</where>
+	</select>
 	
 </mapper>

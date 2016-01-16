@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.CaseAnalysisMapper" >
+  <resultMap id="BaseResultMap" type="caseAnalysis" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="doctorName" property="doctorName" jdbcType="INTEGER" />
+    <result column="eliteType" property="eliteType" jdbcType="VARCHAR" />
+    <result column="hospital" property="hospital" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="postTime" property="postTime" jdbcType="TIMESTAMP" />
+    <result column="illCaseImage" property="illCaseImage" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="caseAnalysisMap" type="caseAnalysis" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="doctorName" property="doctorName" jdbcType="INTEGER" />
+    <result column="hospital" property="hospital" jdbcType="VARCHAR" />
+    <result column="postTime" property="postTime" jdbcType="TIMESTAMP" />
+    <result column="illCaseImage" property="illCaseImage" jdbcType="VARCHAR" />
+    <collection property="remarkList" ofType="caseAnalysisRemark">
+    	 <id column="rid" property="id" jdbcType="INTEGER" />
+    	 <result column="remark" property="content" jdbcType="VARCHAR" />
+    	 <result column="remarkPostTime" property="postTime" jdbcType="VARCHAR" />
+    	 <result column="profileImageUrl" property="profileImageUrl" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="caseAnalysis" extends="BaseResultMap" >
+    <result column="analysis" property="analysis" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, doctorName, eliteType, hospital, title, date_format(postTime, '%Y-%m-%d %k:%i:%s') postTime, illCaseImage,delFlag,analysis
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select   <include refid="Base_Column_List" />  from d_case_analysis
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from d_case_analysis
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="caseAnalysis" >
+    insert into d_case_analysis
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="doctorName != null" >
+        doctorName,
+      </if>
+      <if test="eliteType != null" >
+        eliteType,
+      </if>
+      <if test="hospital != null" >
+        hospital,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="postTime != null" >
+        postTime,
+      </if>
+      <if test="illCaseImage != null" >
+        illCaseImage,
+      </if>
+      <if test="analysis != null" >
+        analysis,
+      </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName,jdbcType=INTEGER},
+      </if>
+      <if test="eliteType != null" >
+        #{eliteType,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital != null" >
+        #{hospital,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="postTime != null" >
+        #{postTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="illCaseImage != null" >
+        #{illCaseImage,jdbcType=VARCHAR},
+      </if>
+      <if test="analysis != null" >
+        #{analysis},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="caseAnalysis" >
+    update d_case_analysis
+    <set >
+      <if test="doctorName != null" >
+        doctorName = #{doctorName,jdbcType=INTEGER},
+      </if>
+      <if test="eliteType != null" >
+        eliteType = #{eliteType,jdbcType=VARCHAR},
+      </if>
+      <if test="hospital != null" >
+        hospital = #{hospital,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="postTime != null" >
+        postTime = #{postTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="illCaseImage != null" >
+        illCaseImage = #{illCaseImage,jdbcType=VARCHAR},
+      </if>
+      <if test="analysis != null" >
+        analysis = #{analysis},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="caseAnalysis" >
+    update d_case_analysis
+    set doctorName = #{doctorName,jdbcType=INTEGER},
+      eliteType = #{eliteType,jdbcType=VARCHAR},
+      hospital = #{hospital,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      postTime = #{postTime,jdbcType=TIMESTAMP},
+      illCaseImage = #{illCaseImage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getCaseAnalysisListWithPager" parameterType="caseAnalysis" resultType="caseAnalysis">
+  	 SELECT
+	 	id,
+		doctorName,
+		eliteType,
+		hospital,
+		title,
+		date_format(postTime, '%Y-%m-%d %k:%i:%s') as postTime,
+		illCaseImage,
+		analysis
+	 from d_case_analysis
+  	<where>
+  		delFlag = 0
+ 	 	<if test="caseAnalysis.doctorName != null">
+ 	 		and doctorName = #{caseAnalysis.doctorName}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.eliteType != null">
+ 	 		and eliteType = #{caseAnalysis.eliteType}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.postTime != null">
+ 	 		and postTime = #{caseAnalysis.postTime}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.hospital != null">
+ 	 		and hospital = #{caseAnalysis.hospital}
+ 	 	</if>
+ 	</where>
+ 	order by postTime DESC
+ 	limit #{start},#{limit}
+  </select>
+  <select id="getAllCaseAnalysisCount" parameterType="caseAnalysis" resultType="java.lang.Integer">
+   SELECT count(*)
+	 from d_case_analysis
+  	<where>
+  		delFlag = 0
+ 	 	<if test="caseAnalysis.doctorName != null">
+ 	 		and doctorName = #{caseAnalysis.doctorName}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.eliteType != null">
+ 	 		and eliteType = #{caseAnalysis.eliteType}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.postTime != null">
+ 	 		and postTime = #{caseAnalysis.postTime}
+ 	 	</if>
+ 	 	<if test="caseAnalysis.hospital != null">
+ 	 		and hospital = #{caseAnalysis.hospital}
+ 	 	</if>
+ 	</where>
+  </select>
+  
+  <select id="getAllCaseAnalysisList" resultType="caseAnalysis">
+	 SELECT * from d_case_analysis where delFlag = 0 
+  </select>
+  
+  <select id="getCaseAnalysisDetail" parameterType="java.lang.Integer" resultMap="caseAnalysisMap">
+  	SELECT 
+		date_format(a.postTime, '%Y-%m-%d %k:%i:%s') as postTime,
+		a.doctorName,
+		a.hospital,
+		a.analysis,
+		b.content as remark,
+		c.profileImageUrl,
+		c.`name`,
+		date_format(b.postTime, '%Y-%m-%d %k:%i:%s') as remarkPostTime
+ 	from d_case_analysis a LEFT JOIN t_caseAnalysis_remark b on a.id=b.caseid left join t_user c on c.id=b.userid 
+ 	where a.id = #{0} and  a.delFlag = 0
+  </select>
+  
+</mapper>

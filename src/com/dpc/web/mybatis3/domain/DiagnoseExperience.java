@@ -21,6 +21,7 @@ public class DiagnoseExperience {
     private Integer remarkCount;
 
     private Integer status;
+    private Integer reward;//打赏积分
 
     private Integer isAnonymous;
 
@@ -42,6 +43,14 @@ public class DiagnoseExperience {
     
 	public Integer getScore() {
 		return score;
+	}
+
+	public Integer getReward() {
+		return reward;
+	}
+
+	public void setReward(Integer reward) {
+		this.reward = reward;
 	}
 
 	public void setScore(Integer score) {

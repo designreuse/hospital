@@ -98,15 +98,6 @@
 		UE.getEditor('contentDiv',{
 	         initialFrameHeight:600
 	     })
-	     
-		$('#datePick .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: true,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true
-        });
-		
 		$("#btnPost").on("click",function(){
 			$("#content").val(UE.getEditor('contentDiv').getContent());
 			$("#type").val("2");

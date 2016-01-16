@@ -138,7 +138,7 @@
  </update>
  
  <select id="getDoctorListWithPager" parameterType="doctor" resultType="doctorVO">
- 	select  u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime ,d.verifyed,d.score
+ 	select  u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime ,d.verifyed,d.score
 	from t_user u left join t_doctor d on u.id=d.userId 
   	<where>
   		registerType = 1
@@ -190,6 +190,7 @@
 	 	u.username,
 	 	u.name,
 	 	u.agender,
+	 	u.profileImageUrl,
 	 	date_format(u.birthday, '%Y-%m-%d') as birthday,
 	 	d.hospital,
 	 	u.mobile,
@@ -205,31 +206,32 @@
  
  <select id="getDiagnoseExperienceListWithPager" parameterType="diagnoseExperience" resultType="diagnoseExperience">
  	select  
-	 	id,
-		doctorName,
-		doctorId,
-		illType,
-		illDesc,
-		readCount,
-		remarkCount,
-		status,
-		isAnonymous,
-		experience,
-		delFlag,
-		date_format(creTime, '%Y-%m-%d %k:%i') as creTime 
-	from d_diagnose_experience 
+	 	de.id,
+		u.name as doctorName,
+		de.doctorId,
+		de.illType,
+		de.reward,
+		de.illDesc,
+		de.readCount,
+		de.remarkCount,
+		de.status,
+		de.isAnonymous,
+		de.experience,
+		de.delFlag,
+		date_format(de.creTime, '%Y-%m-%d %k:%i:%s') as creTime 
+	from d_diagnose_experience de left join t_user u on u.id=de.doctorId
   	<where>
  	 	<if test="dia.doctorName != null">
- 	 		and doctorName = #{dia.doctorName}
+ 	 		and u.name = #{dia.doctorName}
  	 	</if>
  	 	<if test="dia.status != null">
- 	 		and status = #{dia.status}
+ 	 		and de.status = #{dia.status}
  	 	</if>
  	 	<if test="dia.creTime != null">
- 	 		and creTime = #{dia.creTime}
+ 	 		and de.creTime = #{dia.creTime}
  	 	</if>
  	</where>
- 	order by creTime DESC
+ 	order by de.creTime DESC
  	limit #{start},#{limit}
  </select>
  
@@ -318,10 +320,10 @@
 		d.content,
 		d.type,
 		d.score,
-		date_format(d.creTime, '%Y-%m-%d %k:%i') as creTime,
+		date_format(d.creTime, '%Y-%m-%d %k:%i:%s') as creTime,
 		c.totalTakePart	 
 	 from d_academic_support d INNER JOIN 
-	(SELECT a.id as bid,count(*) as totalTakePart from d_academic_support a LEFT JOIN d_take_academicsupinfo b on a.id=b.academicSupId where a.delFlag=0 GROUP BY bid) c
+	(SELECT a.id as bid,count(b.id) as totalTakePart from d_academic_support a LEFT JOIN d_take_academicsupinfo b on a.id=b.academicSupId where a.delFlag=0 GROUP BY bid) c
 	on c.bid = d.id
   	<where>
   		delFlag = 0
@@ -402,7 +404,8 @@
 		d.department,
 		d.technicalTitle,
 		u.registerTime,
-		d.score
+		d.score,
+		d.address
  	from t_doctor d left join t_user u on d.userId=u.id
  </select>
  
@@ -424,4 +427,53 @@
  	order by type,creTime desc
  </select>
  
+ <insert id="addCaseAnalysis" parameterType="caseAnalysis">
+ 	insert into d_academic_support
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+	        title,
+	      </if>
+	      <if test="content != null" >
+	        content,
+	      </if>
+	      <if test="type != null" >
+	        type,
+	      </if>
+	      <if test="score != null" >
+	        score,
+	      </if>
+	      <if test="promoteImage != null" >
+	        promoteImage,
+	      </if>
+	      <if test="creTime != null" >
+	        creTime,
+	      </if>
+	      <if test="delFlag != null" >
+	        delFlag,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="title != null" >
+	        #{title},
+	      </if>
+	      <if test="content != null" >
+	        #{content},
+	      </if>
+	      <if test="type != null" >
+	        #{type},
+	      </if>
+	      <if test="score != null" >
+	        #{score},
+	      </if>
+	      <if test="promoteImage != null" >
+	        #{promoteImage},
+	      </if>
+	      <if test="creTime != null" >
+	        #{creTime},
+	      </if>
+	      <if test="delFlag != null" >
+	        #{delFlag},
+	      </if>
+	    </trim>
+ </insert>
 </mapper>

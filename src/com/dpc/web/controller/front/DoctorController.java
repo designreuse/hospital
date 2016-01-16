@@ -17,9 +17,12 @@ import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
+import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
+import com.dpc.web.mybatis3.domain.CaseAnalysis;
+import com.dpc.web.mybatis3.domain.CaseAnalysisRemark;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
@@ -31,7 +34,12 @@ import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
 import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
 import com.dpc.web.mybatis3.domain.User;
+import com.dpc.web.mybatis3.mapper.CityMapper;
+import com.dpc.web.mybatis3.mapper.CountyMapper;
+import com.dpc.web.mybatis3.mapper.ProvinceMapper;
 import com.dpc.web.service.IArticleService;
+import com.dpc.web.service.IBackDoctorService;
+import com.dpc.web.service.IDistrictService;
 import com.dpc.web.service.IDoctorService;
 import com.dpc.web.service.IPatientService;
 import com.dpc.web.service.IUserService;
@@ -51,6 +59,157 @@ public class DoctorController extends BaseController{
 	
 	@Autowired
 	IUserService userService;
+	
+	@Autowired
+	IDistrictService districtService;
+	
+	@Autowired
+	IBackDoctorService backDoctorService;
+	
+	@Autowired
+	private ProvinceMapper provinceMapper;
+	@Autowired
+	private CityMapper cityMapper;
+	@Autowired
+	private CountyMapper countyMapper;
+	
+	//添加诊后心得
+	@RequestMapping(value = "/profile", method = RequestMethod.GET)
+	@ResponseBody
+	public String getProfile(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		
+		DoctorVO d = doctorService.getDoctorProfile(u.getId());
+		if(!ValidateUtil.isEmpty(d.getAddress())){
+			String province = "";
+			String city = "";
+			String county = "";
+			if(!ValidateUtil.isEmpty(d.getAddress())){
+				String[] addressArr = d.getAddress().split("-");
+				if(addressArr!=null&&addressArr.length>0){
+					for(int j=0;j<addressArr.length;j++){
+						if(j==0){
+							 province = provinceMapper.selectByPrimaryKey(Integer.parseInt(addressArr[0])).getName();
+						}
+						if(j==1){
+							 city = cityMapper.selectByPrimaryKey(Integer.parseInt(addressArr[1])).getName();
+						}
+						if(j==2){
+							 county = countyMapper.selectByPrimaryKey(Integer.parseInt(addressArr[2])).getName();
+						}
+					}
+				}
+			}
+			d.setAddress(province+" "+city+" "+county);
+		}
+		if(!ValidateUtil.isEmpty(d.getProfileImageUrl())){
+			d.setProfileImageUrl(ConstantUtil.DOMAIN+d.getProfileImageUrl());
+		}
+		return JsonUtil.object2String(d);
+	}
+	//病例精析列表
+	@RequestMapping(value = "/caseAnalysis/list", method = RequestMethod.GET)
+	@ResponseBody
+	public String getCaseAnalysisList(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		List<CaseAnalysis> list = backDoctorService.getCaseAnalysisList();
+		if(list!=null&&list.size()>0){
+			for(CaseAnalysis c : list){
+				if(!ValidateUtil.isEmpty(c.getPostTime())){
+					c.setPostTime(DateUtil.timeDiffer(DateUtil.parse(c.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
+				}
+				if(!ValidateUtil.isEmpty(c.getIllCaseImage())){
+					c.setIllCaseImage(ConstantUtil.DOMAIN+c.getIllCaseImage());
+				}
+			}
+		}
+		return JsonUtil.object2String(list);
+	}
+	//病例精析详情
+	@RequestMapping(value = "/caseAnalysis/detail/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getCaseAnalysisDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		
+		CaseAnalysis c = backDoctorService.getCaseAnalysisDetail(Integer.parseInt(id));
+		if(c!=null){
+			List<CaseAnalysisRemark> rmkList = c.getRemarkList();
+			if(rmkList!=null&&rmkList.size()>0){
+				for(CaseAnalysisRemark remark : rmkList){
+					if(!ValidateUtil.isEmpty(remark.getProfileImageUrl())){
+						remark.setProfileImageUrl(ConstantUtil.DOMAIN+remark.getProfileImageUrl());
+					}
+				}
+			}
+			c.setPostTime(DateUtil.timeDiffer(DateUtil.parse(c.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
+		}
+		return JsonUtil.object2String(c);
+	}
+	//病例精析详情
+	@RequestMapping(value = "/caseAnalysis/remark", method = RequestMethod.POST)
+	@ResponseBody
+	public String caseAnalysisRemark(HttpSession session,HttpServletRequest request) throws IOException{
+		String caseId = request.getParameter("caseId");
+		String content = request.getParameter("content");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		
+		CaseAnalysisRemark analysisRemark = new CaseAnalysisRemark();
+		analysisRemark.setCaseId(Integer.parseInt(caseId));
+		analysisRemark.setContent(content);
+		analysisRemark.setDelFlag(0);
+		analysisRemark.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		analysisRemark.setUserId(u.getId());
+		doctorService.caseAnalysisRemark(analysisRemark);
+		
+		return success();
+	}
+	
+	
 	//添加诊后心得
 	@RequestMapping(value = "/diagnose_experience/add", method = RequestMethod.POST)
 	@ResponseBody
@@ -105,12 +264,57 @@ public class DoctorController extends BaseController{
 		diagnoseExperience.setIsAnonymous(Integer.parseInt(isAnonymous));
 		diagnoseExperience.setReadCount(0);
 		diagnoseExperience.setReadCount(0);
+		diagnoseExperience.setIllDesc(illDesc);
+		diagnoseExperience.setReward(0);
+		diagnoseExperience.setDelFlag(0);
 		diagnoseExperience.setStatus(Integer.parseInt(status));
 		doctorService.addDiagnoseExperience(diagnoseExperience,imageUrls);
 		
 		return success();
 	}
 	
+	
+	//诊后心得
+	@RequestMapping(value = "/diaexp/reward", method = RequestMethod.POST)
+	public String diaExpReward(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		
+		String diaExpId = request.getParameter("diaExpId");
+		String score = request.getParameter("score");
+		
+		DiagnoseExperience dia = doctorService.getDiagnoseExperienceById(Integer.parseInt(diaExpId));
+		Integer reward = dia.getReward();
+		dia = new DiagnoseExperience();
+		dia.setReward(reward+Integer.parseInt(score));
+		dia.setId(Integer.parseInt(diaExpId));
+		doctorService.updateDiagnoseExp(dia);
+		
+		//打赏人的积分减少
+		Doctor d = doctorService.getDoctorById(u.getId());
+		Integer ramainScore = d.getScore();
+		d = new Doctor();
+		d.setScore(ramainScore-Integer.parseInt(score));
+		d.setUserId(u.getId());
+		doctorService.updateDoctor(d);
+		//积分增加
+		DiagnoseExperience diaexp = doctorService.getDiagnoseExperienceById(Integer.parseInt(diaExpId));
+		Integer doctorId = diaexp.getDoctorId();
+		Doctor doctor = doctorService.getDoctorById(doctorId);
+		Integer rs = doctor.getScore();
+		doctor = new Doctor();
+		doctor.setUserId(doctorId);
+		doctor.setScore(rs+Integer.parseInt(score));
+		doctorService.updateDoctor(doctor);
+		return success();
+	}
+		
+		
 	@RequestMapping(value = "/diagnose_experience/remark", method = RequestMethod.POST)
 	@ResponseBody
 	public String diagnoseExperienceRemark(HttpSession session,HttpServletRequest request) throws IOException{

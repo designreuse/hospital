@@ -11,6 +11,7 @@
     <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
     <result column="score" property="score" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="reward" property="reward" jdbcType="INTEGER" />
     <result column="isAnonymous" property="isAnonymous" jdbcType="TINYINT" />
     <result column="experience" property="experience" jdbcType="VARCHAR" />
     <result column="dprofileImage" property="profileImage" jdbcType="VARCHAR" />
@@ -25,8 +26,7 @@
 	</collection>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, doctorName, doctorId, illDesc, readCount, remarkCount, status, isAnonymous, experience, 
-    creTime
+    id, doctorName, doctorId, illDesc, readCount, remarkCount, status, isAnonymous, experience,reward,creTime
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select  <include refid="Base_Column_List" /> from d_diagnose_experience
@@ -82,6 +82,9 @@
       <if test="creTime != null" >
         creTime,
       </if>
+      <if test="reward != null" >
+        reward,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -117,6 +120,9 @@
       <if test="creTime != null" >
         #{creTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="reward != null" >
+        #{reward},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="diagnoseExperience" >
@@ -148,6 +154,9 @@
       </if>
       <if test="creTime != null" >
         creTime = #{creTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reward != null" >
+        reward = #{reward},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -248,6 +257,7 @@
 		a.illType,
 		a.creTime AS postTime,
 		a.illDesc,
+		a.reward,
 		a.readCount,
 		a.remarkCount,
 		a.experience

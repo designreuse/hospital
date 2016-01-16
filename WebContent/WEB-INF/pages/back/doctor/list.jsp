@@ -18,7 +18,6 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -85,8 +84,8 @@
 	                             </div>
 	                             <div class="form-group col-lg-3">	
 									<button type="submit" class="btn btn-primary">查询</button>	                             
-									<button type="button" class="btn btn-primary">选择兑换</button>	                             
-									<button type="button" class="btn btn-primary">一键兑换</button>	                             
+									<button type="button" class="btn btn-primary" onclick="selectExchage()">选择兑换</button>	                             
+									<button type="button" class="btn btn-primary" onclick="onekeyExchange()">一键兑换</button>	                             
 									<button type="button" class="btn btn-primary" onclick="exportDoctor()">导出</button>	
 								</div>
                              </div>
@@ -96,10 +95,11 @@
            </div>
            <div class="col-lg-12">
            		 <div class="panel-body">
+           		 <form action="${ctx }/back/doctor/selectExchage" method="post" id="exchageform">
 					<table
 						class="table table-striped table-bordered table-hover">
 						<tr>
-							<th width="2%">序号</th>
+							<th width="2%">全选<input type="checkbox" name="all"  /> </th>
 							<th width="5%">用户名</th>
 							<th width="5%">姓名</th>
 							<th width="5%">医院名称</th>
@@ -113,14 +113,14 @@
 						</tr>
 						<c:forEach var="item" items="${page.datas}" varStatus="st">
 							<tr>
-								<td>${st.index+1}</td>
+								<td><input type="checkbox" name="single" value="${item.id}"/></td>
 								<td>${item.username}</td>
-								<td>${item.name}</td>
+								<td id="name${item.id}">${item.name}</td>
 								<td>${item.hospital}</td>
 								<td>${item.department}</td>
 								<td>${item.address}</td>
 								<td>${item.technicalTitle}</td>
-								<td>${item.score}</td>
+								<td id="score${item.id}">${item.score}</td>
 								<td>
 									<c:if test="${item.verifyed == 0}">未通过</c:if>
 									<c:if test="${item.verifyed == 1}">通过</c:if>
@@ -128,12 +128,13 @@
 								<td>${item.registerTime}</td>
 								<td>
 									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="detail('${item.id}')">详情</button> 
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="exchage('${item.id}')">兑换积分</button> 
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="exchage_record('${item.id}')">兑换记录</button> 
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="preExchange('${item.id}')">兑换积分</button> 
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="exchange_record('${item.id}')">兑换记录</button> 
 								</td>
 							</tr>
 						</c:forEach>
 					</table>
+					</form>
 					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
 						<jsp:param value="${ctx}/back/article/doctor/list/1" name="url" />
 					</jsp:include>
@@ -142,19 +143,67 @@
        </div>
     </div>
 </div>
+
+<div id="tip_container" class="confirm_container theme-popover">
+	<div>
+		<div id="centerShow"></div>
+		<div style="margin-bottom: 20px;overflow: hidden;">
+			<button type="button" style="width: 100px;height: 40px;float:right;margin-right:20px;margin-top:10px;" class="btn btn-default" onclick="cancel()">取消</button>
+			<button type="button" style="width: 100px;height: 40px;float:right;margin-right:20px;margin-top:10px;" class="btn btn-success" onclick="confirm()">确定</button>
+		</div>
+	</div>
+</div>
+
 </body>
 <script type="text/javascript">
+$(function(){
+	$("input[type='checkbox'][name='all']").on("click",function(){    
+	    if(this.checked){    
+	    	$("input[type='checkbox'][name='single']").prop("checked",true); 
+	    }else{    
+	    	$("input[type='checkbox'][name='single']").removeAttr("checked"); 
+	    } 
+	});
+});
 function detail(id){
 	window.location.href = "${ctx}/back/doctor/detail/"+id;
 }
 function exportDoctor(){
 	window.location.href = "${ctx}/back/doctor/export";
 }
-function exchange(){
-	
+function preExchange(id){
+	var name = $("#name"+id).text();
+	var showCenter = "<div style='text-align: center;padding-top:20px;width: 300px;height:80px;'>是否要为"+name+"医生兑换积分？</div>";
+	confirmOpt(showCenter,function(){
+		exchange(id);
+	});
 }
-function exchage_record(){
-	
+function exchange(id){
+	$.ajax({
+ 		type : "post",
+		url : "${ctx}/back/doctor/exchange",
+		async : false,
+		dataType : "json",
+		data:{userId : id},
+		success : function(data){
+			if(data.status == "suc"){
+				$("#score"+id).text(0);
+			}
+		}
+ 	});
+}
+function exchange_record(id){
+	window.location.href = "${ctx}/back/doctor/exchangeHistoryView?userId="+id;
+}
+function selectExchage(){
+	if($("input[type='checkbox'][name='single']:checked").length==0){
+		alert("请选择医生");
+	}else{
+		$("#exchageform").submit();
+	}
+}
+function onekeyExchange(){
+	window.location.href = "${ctx}/back/doctor/onekeyExchange";
 }
 </script>
 </html>

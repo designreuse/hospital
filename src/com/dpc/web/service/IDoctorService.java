@@ -6,11 +6,14 @@ import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
+import com.dpc.web.mybatis3.domain.CaseAnalysis;
+import com.dpc.web.mybatis3.domain.CaseAnalysisRemark;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
+import com.dpc.web.mybatis3.domain.ExchangeHistory;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
@@ -79,5 +82,19 @@ public interface IDoctorService {
 	Pager<HeartCircle> findHeartCircleByPaginaton(HeartCircle h);
 
 	HeartCircle getHeartCircleDetailById(int parseInt);
+
+	List<ExchangeHistory> getMyExchangeHistoryList(int parseInt);
+
+	void addExchangeHistory(ExchangeHistory exchangeHistory);
+
+	void addCaseAnalysis(CaseAnalysis caseAnalysis);
+
+	void updateCaseAnalysis(CaseAnalysis caseAnalysis);
+
+	CaseAnalysis getCaseAnalysisById(int parseInt);
+
+	DoctorVO getDoctorProfile(Integer id);
+
+	void caseAnalysisRemark(CaseAnalysisRemark analysisRemark);
 
 }

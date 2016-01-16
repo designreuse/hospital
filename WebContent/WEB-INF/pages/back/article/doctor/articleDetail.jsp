@@ -17,8 +17,8 @@
              <h2>文章详情(医生)</h2>
          </div>
     </div>
-    <div class="wrapper wrapper-content animated fadeInRight">
-    	<div class="ibox float-e-margins">
+    <div class="wrapper wrapper-content animated fadeInRight ">
+    	<div class="ibox float-e-margins white-bg">
 	    <div class="row show-grid">
 	         <div class="col-md-1 text-right">文章分类：</div>
 	         <div class="col-md-2">

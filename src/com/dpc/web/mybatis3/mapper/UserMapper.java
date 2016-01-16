@@ -1,6 +1,8 @@
 package com.dpc.web.mybatis3.mapper;
 
 
+import java.util.List;
+
 import com.dpc.web.mybatis3.domain.User;
 
 public interface UserMapper{
@@ -14,6 +16,8 @@ public interface UserMapper{
 	User getUserById(Integer id);
 
 	User getDoctorByDoctorIdentity(String doctorIdentity);
+
+	List<User> getUserList(User u);
 	
 }
 

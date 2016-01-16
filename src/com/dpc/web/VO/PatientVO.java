@@ -5,6 +5,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PatientVO implements Serializable{
+	private Integer id;
 	private Integer userId;
 	private String username;//姓名
 	private String name;//姓名
@@ -15,6 +16,7 @@ public class PatientVO implements Serializable{
 	private String profileImageUrl;//体重
 	private Integer score;
 	private String registerTime;
+	private String illProfile;
 	
 	private String startDate;
 	private String hospital;
@@ -39,6 +41,20 @@ public class PatientVO implements Serializable{
 	}
 	public String getHospital() {
 		return hospital;
+	}
+	
+	
+	public String getIllProfile() {
+		return illProfile;
+	}
+	public void setIllProfile(String illProfile) {
+		this.illProfile = illProfile;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	public void setHospital(String hospital) {
 		this.hospital = hospital;

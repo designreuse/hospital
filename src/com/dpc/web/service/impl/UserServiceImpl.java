@@ -1,5 +1,7 @@
 package com.dpc.web.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +79,11 @@ public class UserServiceImpl implements IUserService {
 	public Admin getAdmin(Admin admin) {
 		
 		return adminMapper.getAdmin(admin);
+	}
+
+	@Override
+	public List<User> getUserList(User u) {
+		return userMapper.getUserList(u);
 	}
 	
 }

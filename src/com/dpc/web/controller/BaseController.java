@@ -13,6 +13,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
@@ -68,8 +70,9 @@ public class BaseController
 			String fileNamePrefix = System.currentTimeMillis()+"";
 			filePath = filePath+fileNamePrefix+".png";	
 			
-			BASE64Decoder decoder = new BASE64Decoder(); 
-	        byte[] bytes1 = decoder.decodeBuffer(imageBase64);                  
+			Base64 base64 = new Base64();
+			
+			byte[] bytes1 = base64.decode(imageBase64.substring("data:image/png;base64,".length()));  
 	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes1);    
 	        BufferedImage bi1 =ImageIO.read(bais); 
 			  

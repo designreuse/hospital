@@ -9,6 +9,7 @@ import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Article;
+import com.dpc.web.mybatis3.domain.CaseAnalysis;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
@@ -41,7 +42,7 @@ public interface DoctorMapper{
 	AcademicSupport getAcademicSupportDetail(int id);
 	void delAcademicSupport(int id);
 	List<AcademicSupport> getAcademicSupportList();
-	
+	void addCaseAnalysis(CaseAnalysis caseAnalysis);
 }
 
 

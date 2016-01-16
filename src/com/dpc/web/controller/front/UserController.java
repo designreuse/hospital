@@ -278,7 +278,10 @@ public class UserController extends BaseController{
 		//保存session
 		String accessToken = StringUtil.getRandStr(6, false) + "-"+ (System.currentTimeMillis() + 12 * 60 * 60 * 1000) + "_"+ user.getId();
 		session.setAttribute("accessToken", accessToken,"default");
-		
+		if(user.getRegisterType()==1){
+			String doctorNo = doctorService.getDoctorById(user.getId()).getDoctorIdentityPlain();
+			user.setDoctorNo(doctorNo);
+		}
 		//设置返回值
 		result.put("accessToken",Base64.encodeToString(accessToken.getBytes(),11));
 		result.put("user", user);

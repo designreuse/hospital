@@ -18,8 +18,15 @@ public class User implements Serializable{
 	private String registerTime;//注册时间
 	private String salt;//颜值
 	private Integer registerType;//颜值
+	private String doctorNo;
 	
 	
+	public String getDoctorNo() {
+		return doctorNo;
+	}
+	public void setDoctorNo(String doctorNo) {
+		this.doctorNo = doctorNo;
+	}
 	public Integer getRegisterType() {
 		return registerType;
 	}

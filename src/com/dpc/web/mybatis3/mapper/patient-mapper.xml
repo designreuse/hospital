@@ -104,8 +104,10 @@
   
   <select id="getProfile" parameterType="java.lang.Integer" resultType="patientVO">
   		select 
+  			u.id as userId,
   			u.username,
-  			u.registerTime,
+  			p.illProfile,
+  			date_format(u.registerTime, '%Y-%m-%d %H:%i:%s') as registerTime,
   			p.score,
 			u.name,
 			u.mobile,
@@ -214,7 +216,7 @@
   </select>
   
    <select id="getPatientListWithPager" parameterType="patientVO" resultType="patientVO">
- 	select p.id,u.id as userId, u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i') as registerTime,u.agender,u.mobile,p.score
+ 	select p.id,u.id as userId, u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime,u.agender,u.mobile,p.score,date_format(u.birthday, '%Y-%m-%d') birthday
 	from t_user u left join t_patient p on u.id=p.userId 
   	<where>
  	 	<if test="patient.name != null">

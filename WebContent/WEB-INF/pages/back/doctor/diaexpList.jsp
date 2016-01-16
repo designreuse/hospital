@@ -30,20 +30,23 @@
                          	 	<div class="form-group col-lg-3">
 	                         	 	<div class="form-group" style="margin-left: 39px;">
 		                                 <label for="">医生姓名：</label>
-		                                 <input type="text" name="username" class="form-control">
+		                                 <input type="text" name="doctorName" class="form-control">
 		                             </div>
                          	 	</div>
                          	 	<div class="form-group col-lg-3">
 		                             <div class="form-group"  style="margin-left: 50px;">
 		                                 <label for="">发表状态：</label>
-		                                 <input type="text" name="name" class="form-control">
+		                                 <select class="form-control m-b" name="status">
+			                                 <option value="-1">全部</option>
+			                                 <option value="1">发表</option>
+			                                 <option value="0">未发表</option>
+			                             </select>
 		                             </div>
 		                         </div>
                          	 	<div class="form-group col-lg-3">
 		                             <div class="form-group"  style="margin-left: 50px;">
 		                                 <label for="">发表时间：</label>
-		                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-		                                 <input type="text" name="name" class="form-control" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+		                                 <input type="text" name="creTime" class="form-control" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
 		                             </div>
 		                         </div>
                          	 	<div class="form-group col-lg-3">
@@ -77,9 +80,15 @@
 								<td>${item.illType}</td>
 								<td>${item.illDesc}</td>
 								<td>${item.experience}</td>
-								<td>${item.experience}</td>
-								<td>${item.status}</td>
-								<td>${item.isAnonymous}</td>
+								<td>${item.reward}</td>
+								<td>
+									<c:if test="${item.status==0}">未发表</c:if>
+									<c:if test="${item.status==1}">发表</c:if>
+								</td>
+								<td>
+									<c:if test="${item.isAnonymous==0}">未匿名</c:if>
+									<c:if test="${item.isAnonymous==1}">匿名</c:if>
+								</td>
 								<td>${item.creTime}</td>
 								<td>
 									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="detail('${item.id}')">详情</button> 
@@ -104,22 +113,5 @@ function detail(id){
 function exchange(){
 	
 }
-$(function(){
-	$('#startDate .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: true,
-        forceParse: true,
-        calendarWeeks: true,
-        autoclose: true
-    });
-	
-	$('#endDate .input-group.date').datepicker({
-        todayBtn: "linked",
-        keyboardNavigation: true,
-        forceParse: true,
-        calendarWeeks: true,
-        autoclose: true
-    });
-});
 </script>
 </html>

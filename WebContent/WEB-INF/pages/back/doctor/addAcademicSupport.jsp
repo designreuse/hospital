@@ -38,10 +38,10 @@
                   </div>
 	          	  <div class="row">
    	  				<label>新建时间：</label>
-                    <div class="form-group" id=datePick>
-                        <div class="input-group date">
+                    <div class="form-group">
+                        <div class="input-group">
                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                             <input type="text" name="creTime" class="form-control">
+                             <input type="text" name="creTime" class="form-control" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
                         </div>
                     </div>
                   </div>
@@ -67,7 +67,7 @@
 	                      <div class="col-lg-10" id="contentDiv" >
                                    	
                           </div>
-                          <input type="text" name="content" id="content" />
+                          <input type="hidden" name="content" id="content" />
 	                  </div>
                   </div>
 	          	  <div class="row">
@@ -83,27 +83,10 @@
 </body>
 <script type="text/javascript">
 	$(function(){
-		UE.getEditor('contentDiv',{
-	         //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
-	         toolbars:[['FullScreen', 'Undo', 'Redo','Bold','underline','fontsize','fontfamily','forecolor','insertimage','indent','lineheight','ertorderedlist','insertunorderedlist','link','unlink','rowspacing','date','time']],
-	         //focus时自动清空初始化时的内容
-	         autoClearinitialContent:true,
-	         //关闭字数统计
-	         wordCount:true,
-	         //关闭elementPath
-	         elementPathEnabled:false,
-	         //默认的编辑区域高度
-	         initialFrameHeight:400
-	     })
+		var ue = UE.getEditor('contentDiv',{
+	         initialFrameHeight:800
+	     });
 	     
-		$('#datePick .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: true,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true
-        });
-		
 		$("#btnPost").on("click",function(){
 			$("#content").val(UE.getEditor('contentDiv').getContent());
 			$("#meetingform").submit();

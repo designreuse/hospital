@@ -1,7 +1,8 @@
 package com.dpc.web.mybatis3.domain;
 
 
-import java.util.Date;
+
+import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -10,22 +11,66 @@ public class CaseAnalysis {
 
     private String doctorName;
 
-    private String eliteType;
+    private Integer eliteType;
 
     private String hospital;
 
     private String title;
-
     private String postTime;
 
     private String illCaseImage;
+    private String remark;
+    private String remarkPostTime;
 
     private String analysis;
-    
     private Integer delFlag;
 
+    private Integer start;
+    private Integer limit;
     
-    public Integer getDelFlag() {
+    private List<CaseAnalysisRemark> remarkList;
+    
+	public List<CaseAnalysisRemark> getRemarkList() {
+		return remarkList;
+	}
+
+	public void setRemarkList(List<CaseAnalysisRemark> remarkList) {
+		this.remarkList = remarkList;
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getRemarkPostTime() {
+		return remarkPostTime;
+	}
+
+	public void setRemarkPostTime(String remarkPostTime) {
+		this.remarkPostTime = remarkPostTime;
+	}
+
+	public Integer getDelFlag() {
 		return delFlag;
 	}
 
@@ -53,15 +98,17 @@ public class CaseAnalysis {
         this.doctorName = doctorName == null ? null : doctorName.trim();
     }
 
-    public String getEliteType() {
-        return eliteType;
-    }
+    
 
-    public void setEliteType(String eliteType) {
-        this.eliteType = eliteType == null ? null : eliteType.trim();
-    }
+    public Integer getEliteType() {
+		return eliteType;
+	}
 
-    public String getHospital() {
+	public void setEliteType(Integer eliteType) {
+		this.eliteType = eliteType;
+	}
+
+	public String getHospital() {
         return hospital;
     }
 
@@ -92,4 +139,9 @@ public class CaseAnalysis {
     public void setAnalysis(String analysis) {
         this.analysis = analysis == null ? null : analysis.trim();
     }
+
+	public String getPostTime() {
+		return postTime;
+	}
+    
 }

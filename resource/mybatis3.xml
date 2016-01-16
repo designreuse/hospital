@@ -13,6 +13,7 @@
 		<typeAlias alias="interfaceCategory" type="com.dpc.web.mybatis3.domain.InterfaceCategory"/>
 		<typeAlias alias="errorCode" type="com.dpc.web.mybatis3.domain.ErrorCode"/>
 		<typeAlias alias="medicalDynamic" type="com.dpc.web.mybatis3.domain.MedicalDynamic"/>
+		<typeAlias alias="caseAnalysis" type="com.dpc.web.mybatis3.domain.CaseAnalysis"/>
 		
 		<typeAlias alias="diagnoseExperience" type="com.dpc.web.mybatis3.domain.DiagnoseExperience"/>
 		<typeAlias alias="diagnoseExperienceImage" type="com.dpc.web.mybatis3.domain.DiagnoseExperienceImage"/>
@@ -43,5 +44,7 @@
 		<typeAlias alias="districtList" type="com.dpc.web.mybatis3.domain.DistrictList"/>
 		<typeAlias alias="admin" type="com.dpc.web.mybatis3.domain.Admin"/>
 		<typeAlias alias="takeAcademicSupport" type="com.dpc.web.mybatis3.domain.TakeAcademicSupport"/>
+		<typeAlias alias="exchangeHistory" type="com.dpc.web.mybatis3.domain.ExchangeHistory"/>
+		<typeAlias alias="caseAnalysisRemark" type="com.dpc.web.mybatis3.domain.CaseAnalysisRemark"/>
 	</typeAliases>
 </configuration>

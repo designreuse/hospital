@@ -71,6 +71,9 @@
            </div>
            <div class="col-lg-12">
            		 <div class="panel-body">
+           		 <jsp:include page="/WEB-INF/pages/context/pagination.jsp">
+						<jsp:param value="${ctx}/back/article/list/2" name="url" />
+					</jsp:include>
 					<table
 						class="table table-striped table-bordered table-hover">
 						<tr>
@@ -103,9 +106,6 @@
 							</tr>
 						</c:forEach>
 					</table>
-					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/article/list/2" name="url" />
-					</jsp:include>
 				</div>
            </div>
        </div>

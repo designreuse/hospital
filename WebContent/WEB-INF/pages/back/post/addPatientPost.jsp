@@ -25,20 +25,22 @@
         	<div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-content">
-                            <form class="form-horizontal">
-                                <div class="form-group"><label class="col-lg-2 control-label">新建时间</label>
-                                    <div class="col-lg-4">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                    	<input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="form-control"> 
-                                    </div>
+                            <form class="form-horizontal" action="${ctx }/back/post/addDiscovery" method="post"  enctype="multipart/form-data">
+                                <div class="form-group">
+                                	<label class="col-lg-2 control-label">帖子内容</label>
+                                    <div class="col-lg-4"><input type="text" name="content" class="form-control"></div>
                                 </div>
-                                <div class="form-group"><label class="col-lg-2 control-label">Password</label>
-
-                                    <div class="col-lg-4"><input type="password" placeholder="Password" class="form-control"></div>
+                                <div class="form-group">
+                                	<label class="col-lg-2 control-label">图片</label>
+                                    <div class="col-lg-4" id="imageconn">
+                                    	<input type="file" name="discoveryImage"  class="form-control">
+                                    	<input type="file" name="discoveryImage"  class="form-control">
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-offset-2 col-lg-10">
-                                        <button class="btn btn-sm btn-white" type="submit">Sign in</button>
+                                        <button class="btn  btn-success" type="submit">提交</button>
+                                        <button class="btn btn-default" type="button" onclick="addImage()">新增图片</button>
                                     </div>
                                 </div>
                             </form>
@@ -50,6 +52,10 @@
 </div>
 </body>
 <script type="text/javascript">
-
+	function addImage(){
+		var s = "<input type='file' name='discoveryImage'  class='form-control'>";
+		$("#imageconn").append(s);
+		
+	}
 </script>
 </html>

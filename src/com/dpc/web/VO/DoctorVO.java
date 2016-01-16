@@ -30,8 +30,37 @@ public class DoctorVO implements Serializable{
     private String crtOperTime;//认证操作时间
     private Integer startScore;
     private Integer endScore;
-	    
+	private String province;
+	private String city;
+	private String county;
+	private String profileImageUrl;
+	
+	
     
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getCounty() {
+		return county;
+	}
+	public void setCounty(String county) {
+		this.county = county;
+	}
 	public String getCrtOperTime() {
 		return crtOperTime;
 	}

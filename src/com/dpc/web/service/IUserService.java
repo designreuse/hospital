@@ -1,5 +1,7 @@
 package com.dpc.web.service;
 
+import java.util.List;
+
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.mybatis3.domain.Admin;
 import com.dpc.web.mybatis3.domain.User;
@@ -21,5 +23,7 @@ public interface IUserService {
 	void addAdmin(Admin admin);
 
 	Admin getAdmin(Admin admin);
+
+	List<User> getUserList(User u);
 	
 }

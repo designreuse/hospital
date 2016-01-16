@@ -11,18 +11,24 @@ import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
+import com.dpc.web.mybatis3.domain.CaseAnalysis;
+import com.dpc.web.mybatis3.domain.CaseAnalysisRemark;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
+import com.dpc.web.mybatis3.domain.ExchangeHistory;
 import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
+import com.dpc.web.mybatis3.mapper.CaseAnalysisMapper;
+import com.dpc.web.mybatis3.mapper.CaseAnalysisRemarkMapper;
 import com.dpc.web.mybatis3.mapper.DiagnoseExperienceMapper;
 import com.dpc.web.mybatis3.mapper.DoctorMapper;
+import com.dpc.web.mybatis3.mapper.ExchangeHistoryMapper;
 import com.dpc.web.mybatis3.mapper.HeartCircleMapper;
 import com.dpc.web.mybatis3.mapper.MedicalDynamicMapper;
 import com.dpc.web.mybatis3.mapper.TakeAcademicSupportMapper;
@@ -33,9 +39,6 @@ import com.dpc.web.service.IDoctorService;
 public class DoctorServiceImpl implements IDoctorService {
 
 	@Autowired
-	private MedicalDynamicMapper medicalDynamicMapper;
-	
-	@Autowired
 	private DiagnoseExperienceMapper diagnoseExperienceMapper;
 	
 	@Autowired
@@ -44,9 +47,15 @@ public class DoctorServiceImpl implements IDoctorService {
 	@Autowired
 	private TakeAcademicSupportMapper takeAcademicSupportMapper;
 	
-	
 	@Autowired
 	private DoctorMapper doctorMapper;
+	
+	@Autowired
+	private ExchangeHistoryMapper exchangeHistoryMapper;
+	@Autowired
+	private CaseAnalysisMapper caseAnalysisMapper;
+	@Autowired
+	private CaseAnalysisRemarkMapper caseAnalysisRemarkMapper;
 	
 	@Override
 	public void addDoctorWithRegister(Doctor doctor) {
@@ -239,5 +248,44 @@ public class DoctorServiceImpl implements IDoctorService {
 	public HeartCircle getHeartCircleDetailById(int id) {
 		return heartCircleMapper.getHeartCircleImageDetail(id);
 	}
+
+	@Override
+	public List<ExchangeHistory> getMyExchangeHistoryList(int userID) {
+		// TODO Auto-generated method stub
+		return exchangeHistoryMapper.getMyExchangeHistoryList(userID);
+	}
+
+	@Override
+	public void addExchangeHistory(ExchangeHistory exchangeHistory) {
+		exchangeHistoryMapper.insertSelective(exchangeHistory);
+	}
+
+	@Override
+	public void addCaseAnalysis(CaseAnalysis caseAnalysis) {
+		caseAnalysisMapper.insertSelective(caseAnalysis);
+	}
+
+	@Override
+	public void updateCaseAnalysis(CaseAnalysis caseAnalysis) {
+		caseAnalysisMapper.updateByPrimaryKeySelective(caseAnalysis);
+	}
+
+	@Override
+	public CaseAnalysis getCaseAnalysisById(int id) {
+		return caseAnalysisMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public DoctorVO getDoctorProfile(Integer id) {
+		return doctorMapper.getDoctorDetail(id);
+	}
+
+	@Override
+	public void caseAnalysisRemark(CaseAnalysisRemark analysisRemark) {
+	 
+		caseAnalysisRemarkMapper.insertSelective(analysisRemark);
+	}
+	
+	
 	
 }

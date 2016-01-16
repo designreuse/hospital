@@ -487,6 +487,11 @@ public class CoreController extends BaseController{
 		coreService.updateAdmin(a);
 		return "redirect:/back/toModifyPwd";
 	}
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	public String upload(HttpSession session,HttpServletRequest request) throws IOException{
+		
+		return "redirect:/back/toModifyPwd";
+	}
 	
 	
 }

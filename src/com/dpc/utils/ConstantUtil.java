@@ -7,8 +7,8 @@ public class ConstantUtil {
 
 	//图片外部路径前缀
 	public final static String IMAGE_PATH_EXTERNAL = "/upload/";
-	public final static String DOMAIN = "http://112.126.83.112:8080/hospital";
-	public static final String MEMCACHE_IP = "112.126.83.112:11211";
+	public final static String DOMAIN = "http://123.56.184.184:8080/hospital";
+	public static final String MEMCACHE_IP = "123.56.184.184:11211";
 	
 	//医生患者关系状态
 	public static class DoctorPatientRelation{

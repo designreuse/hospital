@@ -67,5 +67,7 @@ public interface IPatientService {
 
 	Discovery getDiscoveryDetailById(int parseInt);
 
+	void addBackPost(Discovery d, List<String> imageUrls);
+
 
 }

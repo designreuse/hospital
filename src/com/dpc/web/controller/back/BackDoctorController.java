@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.UsesJava7;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,16 +32,23 @@ import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Admin;
 import com.dpc.web.mybatis3.domain.Article;
+import com.dpc.web.mybatis3.domain.CaseAnalysis;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.Doctor;
+import com.dpc.web.mybatis3.domain.ExchangeHistory;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
+import com.dpc.web.mybatis3.mapper.CityMapper;
+import com.dpc.web.mybatis3.mapper.CountyMapper;
+import com.dpc.web.mybatis3.mapper.ProvinceMapper;
 import com.dpc.web.service.IBackDoctorService;
 import com.dpc.web.service.IDoctorService;
 import com.dpc.web.service.IPatientService;
 import com.dpc.web.service.IUserService;
 import com.google.gson.Gson;
+
+import jxl.CellView;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Colour;
@@ -71,6 +79,12 @@ public class BackDoctorController extends BaseController{
 	@Autowired
 	IDoctorService doctorService;
 	
+	@Autowired
+	private ProvinceMapper provinceMapper;
+	@Autowired
+	private CityMapper cityMapper;
+	@Autowired
+	private CountyMapper countyMapper;
 	
 	@RequestMapping(value = "/view/list", method = RequestMethod.GET)
 	public String loginView(HttpSession session,HttpServletRequest request) throws IOException{
@@ -136,7 +150,6 @@ public class BackDoctorController extends BaseController{
 			doctor.setEndScore(Integer.parseInt(endScore));
 		}
 		
-		Map<String, Object> result = new HashMap<String, Object>();
 		Pager<DoctorVO> page = backDoctorService.findByPaginaton(doctor);
 		request.setAttribute("page", page);
 		return "/back/doctor/list";
@@ -152,7 +165,7 @@ public class BackDoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(doctorName)){
 			dia.setDoctorName(doctorName);
 		}
-		if(!ValidateUtil.isEmpty(status)){
+		if(!ValidateUtil.isEmpty(status) && !status.equals("-1")){
 			dia.setStatus(Integer.parseInt(status));
 		}
 		if(!ValidateUtil.isEmpty(creTime)){
@@ -163,6 +176,7 @@ public class BackDoctorController extends BaseController{
 		request.setAttribute("page", page);
 		return "/back/doctor/diaexpList";
 	}
+	
 	//诊后心得
 	@RequestMapping(value = "/diaexp/detail/{id}", method = RequestMethod.GET)
 	public String getDiaExpDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
@@ -182,6 +196,7 @@ public class BackDoctorController extends BaseController{
 		String title = request.getParameter("title");
 		String creTime = request.getParameter("creTime");
 		String score = request.getParameter("score");
+		String type = request.getParameter("type");
 		String content = request.getParameter("content");
 		AcademicSupport academicSupport = new AcademicSupport();
 		academicSupport.setTitle(title);
@@ -203,6 +218,7 @@ public class BackDoctorController extends BaseController{
 			academicSupport.setPromoteImage(imageUrls.get(0));
 		}
 		academicSupport.setDelFlag(0);
+		academicSupport.setType(Integer.parseInt(type));
 		backDoctorService.addAcademicSupport(academicSupport);
 		return "/back/doctor/addAcademicSupport";
 	}
@@ -341,7 +357,7 @@ public class BackDoctorController extends BaseController{
 		//将定义好的Label对象添加到工作表上，这样工作表的第一列第一行的内容为‘学员考试成绩一览表’并应用了titleFormat定义的样式
 		sheet.addCell(lab_00);
 		WritableCellFormat cloumnTitleFormat=new WritableCellFormat();
-		cloumnTitleFormat.setFont(new WritableFont(WritableFont.createFont("宋体"),10,WritableFont.NO_BOLD,false));
+		cloumnTitleFormat.setFont(new WritableFont(WritableFont.createFont("宋体"),12,WritableFont.BOLD,false));
 		cloumnTitleFormat.setAlignment(Alignment.CENTRE);
 		 
 		Label lab_01=new Label(0,1,"医生姓名",cloumnTitleFormat);
@@ -369,23 +385,49 @@ public class BackDoctorController extends BaseController{
 		sheet.addCell(lab_101);
 		sheet.addCell(lab_111);
 		
+		sheet.getSettings().setDefaultColumnWidth(15);
 		//获取所有的医生
 		List<DoctorVO> list = doctorService.getAllDoctorList();
 		if(list!=null&&list.size()>0){
 			for(int i=0;i<list.size();i++){
 				DoctorVO d = list.get(i);
-				sheet.addCell(new Label(0,i+2,d.getName()));
-				sheet.addCell(new Label(1,i+2,d.getMobile()));
-				sheet.addCell(new Label(2,i+2,d.getHospital()));
-				sheet.addCell(new Label(3,i+2,d.getDepartment()));
-				sheet.addCell(new Label(4,i+2,d.getTeachingTitle()));
-				sheet.addCell(new Label(5,i+2,"李明"));
-				sheet.addCell(new Label(6,i+2,"李明"));
-				sheet.addCell(new Label(7,i+2,"李明"));
-				sheet.addCell(new Label(8,i+2,"李明"));
-				sheet.addCell(new Label(9,i+2,d.getScore().toString()));
-				sheet.addCell(new Label(10,i+2,"李明"));
-				sheet.addCell(new Label(11,i+2,d.getRegisterTime()));
+				
+				String province = "";
+				String city = "";
+				String county = "";
+				if(!ValidateUtil.isEmpty(d.getAddress())){
+					String[] addressArr = d.getAddress().split("-");
+					if(addressArr!=null&&addressArr.length>0){
+						for(int j=0;j<addressArr.length;j++){
+							if(j==0){
+								 province = provinceMapper.selectByPrimaryKey(Integer.parseInt(addressArr[0])).getName();
+							}
+							if(j==1){
+								 city = cityMapper.selectByPrimaryKey(Integer.parseInt(addressArr[1])).getName();
+							}
+							if(j==2){
+								 county = countyMapper.selectByPrimaryKey(Integer.parseInt(addressArr[2])).getName();
+							}
+						}
+					}
+				}
+			   WritableFont   wf2   =   new   WritableFont(WritableFont.ARIAL,11,WritableFont.NO_BOLD,false,UnderlineStyle.NO_UNDERLINE,jxl.format.Colour.BLACK); // 定义格式 字体 下划线 斜体 粗体 颜色
+		       WritableCellFormat wcfTitle = new WritableCellFormat(wf2);
+		       wcfTitle.setBorder(jxl.format.Border.ALL, jxl.format.BorderLineStyle.NONE,jxl.format.Colour.AUTOMATIC); //BorderLineStyle边框
+		       wcfTitle.setAlignment(Alignment.CENTRE); //设置垂直对齐
+			      
+				sheet.addCell(new Label(0,i+2,d.getName(),wcfTitle));
+				sheet.addCell(new Label(1,i+2,d.getMobile(),wcfTitle));
+				sheet.addCell(new Label(2,i+2,d.getHospital(),wcfTitle));
+				sheet.addCell(new Label(3,i+2,d.getDepartment(),wcfTitle));
+				sheet.addCell(new Label(4,i+2,d.getTeachingTitle(),wcfTitle));
+				sheet.addCell(new Label(5,i+2,"erweima",wcfTitle));
+				sheet.addCell(new Label(6,i+2,province,wcfTitle));
+				sheet.addCell(new Label(7,i+2,city,wcfTitle));
+				sheet.addCell(new Label(8,i+2,county,wcfTitle));
+				sheet.addCell(new Label(9,i+2,d.getScore().toString(),wcfTitle));
+				sheet.addCell(new Label(10,i+2,d.getScore()/10+"."+d.getScore()%10,wcfTitle));
+				sheet.addCell(new Label(11,i+2,d.getRegisterTime(),wcfTitle));
 			}
 		}
 		//将定义的工作表输出到之前指定的介质中（这里是客户端浏览器）
@@ -397,4 +439,166 @@ public class BackDoctorController extends BaseController{
 		WritableWorkbook wwb = Workbook.createWorkbook(file);
 		return new ModelAndView("redirect:/back/doctor/list");
 	}
+	
+	@RequestMapping(value = "/exchange", method = RequestMethod.POST)
+	@ResponseBody
+	public String exchange(HttpServletRequest request){
+		String userId = request.getParameter("userId");
+		
+		Doctor d = new Doctor();
+		d.setUserId(Integer.parseInt(userId));
+		d.setScore(0);
+		doctorService.updateDoctor(d);
+		
+		return success();
+	}
+	@RequestMapping(value = "/selectExchage", method = RequestMethod.POST)
+	public String selectExchage(HttpServletRequest request){
+		String[] singles = request.getParameterValues("single");
+		if(singles!=null&&singles.length>0){
+			for(String userId  : singles){
+				Doctor d = new Doctor();
+				d.setUserId(Integer.parseInt(userId));
+				d.setScore(0);
+				doctorService.updateDoctor(d);
+			}
+		}
+		return "redirect:/back/doctor/list";
+	}
+	@RequestMapping(value = "/onekeyExchange", method = RequestMethod.GET)
+	public String onekeyExchange(HttpServletRequest request){
+		User u = new User();
+		u.setRegisterType(1);
+		List<User> list = userService.getUserList(u);
+		
+		if(list!=null&&list.size()>0){
+			for(User user  : list){
+				Doctor d = new Doctor();
+				d.setUserId(user.getId());
+				Integer score = doctorService.getDoctorList(d).get(0).getScore();
+				if(score!=0){
+					d.setScore(0);
+					doctorService.updateDoctor(d);
+					
+					ExchangeHistory exchangeHistory = new ExchangeHistory();
+					exchangeHistory.setDoctorId(user.getId());
+					exchangeHistory.setExchageTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+					exchangeHistory.setScore(score);
+					
+					exchangeHistory.setMoney(score/10+"."+score%10+"");
+					doctorService.addExchangeHistory(exchangeHistory);
+				}
+			}
+		}
+		return "redirect:/back/doctor/list";
+	}
+	@RequestMapping(value = "/exchangeHistoryView", method = RequestMethod.GET)
+	public String exchangeHistoryView(HttpServletRequest request){
+		String userId = request.getParameter("userId");
+		User u = userService.getUserById(Integer.parseInt(userId));
+		List<ExchangeHistory> list = doctorService.getMyExchangeHistoryList(Integer.parseInt(userId));
+		request.setAttribute("list", list);
+		request.setAttribute("username", u.getUsername());
+		return "/back/doctor/exchangeHistoryList";
+	}
+	@RequestMapping(value = "/newCaseAnalysis", method = RequestMethod.GET)
+	public String newCaseAnalysis(HttpServletRequest request){
+		return "/back/doctor/newCaseAnalysis";
+	}
+	@RequestMapping(value = "/saveCaseAnalysis", method = RequestMethod.POST)
+	public String saveCaseAnalysis(HttpServletRequest request,HttpSession session,CaseAnalysis caseAnalysis) throws IllegalStateException, IOException{
+		List<String> imageUrls = null;
+		List<MultipartFile> images = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("imageFile");
+			if(images!=null&&images.size()>0){
+				for(MultipartFile file : images){
+					imageUrls = upload(session,request,file);
+				}
+			}
+		}
+		if(!ValidateUtil.isEmpty(imageUrls)){
+			caseAnalysis.setIllCaseImage(imageUrls.get(0));
+		}
+		caseAnalysis.setDelFlag(0);
+		doctorService.addCaseAnalysis(caseAnalysis);
+		return "redirect:/back/doctor/getCaseAnalysisList";
+	}
+	@RequestMapping(value = "/updateCaseAnalysis", method = RequestMethod.POST)
+	public String updateCaseAnalysis(HttpServletRequest request,HttpSession session,CaseAnalysis caseAnalysis) throws IllegalStateException, IOException{
+		List<String> imageUrls = null;
+		List<MultipartFile> images = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("imageFile");
+			if(images!=null&&images.size()>0){
+				for(MultipartFile file : images){
+					imageUrls = upload(session,request,file);
+				}
+			}
+		}
+		caseAnalysis.setDelFlag(0);
+		CaseAnalysis c = new CaseAnalysis();
+		c.setId(caseAnalysis.getId());
+		c.setAnalysis(caseAnalysis.getAnalysis());
+		c.setDoctorName(caseAnalysis.getDoctorName());
+		c.setEliteType(caseAnalysis.getEliteType());
+		c.setHospital(caseAnalysis.getHospital());
+		c.setTitle(caseAnalysis.getTitle());
+		if(!ValidateUtil.isEmpty(imageUrls)){
+			c.setIllCaseImage(imageUrls.get(0));
+		}
+		doctorService.updateCaseAnalysis(caseAnalysis);
+		return "redirect:/back/doctor/getCaseAnalysisList";
+	}
+	@RequestMapping(value = "/caseAnalysis/del", method = RequestMethod.GET)
+	public String delCaseAnalysis(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
+		String id = request.getParameter("id");
+		CaseAnalysis caseAnalysis = new CaseAnalysis();
+		caseAnalysis.setId(Integer.parseInt(id));
+		caseAnalysis.setDelFlag(1);
+		doctorService.updateCaseAnalysis(caseAnalysis);
+		return "redirect:/back/doctor/getCaseAnalysisList";
+	}
+	@RequestMapping(value = "/caseAnalysis/detail", method = RequestMethod.GET)
+	public String caseAnalysisDetail(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
+		String id = request.getParameter("id");
+		CaseAnalysis caseAnalysis = doctorService.getCaseAnalysisById(Integer.parseInt(id));
+		request.setAttribute("detail", caseAnalysis);
+		return "/back/doctor/caseAnalysisDetail";
+	}
+	@RequestMapping(value = "/caseAnalysis/upateView", method = RequestMethod.GET)
+	public String caseAnalysisUpateView(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
+		String id = request.getParameter("id");
+		CaseAnalysis caseAnalysis = doctorService.getCaseAnalysisById(Integer.parseInt(id));
+		request.setAttribute("detail", caseAnalysis);
+		return "/back/doctor/updateCaseAnalysis";
+	}
+	@RequestMapping(value = "/getCaseAnalysisList", method = RequestMethod.GET)
+	public String getCaseAnalysisList(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
+		String doctorName = request.getParameter("doctorName");
+		String eliteType = request.getParameter("eliteType");
+		String hospital = request.getParameter("hospital");
+		String postTime = request.getParameter("postTime");
+		
+		CaseAnalysis caseAnalysis = new CaseAnalysis();
+		if(!ValidateUtil.isEmpty(doctorName)){
+			caseAnalysis.setDoctorName(doctorName);
+		}
+		if(!ValidateUtil.isEmpty(eliteType)){
+			caseAnalysis.setEliteType(Integer.parseInt(eliteType));
+		}
+		if(!ValidateUtil.isEmpty(hospital)){
+			caseAnalysis.setHospital(hospital);
+		}
+		if(!ValidateUtil.isEmpty(postTime)){
+			caseAnalysis.setPostTime(postTime);
+		}
+		
+		Pager<CaseAnalysis> page = backDoctorService.findCaseAnalysisByPaginaton(caseAnalysis);
+		request.setAttribute("page", page);
+		return "/back/doctor/caseAnalysisList";
+	}
+	
 }

@@ -205,6 +205,20 @@ public class PatientServiceImpl implements IPatientService {
 	public Discovery getDiscoveryDetailById(int id) {
 		return discoveryMapper.getDiscoveryImageDetail(id);
 	}
+
+	@Override
+	public void addBackPost(Discovery d, List<String> imageUrls) {
+		discoveryMapper.insertSelective(d);
+		if(imageUrls!=null&&imageUrls.size()>0){
+			for(String s : imageUrls){
+				DiscoveryImage discoveryImage = new DiscoveryImage();
+				discoveryImage.setDelFlag(0);
+				discoveryImage.setDiscoveryId(d.getId());
+				discoveryImage.setImageUrl(s);
+				discoveryMapper.addDiscoveryImage(discoveryImage);
+			}
+		}
+	}
 	
 	
 }

@@ -1,6 +1,7 @@
 package com.dpc.web.controller.back;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.JsonUtil;
@@ -21,6 +25,7 @@ import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.Admin;
 import com.dpc.web.mybatis3.domain.Article;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
@@ -39,7 +44,34 @@ public class PostController extends BaseController{
 	@Autowired
 	private IDoctorService doctorService;
 	
-	
+
+	//后台新建患者帖子
+	@RequestMapping(value = "/addDiscovery", method = RequestMethod.POST)
+	public String addDiscovery(HttpSession session,HttpServletRequest request) throws IOException{
+		Admin admin = (Admin) session.getAttribute("admin");
+		String content = request.getParameter("content");
+		List<MultipartFile> images = null;
+		List<String> imageUrls = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("discoveryImage");
+			if(images!=null&&images.size()>0){
+				for(MultipartFile file : images){
+					imageUrls = upload(session,request,file);
+				}
+			}
+		}
+		Discovery d = new Discovery();
+		d.setDelFlag(0);
+		d.setType(1);
+		d.setContent(content);
+		d.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		d.setVoteCount(0);
+		d.setRemarkCount(0);
+		d.setUserId(admin.getId());
+		patientService.addBackPost(d,imageUrls);
+		return "/back/patient/wishDetail";
+	}
 	@RequestMapping(value = "/patient/list/view", method = RequestMethod.GET)
 	public String getPatientPostsView(HttpSession session,HttpServletRequest request) throws IOException{
 		String username = request.getParameter("username");
