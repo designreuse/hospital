@@ -33,7 +33,18 @@
     <servlet-name>center</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  
+  <filter>
+    <filter-name>CharactorFilter</filter-name>
+    <filter-class>com.dpc.filter.CharactorFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>utf-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharactorFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
   <filter>
     <filter-name>HiddenHttpMethodFilter</filter-name>
     <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
@@ -42,7 +53,6 @@
     <filter-name>HiddenHttpMethodFilter</filter-name>
     <servlet-name>center</servlet-name>
   </filter-mapping>
-  
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -59,8 +69,6 @@
     <filter-name>encodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
- 
-  
   <filter>
     <display-name>PaginationFilter</display-name>
     <filter-name>PaginationFilter</filter-name>
@@ -78,36 +86,34 @@
     <servlet-name>druidStatView</servlet-name>
     <url-pattern>/druid/*</url-pattern>
   </servlet-mapping>
-
-<filter>  
-    <filter-name>CORS</filter-name>  
-    <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>  
-    <init-param>  
-     <param-name>cors.allowOrigin</param-name>  
-        <param-value>*</param-value>  
-    </init-param>  
-    <init-param>  
-     <param-name>cors.supportedMethods</param-name>  
-        <param-value>GET, POST, HEAD, PUT, DELETE</param-value>  
-    </init-param>  
-    <init-param>  
-     <param-name>cors.supportedHeaders</param-name>  
-        <param-value>Accept, Origin, X-Requested-With, Content-Type, Last-Modified</param-value>  
-    </init-param>  
-    <init-param>  
-        <param-name>cors.exposedHeaders</param-name>  
-        <param-value>Set-Cookie</param-value>  
-    </init-param>  
-    <init-param>  
-        <param-name>cors.supportsCredentials</param-name>  
-        <param-value>true</param-value>  
-    </init-param>  
-</filter>  
-<filter-mapping>  
-    <filter-name>CORS</filter-name>  
-    <url-pattern>/*</url-pattern>  
-</filter-mapping>
-
+  <filter>
+    <filter-name>CORS</filter-name>
+    <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+    <init-param>
+      <param-name>cors.allowOrigin</param-name>
+      <param-value>*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportedMethods</param-name>
+      <param-value>GET, POST, HEAD, PUT, DELETE</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportedHeaders</param-name>
+      <param-value>Accept, Origin, X-Requested-With, Content-Type, Last-Modified</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.exposedHeaders</param-name>
+      <param-value>Set-Cookie</param-value>
+    </init-param>
+    <init-param>
+      <param-name>cors.supportsCredentials</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORS</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
   <welcome-file-list>
     <welcome-file>/WEB-INF/pages/login.jsp</welcome-file>
   </welcome-file-list>

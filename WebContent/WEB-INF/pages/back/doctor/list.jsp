@@ -25,11 +25,11 @@
           <div class="col-lg-12">
 				<div class="ibox float-e-margins">
 					<div class="ibox-content">
-                         <form role="form" class="form-inline" method="GET" action="${ctx }/back/doctor/list">
+                         <form role="form" class="form-inline" method="POST" action="${ctx }/back/doctor/list">
                          	 <div class="row show-grid">
                          	 	<div class="form-group col-lg-3">
 	                         	 	<div class="form-group" style="margin-left: 39px;">
-		                                 <label for="">用户名：</label>
+		                                 <label for="">手机号：</label>
 		                                 <input type="text" name="username" class="form-control">
 		                             </div>
                          	 	</div>
@@ -70,7 +70,8 @@
 	                                 <label for="">医生验证：</label>
 	                                 <div class="input-group">
 	                                    <select class="form-control" name="verifyed" style="width: 130px;">
-			                                <option value="0">未通过</option>
+			                                 <option value="-1">请选择</option>
+			                                 <option value="0">未通过</option>
 			                                 <option value="1">通过</option>
 			                             </select>
 	                                </div>
@@ -96,17 +97,21 @@
            <div class="col-lg-12">
            		 <div class="panel-body">
            		 <form action="${ctx }/back/doctor/selectExchage" method="post" id="exchageform">
+           		 	<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
+						<jsp:param value="${ctx}/back/doctor/list" name="url" />
+					</jsp:include>
 					<table
 						class="table table-striped table-bordered table-hover">
 						<tr>
-							<th width="2%">全选<input type="checkbox" name="all"  /> </th>
-							<th width="5%">用户名</th>
+							<th width="2%"><input type="checkbox" name="all"  /> </th>
+							<th width="5%">手机号</th>
 							<th width="5%">姓名</th>
 							<th width="5%">医院名称</th>
 							<th width="5%">科室</th>
 							<th width="10%">所在地</th>
 							<th width="5%">技术职称</th>
 							<th width="5%">医生积分</th>
+							<th width="5%">医生号码</th>
 							<th width="5%">医生验证</th>
 							<th width="10%">注册时间</th>
 							<th width="13%">操作</th>
@@ -121,6 +126,7 @@
 								<td>${item.address}</td>
 								<td>${item.technicalTitle}</td>
 								<td id="score${item.id}">${item.score}</td>
+								<td>${item.doctorIdentityPlain}</td>
 								<td>
 									<c:if test="${item.verifyed == 0}">未通过</c:if>
 									<c:if test="${item.verifyed == 1}">通过</c:if>
@@ -135,9 +141,6 @@
 						</c:forEach>
 					</table>
 					</form>
-					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/article/doctor/list/1" name="url" />
-					</jsp:include>
 				</div>
            </div>
        </div>

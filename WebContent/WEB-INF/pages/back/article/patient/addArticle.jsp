@@ -51,7 +51,7 @@
                               	<div class="form-group">
 		                             <div class="input-group" style="margin-left: 15px;">
 		                             	  <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-		                                 <input type="text" class="form-control" name="postTime" id="postTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+		                                 <input type="text" class="form-control" name="postTime" id="postTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})">
 		                             </div>
                          		</div>
                                 </div>
@@ -96,7 +96,8 @@
 <script type="text/javascript">
 	$(function(){
 		UE.getEditor('contentDiv',{
-	         initialFrameHeight:600
+	         initialFrameHeight:600,
+	         imageUrl:"http://localhost:8080/hospital/ueditor/execute"
 	     })
 		$("#btnPost").on("click",function(){
 			$("#content").val(UE.getEditor('contentDiv').getContent());

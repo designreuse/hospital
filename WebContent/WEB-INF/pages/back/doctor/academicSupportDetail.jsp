@@ -38,11 +38,18 @@
                  <div class="col-md-1  text-right">会议内容：</div>
                  <div class="col-md-11 text-left">${academic.content }</div>
              </div>
+       		<div class="row show-grid">
+       		<div class="col-md-1  text-right"></div>
+                 <div class="col-md-11 text-left"><button style="width: 130px" class="btn btn-success" type="button" onclick="edit('${academic.id }')">修改</button></div>
+       		
+             </div>
        </div>
     </div>
 </div>
 </body>
 <script type="text/javascript">
-	
+function edit(id){
+	window.location.href = "${ctx}/back/doctor/academicSupport/update/view?id="+id;
+}
 </script>
 </html>

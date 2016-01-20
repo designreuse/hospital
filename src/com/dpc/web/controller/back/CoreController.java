@@ -75,6 +75,8 @@ public class CoreController extends BaseController{
 	}
 	@RequestMapping(value = "/manager/view", method = RequestMethod.GET)
 	public String managerView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "setting", "default");
 		List<Admin> list = coreService.getAllManagerList();
 		if(list!=null&&list.size()>0){
 			for(Admin a : list){
@@ -125,6 +127,8 @@ public class CoreController extends BaseController{
 		if (admin == null){
 			msg = "用户名不存在";
 			flag = false;
+			request.setAttribute("msg", msg);
+			return "login";
 		}		
 		//获得密码
 		String pwd = admin.getPassword();
@@ -186,6 +190,8 @@ public class CoreController extends BaseController{
 	//用户反馈列表
 	@RequestMapping(value = "/feedback/list", method = RequestMethod.GET)
 	public String getFeedBackList(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "setting", "default");
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		String username = request.getParameter("username");
@@ -245,12 +251,15 @@ public class CoreController extends BaseController{
 	@RequestMapping(value = "/feedback/replay", method = RequestMethod.POST)
 	@ResponseBody
 	public String feedbackReply(HttpSession session,HttpServletRequest request) throws IOException{
+		Admin admin = (Admin) session.getAttribute("admin");
+		
 		String id = request.getParameter("id");
 		String content = request.getParameter("content");
 		FeedBack feedBack = new FeedBack();
 		feedBack.setId(Integer.parseInt(id));
 		feedBack.setReply(content);
 		feedBack.setStatus(1);
+		feedBack.setOperator(admin.getName());
 		coreService.updateFeedBack(feedBack);
 		return success();
 	}
@@ -305,7 +314,9 @@ public class CoreController extends BaseController{
 	}
 	
 	@RequestMapping(value = "/hopital/import/view", method = RequestMethod.GET)
-	public String importHospitalView(HttpServletRequest request) throws IOException{
+	public String importHospitalView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "setting", "default");
 		//获取省
 		List<Province> plist = coreService.getAllProvinceList();
 		request.setAttribute("plist", plist);
@@ -471,7 +482,8 @@ public class CoreController extends BaseController{
 	}
 	@RequestMapping(value = "/toModifyPwd", method = RequestMethod.GET)
 	public String toModifyPwd(HttpSession session,HttpServletRequest request) throws IOException{
-		
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "setting", "default");
 		return "/back/common/modifyPwd";
 	}
 	

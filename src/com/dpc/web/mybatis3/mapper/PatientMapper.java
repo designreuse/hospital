@@ -74,4 +74,10 @@ public interface PatientMapper {
 
 	DoctorPatientRelation getDoctorPatientRelationById(int id);
 
+	List<PatientVO> getAllPatient();
+
+	List<DoctorPatientRelation> getBindDoctors(Object i);
+
+	void updateDoctorPatientRelation(DoctorPatientRelation doctorPatientRelation);
+
 }

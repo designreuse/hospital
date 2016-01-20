@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dpc.web.mybatis3.mapper.ArticleMapper" >
-  
+  <resultMap id="articleDetailMap" type="article" >
+    	<id column="id" property="id" jdbcType="INTEGER" />
+    	<result column="content" property="content" jdbcType="VARCHAR" />
+    	<result column="title" property="title" jdbcType="VARCHAR" />
+    	<result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
+    	<result column="category" property="category" jdbcType="INTEGER" />
+    	<result column="resource" property="resource" jdbcType="VARCHAR" />
+    	<result column="linkType" property="linkType" jdbcType="INTEGER" />
+    	<result column="linkUrl" property="linkUrl" jdbcType="VARCHAR" />
+    	<result column="coverImageUrl" property="coverImageUrl" jdbcType="VARCHAR" />
+    	<result column="postTime" property="postTime" jdbcType="VARCHAR" />
+    	<collection property="remarkList" ofType="articleRemark">
+			<id column="rid" property="id" jdbcType="INTEGER" />
+    		<result column="remark" property="remark" jdbcType="VARCHAR" />
+    		<result column="remarkTime" property="postTime" jdbcType="VARCHAR" />
+    		<result column="name" property="name" jdbcType="VARCHAR" />
+    		<result column="profileImageUrl" property="profileImageUrl" jdbcType="VARCHAR" />
+    	</collection>
+    </resultMap>
+    
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="article">
   	select * from t_article where id = #{0} and delFlag=0
   </select>
@@ -53,6 +72,9 @@
       <if test="content != null" >
         content,
       </if>
+      <if test="remarkCount != null" >
+        remarkCount,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -91,6 +113,9 @@
       <if test="content != null" >
         #{content,jdbcType=LONGVARCHAR},
       </if>
+      <if test="remarkCount != null" >
+        #{remarkCount},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="article" >
@@ -128,6 +153,9 @@
       </if>
       <if test="content != null" >
         content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="remarkCount != null" >
+        remarkCount = #{remarkCount},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -205,17 +233,42 @@
   	select * from t_article where delFlag = 0 and type=2 and category=7 and illType = #{0} order by postTime desc
   </select>
    <select id="getArticlesLately" resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=7 order by postTime desc
+  	select * from t_article where delFlag = 0 and type=2 and category=7  order by postTime desc
   </select>
-  
 
-   <select id="getHeartVedioList"  resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=6 order by postTime desc
+   <select id="getHeartVedioList" parameterType="article"  resultType="article">
+  	select * from t_article 
+  	<where>
+  		delFlag = 0 and type=2 and category=6
+  		<if test="illType != null"> and illType = #{illType}</if>
+  	</where>
+  	order by postTime desc
   </select>
   
-  
-   <select id="getCartoonList" resultType="article">
-  	select * from t_article where delFlag = 0 and type=2 and category=5 order by postTime desc
+   <select id="getCartoonList" parameterType="article" resultType="article">
+  	select * from t_article 
+  	<where>
+  		delFlag = 0 and type=2 and category=6
+  		<if test="illType != null"> and illType = #{illType}</if>
+  	</where>
+  	 order by postTime desc
   </select>
   
+  <select id="getArticleDetail" parameterType="java.lang.Integer" resultMap="articleDetailMap">
+ 	SELECT 
+		a.content,
+		a.remarkCount,
+		a.resource,
+		a.linkType,
+		a.linkUrl,
+		a.coverImageUrl,
+		a.postTime,
+		a.title,
+		b.remark,
+		date_format(b.postTime, '%Y-%m-%d %H:%i:%s') as remarkTime,
+		b.remark,
+		u.`name`,
+		u.profileImageUrl
+    from t_article a LEFT JOIN t_article_remark b on a.id=b.articleId LEFT JOIN t_user u on u.id=b.userId where a.id=#{0}
+  </select>
 </mapper>

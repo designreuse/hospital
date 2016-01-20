@@ -22,6 +22,7 @@ import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
@@ -55,11 +56,7 @@ public class PostController extends BaseController{
 		if (request instanceof MultipartHttpServletRequest){
 			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
 			images = req.getFiles("discoveryImage");
-			if(images!=null&&images.size()>0){
-				for(MultipartFile file : images){
-					imageUrls = upload(session,request,file);
-				}
-			}
+			imageUrls = upload(session,request,images);
 		}
 		Discovery d = new Discovery();
 		d.setDelFlag(0);
@@ -70,10 +67,36 @@ public class PostController extends BaseController{
 		d.setRemarkCount(0);
 		d.setUserId(admin.getId());
 		patientService.addBackPost(d,imageUrls);
-		return "/back/patient/wishDetail";
+		return "redirect:/back/post/patient/list/view";
+	}
+	//后台新建患者帖子
+	@RequestMapping(value = "/addHeartCircle", method = RequestMethod.POST)
+	public String addHeartCircle(HttpSession session,HttpServletRequest request) throws IOException{
+		Admin admin = (Admin) session.getAttribute("admin");
+		String content = request.getParameter("content");
+		List<MultipartFile> images = null;
+		List<String> imageUrls = null;
+		if (request instanceof MultipartHttpServletRequest){
+			MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+			images = req.getFiles("discoveryImage");
+			imageUrls = upload(session,request,images);
+		}
+		HeartCircle circle = new HeartCircle();
+		circle.setContent(content);
+		circle.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		circle.setDoctorId(admin.getId());
+		circle.setProfileImage(admin.getProfileImageUrl());
+		circle.setRemarkCount(0);
+		circle.setType(1);
+		circle.setDelFlag(0);
+		doctorService.addHeartCircle(circle,imageUrls);
+		return "redirect:/back/post/doctor/list/view";
 	}
 	@RequestMapping(value = "/patient/list/view", method = RequestMethod.GET)
 	public String getPatientPostsView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "post", "default");
+		
 		String username = request.getParameter("username");
 		String postTime = request.getParameter("postTime");
 		
@@ -84,6 +107,7 @@ public class PostController extends BaseController{
 		if(!ValidateUtil.isEmpty(postTime)){
 			d.setPostTime(postTime);
 		}
+		d.setType(1);
 		Pager<Discovery> page = patientService.findDiscoveryByPaginaton(d);
 		request.setAttribute("page", page);
 		
@@ -136,6 +160,8 @@ public class PostController extends BaseController{
 	
 	@RequestMapping(value = "/doctor/list/view", method = RequestMethod.GET)
 	public String getDoctorPostsView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "post", "default");
 		String username = request.getParameter("username");
 		String postTime = request.getParameter("postTime");
 		
@@ -155,10 +181,14 @@ public class PostController extends BaseController{
 	
 	@RequestMapping(value = "/patient/add/view", method = RequestMethod.GET)
 	public String addPatientPostView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "post", "default");
 		return "/back/post/addPatientPost";
 	}
 	@RequestMapping(value = "/doctor/add/view", method = RequestMethod.GET)
 	public String addDoctorPostView(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "post", "default");
 		return "/back/post/addDoctorPost";
 	}
 	

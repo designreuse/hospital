@@ -7,6 +7,7 @@ import com.dpc.utils.PageResult;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.Article;
+import com.dpc.web.mybatis3.domain.ArticleRemark;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
 
@@ -26,13 +27,17 @@ public interface IArticleService {
 
 	List<Article> getArticlesByIllType(int parseInt);
 
-	List<Article> getHeartVedioList();
+	List<Article> getHeartVedioList(Article param);
 
-	List<Article> getCartoonList();
+	List<Article> getCartoonList(Article param);
 
 	List<Article> getArticlesLately();
 
 	Article getArticleDetailById(int parseInt);
+
+	Article getArticleDetail(int parseInt);
+
+	void addArticleRemark(ArticleRemark articleRemark);
 
 	
 }

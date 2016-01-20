@@ -5,20 +5,52 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class DoctorPatientRelation {
     private Integer id;
-
     private Integer doctorId;
-
     private Integer patientId;
     private String patientName;
-
     private Integer relation;
-
+    private String bindTime;
     private Integer checked;
     private Integer direction;
     private Integer acceptOrNot;
+    private Integer age;
+    private Integer agender;
+    private String remark;
 
     
-    public Integer getAcceptOrNot() {
+    public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public Integer getAgender() {
+		return agender;
+	}
+
+	public void setAgender(Integer agender) {
+		this.agender = agender;
+	}
+
+	public String getBindTime() {
+		return bindTime;
+	}
+
+	public void setBindTime(String bindTime) {
+		this.bindTime = bindTime;
+	}
+
+	public Integer getAcceptOrNot() {
 		return acceptOrNot;
 	}
 

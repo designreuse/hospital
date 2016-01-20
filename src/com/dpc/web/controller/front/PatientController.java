@@ -6,17 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
@@ -28,7 +25,8 @@ import com.dpc.web.VO.WishVO;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Article;
-import com.dpc.web.mybatis3.domain.DiagnoseExperience;
+import com.dpc.web.mybatis3.domain.ArticleRemark;
+import com.dpc.web.mybatis3.domain.DayLive;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
@@ -38,6 +36,9 @@ import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
+import com.dpc.web.mybatis3.mapper.CityMapper;
+import com.dpc.web.mybatis3.mapper.CountyMapper;
+import com.dpc.web.mybatis3.mapper.ProvinceMapper;
 import com.dpc.web.service.IArticleService;
 import com.dpc.web.service.IDoctorService;
 import com.dpc.web.service.IPatientService;
@@ -56,6 +57,12 @@ public class PatientController extends BaseController{
 	@Autowired
 	IArticleService articleService;
 	
+	@Autowired
+	private ProvinceMapper provinceMapper;
+	@Autowired
+	private CityMapper cityMapper;
+	@Autowired
+	private CountyMapper countyMapper;
 	//患者个人资料
 	@RequestMapping(value = "/profile", method = RequestMethod.GET)
 	@ResponseBody
@@ -309,6 +316,33 @@ public class PatientController extends BaseController{
 		discovery.setContent(content);
 		patientService.addDiscovery(discovery,imageUrls);
 		
+		//记录日活
+		//是否是绑定关系
+		List<DoctorPatientRelation> bindDoctors = patientService.getBindDoctors(u.getId());
+		if(bindDoctors!=null&&bindDoctors.size()>0){
+			for(DoctorPatientRelation relation : bindDoctors){
+				//daylive 2016-10-10 pid did
+				MemSession dayliveSession = MemSession.getSession("daylive" + DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN)+u.getId()+relation.getDoctorId(),false,"default");
+				if(dayliveSession!=null && dayliveSession.getMap()==null){
+					//记录当前患者对应医生的日活
+					DayLive dayLive = new DayLive();
+					dayLive.setDoctorId(relation.getDoctorId());
+					dayLive.setPatientId(u.getId());
+					dayLive.setOperTime(DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN));
+					patientService.addDayLive(dayLive);
+					
+					//给对应医生添加积分
+					Doctor d = doctorService.getDoctorById(relation.getDoctorId());
+					if(d!=null){
+						Doctor doctor = new Doctor();
+						doctor.setId(d.getId());
+						doctor.setScore(d.getScore()+10);
+						doctorService.updateDoctor(doctor);
+					}
+					MemSession.getSession("daylive" + DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN)+u.getId()+relation.getDoctorId(),true,"default");
+				}
+			}
+		}
 		return success();
 	}
 	//对说说进行评价
@@ -464,23 +498,22 @@ public class PatientController extends BaseController{
 		if(u.getRegisterType() == 1){
 			return error(ErrorCodeUtil.e10000);
 		}
-		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
-		doctorPatientRelation.setDoctorId(Integer.parseInt(doctorId));
-		doctorPatientRelation.setPatientId(u.getId());
-		doctorPatientRelation.setRelation(1);
-		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
-			return error(ErrorCodeUtil.e11604);
-		}
+//		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
+//		doctorPatientRelation.setDoctorId(Integer.parseInt(doctorId));
+//		doctorPatientRelation.setPatientId(u.getId());
+//		doctorPatientRelation.setRelation(1);
+//		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+//			return error(ErrorCodeUtil.e11604);
+//		}
 		patientService.unBindRelation(u.getId(),Integer.parseInt(doctorId));
 		
 		return success();
 	}
 	//获取我的医生详情
-	@RequestMapping(value = "/mydoctor/detail", method = RequestMethod.GET)
+	@RequestMapping(value = "/mydoctor/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getMyDoctorDetail(HttpSession session,HttpServletRequest request) throws IOException{
+	public String getMyDoctorDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
 		String accessToken = request.getParameter("accessToken");
-		String id = request.getParameter("id");
 		MemSession memSession = userService.getSessionByAccessToken(accessToken);
 		//无效授权
 		if (memSession == null){
@@ -497,7 +530,32 @@ public class PatientController extends BaseController{
 			return error(ErrorCodeUtil.e11802);
 		}
 		Doctor d = patientService.getMyDoctorDetail(Integer.parseInt(id));
-		
+		if(d!=null){
+			if(!ValidateUtil.isEmpty(d.getProfileImageUrl())){
+				d.setProfileImageUrl(ConstantUtil.DOMAIN+d.getProfileImageUrl());
+			}
+			
+			String province = "";
+			String city = "";
+			String county = "";
+			if(!ValidateUtil.isEmpty(d.getAddress())){
+				String[] addressArr = d.getAddress().split("-");
+				if(addressArr!=null&&addressArr.length>0){
+					for(int j=0;j<addressArr.length;j++){
+						if(j==0){
+							 province = provinceMapper.selectByPrimaryKey(Integer.parseInt(addressArr[0])).getName();
+						}
+						if(j==1){
+							 city = cityMapper.selectByPrimaryKey(Integer.parseInt(addressArr[1])).getName();
+						}
+						if(j==2){
+							 county = countyMapper.selectByPrimaryKey(Integer.parseInt(addressArr[2])).getName();
+						}
+					}
+				}
+			}
+			d.setAddress(province+" "+city+" "+county);
+		}
 		return JsonUtil.object2String(d);
 	}
 	//获取我绑定的医生和加为好友的医生的公告
@@ -582,6 +640,7 @@ public class PatientController extends BaseController{
 		dp.setDoctorId(user.getId());
 		dp.setDirection(1);
 		dp.setPatientName(u.getName());
+		dp.setBindTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		//该患者是否已经和其他医生绑定
 		if(patientService.hasBindWithDoctor(u.getId())){
 			//好友关系
@@ -597,10 +656,11 @@ public class PatientController extends BaseController{
 	}
 	
 	//获取某疾病下的文章
-	@RequestMapping(value = "/ill/articles", method = RequestMethod.GET)
+	@RequestMapping(value = "/ill/articles/{illType}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getArticlesWithIll(HttpSession session,HttpServletRequest request) throws IOException{
-		String illType = request.getParameter("illType");
+	public String getArticlesWithIll(HttpSession session,HttpServletRequest request,@PathVariable("illType") String illType) throws IOException{
+		Article param = new Article();
+		param.setIllType(Integer.parseInt(illType));
 		Map<String, Object> result = new HashMap<String, Object>();
 		//获取疾病下文章列表
 		List<Article> articleList = articleService.getArticlesByIllType(Integer.parseInt(illType));
@@ -612,7 +672,7 @@ public class PatientController extends BaseController{
 			}
 		}
 		//获取心视频列表
-		List<Article> vedioList = articleService.getHeartVedioList();
+		List<Article> vedioList = articleService.getHeartVedioList(param);
 		if(vedioList!=null&&vedioList.size()>0){
 			for(Article a : vedioList){
 				if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
@@ -621,7 +681,7 @@ public class PatientController extends BaseController{
 			}
 		}
 		//获取心漫画列表
-		List<Article> cartoonList = articleService.getCartoonList();
+		List<Article> cartoonList = articleService.getCartoonList(param);
 		if(cartoonList!=null&&cartoonList.size()>0){
 			for(Article a : cartoonList){
 				if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
@@ -640,21 +700,23 @@ public class PatientController extends BaseController{
 	@RequestMapping(value = "/saveHeart/lecture", method = RequestMethod.GET)
 	@ResponseBody
 	public String getSaveHeartLecture(HttpSession session,HttpServletRequest request) throws IOException{
+		Article param = new Article();
+		param.setIllType(null);
 		Map<String, Object> result = new HashMap<String, Object>();
 		//获取疾病下文章列表
 		List<Article> articleList = articleService.getArticlesLately();
 				
 		//获取心视频列表
-		List<Article> vedioList = articleService.getHeartVedioList();
+		List<Article> vedioList = articleService.getHeartVedioList(param);
 		
 		//获取心漫画列表
-		List<Article> cartoonList = articleService.getCartoonList();
+		List<Article> cartoonList = articleService.getCartoonList(param);
 		Integer a = 0;
 		Integer b = 0;
 		Integer c = 0;
 		if(articleList!=null&&articleList.size()>0){
 			if(cartoonList!=null&&cartoonList.size()>0){
-				for(Article article : cartoonList){
+				for(Article article : articleList){
 					if(!ValidateUtil.isEmpty(article.getCoverImageUrl())){
 						article.setCoverImageUrl(ConstantUtil.DOMAIN+article.getCoverImageUrl());
 					}
@@ -682,7 +744,7 @@ public class PatientController extends BaseController{
 			}
 			c=cartoonList.size();
 		}
-		if(articleList!=null&&articleList.size()>=3){
+	/*	if(articleList!=null&&articleList.size()>=3){
 			result.put("heart_knowledge", articleList.subList(0, 3));
 		}else if(articleList!=null&&articleList.size()<3){
 			result.put("heart_knowledge", articleList.subList(0, a));
@@ -696,9 +758,123 @@ public class PatientController extends BaseController{
 			result.put("heart_cartoon", cartoonList.subList(0, 3));
 		}else if(cartoonList!=null&&cartoonList.size()<3){
 			result.put("heart_cartoon", cartoonList.subList(0, c));
+		}*/
+		
+		if(articleList!=null&&articleList.size()>0){
+			result.put("heart_knowledge", articleList.get(0));
+		}
+		if(vedioList!=null&&vedioList.size()>0){
+			result.put("heart_vedio", vedioList.get(0));
+		}
+		if(cartoonList!=null&&cartoonList.size()>0){
+			result.put("heart_cartoon", cartoonList.get(0));
 		}
 		String ret = JsonUtil.object2String(result);
 		return ret;
+	}
+	
+	
+	
+	@RequestMapping(value = "/article/list/{type}/{category}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getDoctorArticleByCategory(HttpSession session,HttpServletRequest request,@PathVariable("type") String type,@PathVariable("category") String category) throws IOException{
+		List<Article> list = articleService.getArticleByTypeAndCategory(Integer.parseInt(type),Integer.parseInt(category));
+		if(list!=null&&list.size()>0){
+			for(Article a : list){
+				a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+				a.setPostTime(DateUtil.date2Str(DateUtil.parse(a.getPostTime(), DateUtil.DATE_PATTERN), DateUtil.DATE_PATTERN));
+			}
+		}
+		return JsonUtil.object2String(list);
+	}
+	@RequestMapping(value = "/article/remark", method = RequestMethod.POST)
+	@ResponseBody
+	public String articleRemark(HttpSession session,HttpServletRequest request) throws IOException{
+		String articleId = request.getParameter("articleId");
+		String remark = request.getParameter("remark");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		ArticleRemark articleRemark = new ArticleRemark();
+		articleRemark.setArticleId(Integer.parseInt(articleId));
+		articleRemark.setDelFlag(0);
+		articleRemark.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		articleRemark.setRemark(remark);
+		articleRemark.setUserId(u.getId());
+		articleService.addArticleRemark(articleRemark);
+		
+		//评论数
+		Article a = articleService.getArticleById(Integer.parseInt(articleId));
+		Integer remarkCount = a.getRemarkCount();
+		if(remarkCount==null){
+			remarkCount = 0;
+		}
+		a = new Article();
+		a.setId(Integer.parseInt(articleId));
+		a.setRemarkCount(remarkCount+1);
+		articleService.update(a);
+		
+		return success();
+	}
+	@RequestMapping(value = "/article/detail/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getArticleDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession != null){
+			User u = (User) memSession.getAttribute("user");
+			if(u!=null){
+				//是否是绑定关系
+				List<DoctorPatientRelation> bindDoctors = patientService.getBindDoctors(u.getId());
+				if(bindDoctors!=null&&bindDoctors.size()>0){
+					for(DoctorPatientRelation relation : bindDoctors){
+						//daylive 2016-10-10 pid did
+						MemSession dayliveSession = MemSession.getSession("daylive" + DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN)+u.getId()+relation.getDoctorId(),false,"default");
+						if(dayliveSession!=null && dayliveSession.getMap()==null){
+							//记录当前患者对应医生的日活
+							DayLive dayLive = new DayLive();
+							dayLive.setDoctorId(relation.getDoctorId());
+							dayLive.setPatientId(u.getId());
+							dayLive.setOperTime(DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN));
+							patientService.addDayLive(dayLive);
+							
+							//给对应医生添加积分
+							Doctor d = doctorService.getDoctorById(relation.getDoctorId());
+							if(d!=null){
+								Doctor doctor = new Doctor();
+								doctor.setId(d.getId());
+								doctor.setScore(d.getScore()+10);
+								doctorService.updateDoctor(doctor);
+							}
+							MemSession.getSession("daylive" + DateUtil.date2Str(new Date(), DateUtil.DATE_PATTERN)+u.getId()+relation.getDoctorId(),true,"default");
+						}
+					}
+				}
+			}
+		}
+		Article a = articleService.getArticleDetail(Integer.parseInt(id));
+		if(a!=null){
+			List<ArticleRemark> remarkList = a.getRemarkList();
+			if(remarkList!=null&&remarkList.size()>0){
+				for(ArticleRemark aa : remarkList){
+					if(!ValidateUtil.isEmpty(aa.getProfileImageUrl())){
+						aa.setProfileImageUrl(ConstantUtil.DOMAIN+aa.getProfileImageUrl());
+					}
+				}
+			}
+			if(!ValidateUtil.isEmpty(a.getCoverImageUrl())){
+				a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
+			}
+		}
+		return JsonUtil.object2String(a);
 	}
 	
 }

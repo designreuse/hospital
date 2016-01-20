@@ -1,3 +1,5 @@
+<%@page import="com.dpc.utils.memcached.MemSession"%>
+<%@ page import="com.dpc.web.mybatis3.domain.Admin" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <div class="row border-bottom">
 	<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -6,7 +8,12 @@
 		</div>
 		<ul class="nav navbar-top-links navbar-right">
 			<li>
-				<span class="m-r-sm text-muted welcome-message">当前登录用户：admin</span>
+				<span class="m-r-sm text-muted welcome-message">
+				<%
+				Admin admin = (Admin) session.getAttribute("admin");
+				String name = admin.getName();
+				%>
+				当前登录用户：<%=name%></span>
 			</li>
 			<li>
                	<a href="#" onclick="loginout()">

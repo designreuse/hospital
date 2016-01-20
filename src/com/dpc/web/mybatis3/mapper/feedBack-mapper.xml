@@ -44,6 +44,9 @@
       <if test="contact != null" >
         contact,
       </if>
+      <if test="operator != null" >
+        operator,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -60,6 +63,9 @@
       </if>
       <if test="contact != null" >
         #{contact},
+      </if>
+      <if test="operator != null" >
+        #{operator},
       </if>
     </trim>
   </insert>
@@ -81,12 +87,15 @@
       <if test="reply != null" >
         reply = #{reply},
       </if>
+      <if test="operator != null" >
+        operator = #{operator},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
   
   <select id="getFeedBackListWithPager" resultType="feedBack">
-  		select f.id,u.username,f.content,f.contact,f.reply,u.mobile,date_format(feedBackTime, '%Y-%m-%d %k:%i:%s') as feedBackTime,f.status from t_feedback f inner join t_user u on f.userId = u.id
+  		select f.id,u.username,f.content,f.operator,f.contact,f.reply,u.mobile,date_format(feedBackTime, '%Y-%m-%d %k:%i:%s') as feedBackTime,f.status from t_feedback f inner join t_user u on f.userId = u.id
   		<where>
   			<if test="feedBack.username != null">u.username = #{feedBack.username}</if>
   			<if test="feedBack.startDate != null and  feedBack.endDate != null">

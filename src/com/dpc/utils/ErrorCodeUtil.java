@@ -43,6 +43,7 @@ public class ErrorCodeUtil
 	public static final String e11008 = "11008";   //手机号码已注册
 	public static final String e11009 = "11009";   //确认密码不能为空
 	public static final String e11010 = "11010";   //新密码和确认密码不匹配
+	public static final String e11011 = "11011";   //手机号码不存在
 	
 	//登录
 	public static final String e11100 = "11100";   //用户名不存在
@@ -87,7 +88,10 @@ public class ErrorCodeUtil
 	public static final String e11602 = "11602";   //您已绑定医生
 	public static final String e11603 = "11603";   //邀请信息已发送
 	public static final String e11604 = "11604";   //无法解绑
-	
+	public static final String e11605 = "11605";   //您没有绑定该患者
+
+	public static final String e11606 = "11606";   //已经绑定该患者
+	public static final String e11607 = "11607";   //与该患者是好友关系
 	//意见反馈
 	public static final String e11700 = "11700";//反馈内容不能为空
 	
@@ -99,6 +103,10 @@ public class ErrorCodeUtil
 	public static final String e11900 = "11900";//省份ID不能为空
 	public static final String e11901 = "11901";//机构ID不能为空
 	public static final String e11902 = "11902";//获取机构类型不能为空
+	
+	//病例惊喜
+	public static final String e12000 = "12000";//已经收藏该病例析
+	
 	
 	public static String errorMsg(Map<String, Object> map, String errorCode) {
 		map.put("error_code", errorCode);

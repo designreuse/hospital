@@ -15,8 +15,10 @@ public class PatientVO implements Serializable{
 	private double weight;//体重
 	private String profileImageUrl;//体重
 	private Integer score;
+	private Integer age;
 	private String registerTime;
 	private String illProfile;
+	private String remark;
 	
 	private String startDate;
 	private String hospital;
@@ -27,6 +29,19 @@ public class PatientVO implements Serializable{
     private Integer endScore;
     
     
+    
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 	public Integer getUserId() {
 		return userId;
 	}

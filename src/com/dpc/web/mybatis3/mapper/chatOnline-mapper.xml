@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.ChatOnlineMapper" >
+  <resultMap id="BaseResultMap" type="chatOnline" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="timePoint" property="timePoint" jdbcType="TIMESTAMP" />
+    <result column="fromUserId" property="fromUserId" jdbcType="INTEGER" />
+    <result column="toUserID" property="toUserID" jdbcType="INTEGER" />
+    <result column="fromChat" property="fromChat" jdbcType="VARCHAR" />
+    <result column="toChat" property="toChat" jdbcType="VARCHAR" />
+    <result column="imageUrl" property="imageUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, timePoint, fromUserId, toUserID, fromChat, toChat, imageUrl
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_chat
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_chat
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="chatOnline" >
+    insert into t_chat (id, timePoint, fromUserId, 
+      toUserID, fromChat, toChat, 
+      imageUrl)
+    values (#{id,jdbcType=INTEGER}, #{timePoint,jdbcType=TIMESTAMP}, #{fromUserId,jdbcType=INTEGER}, 
+      #{toUserID,jdbcType=INTEGER}, #{fromChat,jdbcType=VARCHAR}, #{toChat,jdbcType=VARCHAR}, 
+      #{imageUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="chatOnline" >
+    insert into t_chat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="timePoint != null" >
+        timePoint,
+      </if>
+      <if test="fromUserId != null" >
+        fromUserId,
+      </if>
+      <if test="toUserID != null" >
+        toUserID,
+      </if>
+      <if test="fromChat != null" >
+        fromChat,
+      </if>
+      <if test="toChat != null" >
+        toChat,
+      </if>
+      <if test="imageUrl != null" >
+        imageUrl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="timePoint != null" >
+        #{timePoint,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fromUserId != null" >
+        #{fromUserId,jdbcType=INTEGER},
+      </if>
+      <if test="toUserID != null" >
+        #{toUserID,jdbcType=INTEGER},
+      </if>
+      <if test="fromChat != null" >
+        #{fromChat,jdbcType=VARCHAR},
+      </if>
+      <if test="toChat != null" >
+        #{toChat,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="chatOnline" >
+    update t_chat
+    <set >
+      <if test="timePoint != null" >
+        timePoint = #{timePoint,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fromUserId != null" >
+        fromUserId = #{fromUserId,jdbcType=INTEGER},
+      </if>
+      <if test="toUserID != null" >
+        toUserID = #{toUserID,jdbcType=INTEGER},
+      </if>
+      <if test="fromChat != null" >
+        fromChat = #{fromChat,jdbcType=VARCHAR},
+      </if>
+      <if test="toChat != null" >
+        toChat = #{toChat,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null" >
+        imageUrl = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="chatOnline" >
+    update t_chat
+    set timePoint = #{timePoint,jdbcType=TIMESTAMP},
+      fromUserId = #{fromUserId,jdbcType=INTEGER},
+      toUserID = #{toUserID,jdbcType=INTEGER},
+      fromChat = #{fromChat,jdbcType=VARCHAR},
+      toChat = #{toChat,jdbcType=VARCHAR},
+      imageUrl = #{imageUrl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getChatOnlineInfo" resultType="chatOnline">
+  	select * from t_chat 
+  	<where>
+  		<if test="fromUserId != null">fromUserId = #{fromUserId}</if>
+  		<if test="toUserID != null">toUserID = #{toUserID}</if>
+  	</where>
+  </select>
+</mapper>

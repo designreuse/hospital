@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.DayLiveMapper" >
+  <resultMap id="BaseResultMap" type="dayLive" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="doctorId" property="doctorId" jdbcType="INTEGER" />
+    <result column="patientId" property="patientId" jdbcType="INTEGER" />
+    <result column="operTime" property="operTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, doctorId, patientId, operTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_daylive
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_daylive
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="dayLive" >
+    insert into t_daylive (id, doctorId, patientId, 
+      operTime)
+    values (#{id,jdbcType=INTEGER}, #{doctorId,jdbcType=INTEGER}, #{patientId,jdbcType=INTEGER}, 
+      #{operTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="dayLive" >
+    insert into t_daylive
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="doctorId != null" >
+        doctorId,
+      </if>
+      <if test="patientId != null" >
+        patientId,
+      </if>
+      <if test="operTime != null" >
+        operTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="doctorId != null" >
+        #{doctorId,jdbcType=INTEGER},
+      </if>
+      <if test="patientId != null" >
+        #{patientId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="dayLive" >
+    update t_daylive
+    <set >
+      <if test="doctorId != null" >
+        doctorId = #{doctorId,jdbcType=INTEGER},
+      </if>
+      <if test="patientId != null" >
+        patientId = #{patientId,jdbcType=INTEGER},
+      </if>
+      <if test="operTime != null" >
+        operTime = #{operTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="dayLive" >
+    update t_daylive
+    set doctorId = #{doctorId,jdbcType=INTEGER},
+      patientId = #{patientId,jdbcType=INTEGER},
+      operTime = #{operTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -46,5 +46,9 @@
 		<typeAlias alias="takeAcademicSupport" type="com.dpc.web.mybatis3.domain.TakeAcademicSupport"/>
 		<typeAlias alias="exchangeHistory" type="com.dpc.web.mybatis3.domain.ExchangeHistory"/>
 		<typeAlias alias="caseAnalysisRemark" type="com.dpc.web.mybatis3.domain.CaseAnalysisRemark"/>
+		<typeAlias alias="caseAnalysisCollection" type="com.dpc.web.mybatis3.domain.CaseAnalysisCollection"/>
+		<typeAlias alias="articleRemark" type="com.dpc.web.mybatis3.domain.ArticleRemark"/>
+		<typeAlias alias="chatOnline" type="com.dpc.web.mybatis3.domain.ChatOnline"/>
+		<typeAlias alias="dayLive" type="com.dpc.web.mybatis3.domain.DayLive"/>
 	</typeAliases>
 </configuration>

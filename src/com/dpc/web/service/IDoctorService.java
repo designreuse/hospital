@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
+import com.dpc.web.VO.PatientVO;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.CaseAnalysis;
+import com.dpc.web.mybatis3.domain.CaseAnalysisCollection;
 import com.dpc.web.mybatis3.domain.CaseAnalysisRemark;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -96,5 +98,29 @@ public interface IDoctorService {
 	DoctorVO getDoctorProfile(Integer id);
 
 	void caseAnalysisRemark(CaseAnalysisRemark analysisRemark);
+
+	void addCaseAnalysisCollection(CaseAnalysisCollection collection);
+
+	List<CaseAnalysisCollection> getCaseAnalysisCollectList(Integer id);
+
+	void delCaseAnalysisCollect(CaseAnalysisCollection collection);
+
+	boolean hasCollectCaseAnalysis(CaseAnalysisCollection c);
+
+	void delRelation(int id);
+
+	Integer getBindListToday(int parseInt);
+
+	Integer getBindListTotal(int parseInt);
+
+	PatientVO getMyPatientInfo(Integer doctorId, int parseInt);
+
+	List<DoctorPatientRelation> getMyPatients(Integer id);
+
+	Integer getDayLiveTotal(int parseInt);
+
+	void doctorunBindPatient(Integer id, int parseInt);
+
+	void updateDoctorPatientRelation(DoctorPatientRelation doctorPatientRelation);
 
 }

@@ -22,6 +22,16 @@
    		<result column="remarkTime" property="remarkTime" jdbcType="VARCHAR" />
     </collection>
   </resultMap>
+  <resultMap id="patientVOMapper" type="patientVO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="agender" property="agender" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="registerTime" property="registerTime" jdbcType="VARCHAR" />
+  </resultMap>
   <sql id="Base_Column_List" >
     id, userId, weight, score, illProfile
   </sql>
@@ -216,9 +226,19 @@
   </select>
   
    <select id="getPatientListWithPager" parameterType="patientVO" resultType="patientVO">
- 	select p.id,u.id as userId, u.username,u.name,date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime,u.agender,u.mobile,p.score,date_format(u.birthday, '%Y-%m-%d') birthday
+ 	select 
+ 		p.id,
+ 		u.id as userId,
+ 	 	u.username,
+ 	 	u.name,
+ 	 	date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime,
+ 	 	u.agender,
+ 	 	u.mobile,
+ 	 	p.score,
+ 	 	date_format(u.birthday, '%Y-%m-%d') birthday
 	from t_user u left join t_patient p on u.id=p.userId 
   	<where>
+  		registerType = 2
  	 	<if test="patient.name != null">
  	 		and u.name = #{patient.name}
  	 	</if>
@@ -226,7 +246,7 @@
  	 		and u.username = #{patient.username}
  	 	</if>
  	 	<if test="patient.startDate != null and patient.endDate != null">
- 	 		and u.registerTime >= #{patient.startDate} and #{patient.endDate} >= u.registerTime
+ 	 		and u.registerTime >= date_format(#{patient.startDate}, '%Y-%m-%d 00:00:00') and date_format(#{patient.endDate}, '%Y-%m-%d 23:59:59') >= u.registerTime
  	 	</if>
  	 	<if test="patient.mobile != null">
  	 		and u.mobile = #{mobile}
@@ -279,7 +299,7 @@
  </select>
   
   <insert id="patientBindDoctor" parameterType="doctorPatientRelation" useGeneratedKeys="true" keyProperty="id">
-  	insert into t_doctor_patient(doctorId,patientId,relation,checked,patientName) values(#{doctorId},#{patientId},#{relation},#{checked},#{patientName})
+  	insert into t_doctor_patient(doctorId,patientId,relation,checked,patientName,bindTime) values(#{doctorId},#{patientId},#{relation},#{checked},#{patientName},#{bindTime})
   </insert>
   
   <select id="getWishList" parameterType="wish" resultType="wish">
@@ -371,6 +391,7 @@
  <select id="getMyDoctors" parameterType="java.lang.Integer" resultType="doctor">
  	select 
 		d.id,
+		d.userId,
  		d.hospital,
 		u.name,
 		u.profileImageUrl,
@@ -387,13 +408,16 @@
 			d.teachingTitle,
 			d.hospital,
 			u.name,
-		  	u.profileImageUrl
+		    u.profileImageUrl,
+			d.address,
+			c.patientCount
 		from t_doctor d INNER JOIN t_user u on d.userid=u.id
-		where d.id = #{0} 
+		LEFT JOIN (select doctorId,count(*) patientCount from t_doctor_patient where doctorId = #{0} and checked=1) c on d.userId= c.doctorId
+		where d.userId = #{0}
  </select>
  
  <delete id="unBindRelation" parameterType="java.lang.Integer">
- 	delete from t_doctor_patient where doctorId = #{1} and patientId = #{0} and relation = 2 
+ 	delete from t_doctor_patient where doctorId = #{1} and patientId = #{0}
  </delete>
  
  <select id="getMydoctorAnnouncements" parameterType="java.lang.Integer" resultType="announcement">
@@ -411,5 +435,30 @@
  <select id="getDoctorPatientRelationById" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
  		select * from t_doctor_patient where id=#{0}
  </select>
+ <select id="getAllPatient" resultMap="patientVOMapper">
+ 	SELECT 
+		a.score,
+		b.`name`,
+		b.username,
+		(case b.agender when 1 then '男' else '女' end) agender,
+		date_format(b.birthday, '%Y-%m-%d') as birthday,
+		b.mobile,
+		date_format(b.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime
+	 from t_patient a LEFT JOIN t_user b on a.userId=b.id where b.registerType=2
+ </select>
  
+ <select id="getBindDoctors" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
+ 	select * from t_doctor_patient where patientId=#{0} and checked = 1
+ </select>
+ 
+ <update id="updateDoctorPatientRelation" parameterType="doctorPatientRelation">
+ 	update t_doctor_patient 
+ 	<set>
+ 		<if test="remark != null">remark = #{remark}</if>
+ 	</set>
+ 	<where>
+ 		<if test="doctorId != null">doctorId = #{doctorId}</if>
+ 		<if test="patientId != null">and patientId = #{patientId}</if>
+ 	</where>
+ </update>
 </mapper>

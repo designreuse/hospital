@@ -15,6 +15,7 @@
     <result column="doctorName" property="doctorName" jdbcType="INTEGER" />
     <result column="hospital" property="hospital" jdbcType="VARCHAR" />
     <result column="postTime" property="postTime" jdbcType="TIMESTAMP" />
+    <result column="analysis" property="analysis" jdbcType="VARCHAR" />
     <result column="illCaseImage" property="illCaseImage" jdbcType="VARCHAR" />
     <collection property="remarkList" ofType="caseAnalysisRemark">
     	 <id column="rid" property="id" jdbcType="INTEGER" />
@@ -202,6 +203,7 @@
 		b.content as remark,
 		c.profileImageUrl,
 		c.`name`,
+		a.illCaseImage,
 		date_format(b.postTime, '%Y-%m-%d %k:%i:%s') as remarkPostTime
  	from d_case_analysis a LEFT JOIN t_caseAnalysis_remark b on a.id=b.caseid left join t_user c on c.id=b.userid 
  	where a.id = #{0} and  a.delFlag = 0

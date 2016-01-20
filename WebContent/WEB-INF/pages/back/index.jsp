@@ -18,7 +18,6 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">

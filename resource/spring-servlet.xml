@@ -158,6 +158,7 @@
 	<mvc:resources location="/static/img/" mapping="/static/img/**" />
 	<mvc:resources location="/static/js/" mapping="/static/js/**" />
 	<mvc:resources location="/upload/" mapping="/upload/**" />
+	<mvc:resources location="/ueditor/" mapping="/ueditor/**" />
 	
 	<mvc:interceptors>
         <mvc:interceptor>

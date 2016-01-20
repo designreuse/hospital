@@ -118,7 +118,7 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 
 	@Override
 	public DiagnoseExperience getDiaExpDetail(String id) {
-		return doctorMapper.getDiaExpDetail(id);
+		return doctorMapper.getDiaExpDetail(Integer.parseInt(id));
 	}
 
 	@Override
@@ -150,6 +150,16 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 		doctor.setStart(start);
 		doctor.setLimit(limit);
 		List<DoctorVO> datas = doctorMapper.getAuthenticationListWithPager(doctor,start,limit);
+		if(datas!=null&&datas.size()>0){
+			for(DoctorVO d : datas){
+				if(!ValidateUtil.isEmpty(d.getCrtWithNameUrl())){
+					d.setCrtWithNameUrl(ConstantUtil.DOMAIN+d.getCrtWithNameUrl());
+				}
+				if(!ValidateUtil.isEmpty(d.getCrtWithPhotoUrl())){
+					d.setCrtWithPhotoUrl(ConstantUtil.DOMAIN+d.getCrtWithPhotoUrl());
+				}
+			}
+		}
 		Integer totalCount = doctorMapper.getAllAuthenticationCount(doctor);
 		Pager<DoctorVO> pager = new Pager<DoctorVO>();
 		pager.setPageOffset(start);
@@ -203,6 +213,11 @@ public class BackDoctorServiceImpl implements IBackDoctorService {
 	@Override
 	public CaseAnalysis getCaseAnalysisDetail(int id) {
 		return caseAnalysisMapper.getCaseAnalysisDetail(id);
+	}
+
+	@Override
+	public void updateAcademicSupport(AcademicSupport academicSupport) {
+		doctorMapper.updateAcademicSupport(academicSupport);
 	}
 	
 	

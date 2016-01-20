@@ -69,14 +69,14 @@
                             			<td>${item.username }</td>
                             			<td>
                             				<c:forEach items="${item.imageList }" var="images">
-                            					<img alt="" src="${images.imageUrl }">
+                            					<img width="150" height="100" alt="" src="${images.imageUrl }">
                             				</c:forEach>
                             			</td>
                             			<td>${item.content }</td>
                             			<td>${item.postTime }</td>
                             			<td>
 	                            			<button type="button" onclick="detail('${item.id }')" class="btn btn-w-m btn-success">详情</button>
-	                            			<button type="button" onclick="del('${item.id }')" class="btn btn-w-m btn-danger">删除</button>
+	                            			<button type="button" onclick="preDel('${item.id }')" class="btn btn-w-m btn-danger">删除</button>
                             			</td>
                             		</tr>
                             	</c:forEach>
@@ -89,8 +89,27 @@
         </div>
     </div>
 </div>
+
+<div id="tip_container" class="confirm_container theme-popover">
+	<div>
+		<div id="centerShow"></div>
+		<div style="margin-bottom: 20px;overflow: hidden;">
+			<button type="button" style="width: 100px;height: 40px;float:right;margin-right:20px;margin-top:10px;" class="btn btn-default" onclick="cancel()">取消</button>
+			<button type="button" style="width: 100px;height: 40px;float:right;margin-right:20px;margin-top:10px;" class="btn btn-success" onclick="confirm()">确定</button>
+		</div>
+	</div>
+</div>
 </body>
 <script type="text/javascript">
+
+
+function preDel(id){
+	var showCenter = "<div style='text-align: center;padding-top:20px;width: 300px;height:80px;'>是否删除该贴子？</div>";
+	confirmOpt(showCenter,function(){
+		del(id);
+	});
+}
+
 function detail(id){
 	window.location.href = "${ctx}/back/post/patient/detail?id="+id;
 }

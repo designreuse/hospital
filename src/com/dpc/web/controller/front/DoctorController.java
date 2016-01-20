@@ -2,7 +2,10 @@ package com.dpc.web.controller.front;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,12 @@ import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.VO.PatientVO;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.CaseAnalysis;
+import com.dpc.web.mybatis3.domain.CaseAnalysisCollection;
 import com.dpc.web.mybatis3.domain.CaseAnalysisRemark;
 import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
@@ -32,6 +37,7 @@ import com.dpc.web.mybatis3.domain.HeartCircle;
 import com.dpc.web.mybatis3.domain.HeartCircleImage;
 import com.dpc.web.mybatis3.domain.HeartCircleRemark;
 import com.dpc.web.mybatis3.domain.MedicalDynamic;
+import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.TakeAcademicSupport;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.mapper.CityMapper;
@@ -149,6 +155,86 @@ public class DoctorController extends BaseController{
 		}
 		return JsonUtil.object2String(list);
 	}
+	//收藏病例精析
+	@RequestMapping(value = "/caseAnalysis/collection", method = RequestMethod.POST)
+	@ResponseBody
+	public String caseAnalysisCollect(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		String caseId = request.getParameter("caseId");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		//是否已经收藏
+		CaseAnalysisCollection c = new CaseAnalysisCollection();
+		c.setUserId(u.getId());
+		c.setCaseId(Integer.parseInt(caseId));
+		c.setDelFlag(0);
+		if(doctorService.hasCollectCaseAnalysis(c)){
+			return error(ErrorCodeUtil.e12000);
+		}
+		CaseAnalysisCollection collection = new CaseAnalysisCollection();
+		collection.setDelFlag(0);
+		collection.setCollectTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		collection.setUserId(u.getId());
+		collection.setCaseId(Integer.parseInt(caseId));
+		doctorService.addCaseAnalysisCollection(collection);
+		return success();
+	}
+	//收藏病例精析
+	@RequestMapping(value = "/caseAnalysis/collection/list", method = RequestMethod.GET)
+	@ResponseBody
+	public String getCaseAnalysisCollectList(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		List<CaseAnalysisCollection> list = doctorService.getCaseAnalysisCollectList(u.getId());
+		if(list!=null&&list.size()>0){
+			for(CaseAnalysisCollection c : list){
+				List<CaseAnalysis> clist = c.getCaseAnalysisList();
+				if(clist!=null&&clist.size()>0){
+					for(CaseAnalysis ca : clist){
+						if(!ValidateUtil.isEmpty(ca.getIllCaseImage())){
+							ca.setIllCaseImage(ConstantUtil.DOMAIN+ca.getIllCaseImage());
+						}
+					}
+				}
+			}
+		}
+		return JsonUtil.object2String(list);
+	}
+	@RequestMapping(value = "/caseAnalysis/collection/del", method = RequestMethod.POST)
+	@ResponseBody
+	public String delCaseAnalysisCollect(HttpSession session,HttpServletRequest request) throws IOException{
+		String collectId = request.getParameter("collectId");
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		CaseAnalysisCollection collection = new CaseAnalysisCollection();
+		collection.setId(Integer.parseInt(collectId));
+		collection.setDelFlag(1);
+		doctorService.delCaseAnalysisCollect(collection);
+		return success();
+	}
 	//病例精析详情
 	@RequestMapping(value = "/caseAnalysis/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
@@ -178,6 +264,9 @@ public class DoctorController extends BaseController{
 				}
 			}
 			c.setPostTime(DateUtil.timeDiffer(DateUtil.parse(c.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
+			if(!ValidateUtil.isEmpty(c.getIllCaseImage())){
+				c.setIllCaseImage(ConstantUtil.DOMAIN+c.getIllCaseImage());
+			}
 		}
 		return JsonUtil.object2String(c);
 	}
@@ -354,9 +443,9 @@ public class DoctorController extends BaseController{
 		doctorService.updateDiagnoseExp(diaexp);
 		return success();
 	}
-	@RequestMapping(value = "/diagnose_experience/detail", method = RequestMethod.GET)
+	@RequestMapping(value = "/diagnose_experience/detail/{diaExpId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getDiagnoseExperienceDetail(HttpSession session,HttpServletRequest request) throws IOException{
+	public String getDiagnoseExperienceDetail(HttpSession session,HttpServletRequest request,@PathVariable("diaExpId") String diaExpId) throws IOException{
 		String accessToken = request.getParameter("accessToken");
 		MemSession memSession = userService.getSessionByAccessToken(accessToken);
 		//无效授权
@@ -367,7 +456,6 @@ public class DoctorController extends BaseController{
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
-		String diaExpId = request.getParameter("diaExpId"); 
 		DiagnoseExperience diagnoseExperience = doctorService.getDiagnoseExperienceDetail(Integer.parseInt(diaExpId));
 		List<DiagnoseExperienceRemark>  remarkList = diagnoseExperience.getRemarkList();
 		if(diagnoseExperience!=null && remarkList!=null && remarkList.size()>0){
@@ -442,43 +530,44 @@ public class DoctorController extends BaseController{
 		circle.setProfileImage(u.getProfileImageUrl());
 		circle.setRemarkCount(0);
 		circle.setDelFlag(0);
+		circle.setType(2);
 		doctorService.addHeartCircle(circle,imageUrls);
 		return success();
 	}
-	@RequestMapping(value = "/heartcircle/detail", method = RequestMethod.GET)
+	@RequestMapping(value = "/heartcircle/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getHeartCircleDetail(HttpSession session,HttpServletRequest request) throws IOException{
+	public String getHeartCircleDetail(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
 		String accessToken = request.getParameter("accessToken");
 		MemSession memSession = userService.getSessionByAccessToken(accessToken);
 		//无效授权
-		if (memSession == null){ 
+		if (memSession == null){
 			return error(ErrorCodeUtil.e10002);
 		}
 		User u = (User) memSession.getAttribute("user");
 		if(u==null){
 			return error(ErrorCodeUtil.e10002);
 		}
-		String id = request.getParameter("id");
+		
 		if(ValidateUtil.isEmpty(id)){
 			return error(ErrorCodeUtil.e11301);
 		}
 		HeartCircle circle = doctorService.getHeartCircleDetail(Integer.parseInt(id));
 		if(circle!=null&&!ValidateUtil.isEmpty(circle.getProfileImage())){
 			circle.setProfileImage(ConstantUtil.DOMAIN+circle.getProfileImage());
-			List<HeartCircleRemark> remarkList = circle.getRemarkList();
-			if(remarkList!=null&&remarkList.size()>0){
-				for(HeartCircleRemark remark : remarkList){
-					remark.setProfileImage(ConstantUtil.DOMAIN+remark.getProfileImage());
-				}
-			}
-			List<HeartCircleImage> imageList = doctorService.getHeartCircleImageListByHeartCircleId(Integer.parseInt(id));
-			if(imageList!=null&&imageList.size()>0){
-				for(HeartCircleImage image : imageList){
-					image.setImageUrl(ConstantUtil.DOMAIN+image.getImageUrl());
-				}
-			}
-			circle.setImageList(imageList);
 		}
+		List<HeartCircleRemark> remarkList = circle.getRemarkList();
+		if(remarkList!=null&&remarkList.size()>0){
+			for(HeartCircleRemark remark : remarkList){
+				remark.setProfileImage(ConstantUtil.DOMAIN+remark.getProfileImage());
+			}
+		}
+		List<HeartCircleImage> imageList = doctorService.getHeartCircleImageListByHeartCircleId(Integer.parseInt(id));
+		if(imageList!=null&&imageList.size()>0){
+			for(HeartCircleImage image : imageList){
+				image.setImageUrl(ConstantUtil.DOMAIN+image.getImageUrl());
+			}
+		}
+		circle.setImageList(imageList);
 		return JsonUtil.object2String(circle);
 	}
 	@RequestMapping(value = "/heartcircle/remark", method = RequestMethod.POST)
@@ -546,16 +635,6 @@ public class DoctorController extends BaseController{
 	@RequestMapping(value = "/heartcircle/list", method = RequestMethod.GET)
 	@ResponseBody
 	public String getHeartCircleList(HttpSession session,HttpServletRequest request) throws IOException{
-		String accessToken = request.getParameter("accessToken");
-		MemSession memSession = userService.getSessionByAccessToken(accessToken);
-		//无效授权
-		if (memSession == null){
-			return error(ErrorCodeUtil.e10002);
-		}
-		User u = (User) memSession.getAttribute("user");
-		if(u==null){
-			return error(ErrorCodeUtil.e10002);
-		}
 		List<HeartCircle> list = doctorService.getHeartCircleList();
 		if(list!=null&&list.size()>0){
 			for(HeartCircle circle : list){
@@ -610,6 +689,7 @@ public class DoctorController extends BaseController{
 	@ResponseBody
 	public String updateProfile(HttpSession session,HttpServletRequest request) throws IOException{
 		String accessToken = request.getParameter("accessToken");
+		String[] imageBase64s=request.getParameterValues("imageBase64s");
 		MemSession memSession = userService.getSessionByAccessToken(accessToken);
 		//无效授权
 		if (memSession == null){
@@ -674,7 +754,6 @@ public class DoctorController extends BaseController{
 			}
 			user.setMobile(mobile);
 		}
-		String[] imageBase64s=request.getParameterValues("imageBase64s");
 		List<String> imageUrls = null;
 		if(!ValidateUtil.isEmpty(imageBase64s)){
 			imageUrls =upload(session,request,imageBase64s);
@@ -766,7 +845,16 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e11210);
 		}
 		List<Announcement> list = doctorService.getAnnouncementListByDoctorId(Integer.parseInt(id));
-		
+		if(list!=null&&list.size()>0){
+			for(Announcement a : list){
+				if(!ValidateUtil.isEmpty(a.getImageUrl())){
+					a.setImageUrl(ConstantUtil.DOMAIN+a.getImageUrl());
+				}
+				if(!ValidateUtil.isEmpty(a.getPostTime())){
+					a.setPostTime(DateUtil.timeDiffer(DateUtil.parse(a.getPostTime(), DateUtil.DATETIME_PATTERN), DateUtil.parse(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN), DateUtil.DATETIME_PATTERN)));
+				}
+			}
+		}
 		return JsonUtil.object2String(list);
 	}
 	
@@ -785,6 +873,24 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e10002);
 		}
 		List<DoctorPatientRelation> list = doctorService.getBindList(u.getId());
+		
+		return JsonUtil.object2String(list);
+	}
+	//获取患者绑定邀请列表（已绑定和未绑定）
+	@RequestMapping(value = "/mypatients", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPatients(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		List<DoctorPatientRelation> list = doctorService.getMyPatients(u.getId());
 		
 		return JsonUtil.object2String(list);
 	}
@@ -815,7 +921,11 @@ public class DoctorController extends BaseController{
 		if(doctorPatientRelation!=null&&doctorPatientRelation.getRelation()==1&&doctorPatientRelation.getChecked()==1){
 			return error(ErrorCodeUtil.e11602);
 		}
-		doctorService.bindAcceptOrNot(Integer.parseInt(id),Integer.parseInt(acceptOrNot));
+		if(Integer.parseInt(acceptOrNot) == 0){
+			doctorService.delRelation(Integer.parseInt(id));
+		}else{
+			doctorService.bindAcceptOrNot(Integer.parseInt(id),Integer.parseInt(acceptOrNot));
+		}
 		
 		if(Integer.parseInt(acceptOrNot) == 1){
 			//更新医生表的totalPatient
@@ -954,6 +1064,51 @@ public class DoctorController extends BaseController{
 		
 		return success();
 	}
+	@RequestMapping(value = "/mypatient/updateRemark", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateRemark(HttpServletRequest request) throws IOException{
+		//患者ID
+		String userId = request.getParameter("userId");
+		//备注
+		String remark = request.getParameter("remark");
+		String accessToken = request.getParameter("accessToken");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		Integer doctorId = u.getId();
+		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
+		doctorPatientRelation.setDoctorId(doctorId);
+		doctorPatientRelation.setPatientId(Integer.parseInt(userId));
+		doctorPatientRelation.setRemark(remark);
+		doctorService.updateDoctorPatientRelation(doctorPatientRelation);
+		return success();
+	}
+	@RequestMapping(value = "/mypatient/updateIllProfile", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateIllProfile(HttpServletRequest request) throws IOException{
+		//患者ID
+		String userId = request.getParameter("userId");
+		//备注
+		String illProfile = request.getParameter("illProfile");
+		String accessToken = request.getParameter("accessToken");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		Patient patient = new Patient();
+		patient.setUserId(Integer.parseInt(userId));
+		patient.setIllProfile(illProfile);
+		patientService.updatePatient(patient);
+		return success();
+	}
 	//去兑换
 	@RequestMapping(value = "/academicSupport/toExchange", method = RequestMethod.GET)
 	@ResponseBody
@@ -978,5 +1133,142 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e11303);
 		}
 		return success();
+	}
+	//去兑换
+	@RequestMapping(value = "/bindinfo/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getBindInfo(HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		Integer bindCountToday = doctorService.getBindListToday(Integer.parseInt(id));
+		
+		Integer bindCountTotal = doctorService.getBindListTotal(Integer.parseInt(id));
+
+		Integer dayLiveTotal = doctorService.getDayLiveTotal(Integer.parseInt(id));
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("bindCountToday", bindCountToday);
+		result.put("bindCountTotal", bindCountTotal);
+		result.put("dayLiveTotal", dayLiveTotal);
+		
+		return JsonUtil.object2String(result);
+	}
+	//医生绑定患者
+	@RequestMapping(value = "/doctorBindPatient", method = RequestMethod.POST)
+	@ResponseBody
+	public String doctorBindPatient(HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		String mobile = request.getParameter("mobile");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		if(ValidateUtil.isEmpty(mobile)){
+			return error(ErrorCodeUtil.e11001);
+		}
+		if(!ValidateUtil.isMobile(mobile)){
+			return error(ErrorCodeUtil.e11002);
+		}
+		Integer doctorId = u.getId();
+		User user = new User();
+		user.setMobile(mobile);
+		user = userService.getUser(user);
+		if(user==null){
+			return error(ErrorCodeUtil.e11011);
+		}
+		Integer patientId = user.getId();
+		//查看当前患者和绑定医生是否已经绑定或已经是好友
+		DoctorPatientRelation doctorPatientRelation = new DoctorPatientRelation();
+		doctorPatientRelation.setDoctorId(doctorId);
+		doctorPatientRelation.setPatientId(patientId);
+		
+		//是否是绑定关系
+		doctorPatientRelation.setChecked(1);
+		doctorPatientRelation.setRelation(1);
+		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+			return error(ErrorCodeUtil.e11606);
+		}
+		doctorPatientRelation.setRelation(2);
+		if(patientService.hasRelationshipWithDoctor(doctorPatientRelation)){
+			return error(ErrorCodeUtil.e11607);
+		}
+		DoctorPatientRelation dp = new DoctorPatientRelation();
+		dp.setPatientId(patientId);
+		dp.setDoctorId(doctorId);
+		dp.setDirection(2);
+		dp.setBindTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		//该患者是否已经和其他医生绑定
+		if(patientService.hasBindWithDoctor(patientId)){
+			//好友关系
+			dp.setRelation(2);
+			patientService.patientBindDoctor(dp);
+		}else{
+			//绑定关系
+			dp.setRelation(1);
+			patientService.patientBindDoctor(dp);
+		}
+		return success();
+	}
+	@RequestMapping(value = "/doctorunBindPatient", method = RequestMethod.POST)
+	@ResponseBody
+	public String doctorunBindPatient(HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		String patientId = request.getParameter("patientId");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		doctorService.doctorunBindPatient(u.getId(),Integer.parseInt(patientId));
+		return success();
+	}
+	@RequestMapping(value = "/score/dayincrease", method = RequestMethod.POST)
+	@ResponseBody
+	public String getScoreIncreaseByDay(HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		String patientId = request.getParameter("patientId");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		doctorService.doctorunBindPatient(u.getId(),Integer.parseInt(patientId));
+		return success();
+	}
+	@RequestMapping(value = "/mypatient/{patientId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPatientInfo(HttpServletRequest request,@PathVariable("patientId") String patientId) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		if(ValidateUtil.isEmpty(accessToken)){
+			return error(ErrorCodeUtil.e10007);
+		}
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		if(memSession==null){
+			return error(ErrorCodeUtil.e10008);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u.getRegisterType()==2){
+			return error(ErrorCodeUtil.e10000);
+		}
+		Integer doctorId = u.getId();
+		PatientVO patientVO = doctorService.getMyPatientInfo(doctorId,Integer.parseInt(patientId));
+		if(patientVO==null){
+			return error(ErrorCodeUtil.e11605);
+		}
+		if(!ValidateUtil.isEmpty(patientVO.getProfileImageUrl())){
+			patientVO.setProfileImageUrl(ConstantUtil.DOMAIN+patientVO.getProfileImageUrl());
+		}
+		return JsonUtil.object2String(patientVO);
 	}
 }

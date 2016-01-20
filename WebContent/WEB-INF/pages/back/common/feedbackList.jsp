@@ -68,6 +68,9 @@
            </div>
            <div class="col-lg-12">
            		 <div class="panel-body">
+           		 <jsp:include page="/WEB-INF/pages/context/pagination.jsp">
+						<jsp:param value="${ctx}/back/feedback/list" name="url" />
+					</jsp:include>
 					<table
 						class="table table-striped table-bordered table-hover">
 						<tr>
@@ -93,14 +96,11 @@
 									<c:if test="${item.status==1}">已回复</c:if>
 								</td>
 								<td id="reply${item.id}">${item.reply}</td>
-								<td>${operator }</td>
+								<td>${item.operator }</td>
 								<td><button  class="btn btn-success" onclick="preReply('${item.id}')">回复</button></td>
 							</tr>
 						</c:forEach>
 					</table>
-					<jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/feedback/list" name="url" />
-					</jsp:include>
 				</div>
            </div>
        </div>

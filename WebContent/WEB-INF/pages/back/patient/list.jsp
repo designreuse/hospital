@@ -19,14 +19,13 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
        <div class="row">
           <div class="col-lg-12">
 				<div class="ibox float-e-margins">
-                       <form role="form" class="form-inline" method="GET" action="${ctx }/back/patient/list">
+                       <form role="form" class="form-inline" method="POST" action="${ctx }/back/patient/list">
                          	 <div class="row show-grid">
                          	 	<div class="form-group col-lg-3">
 	                         	 	<div class="form-group" style="margin-left: 39px;">
@@ -63,7 +62,7 @@
 	                             </div>
 	                             <div class="form-group col-lg-3">	
 									<button type="submit" style="width: 150px" class="btn btn-primary">查询</button>	                             
-									<button type="button" style="width: 150px" class="btn btn-primary" onclick="exportDoctor()">导出</button>	
+									<button type="button" style="width: 150px" class="btn btn-primary" onclick="exportPatient()">导出</button>	
 								</div>
                              </div>
                          </form>
@@ -72,7 +71,7 @@
            <div class="col-lg-12">
            		 <div class="panel-body">
            		 <jsp:include page="/WEB-INF/pages/context/pagination.jsp">
-						<jsp:param value="${ctx}/back/article/list/2" name="url" />
+						<jsp:param value="${ctx}/back/patient/list" name="url" />
 					</jsp:include>
 					<table
 						class="table table-striped table-bordered table-hover">
@@ -113,6 +112,11 @@
 </div>
 </body>
 <script type="text/javascript">
+
+
+	function exportPatient(){
+		window.location.href = "${ctx }/back/patient/export";
+	}
 	function detail(id){
 		window.location.href = "${ctx }/back/patient/detail?id="+id;
 	}

@@ -20,6 +20,7 @@ import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.Article;
@@ -32,23 +33,10 @@ public class ArticleController extends BaseController{
 	@Autowired
 	IArticleService articleService;
 	
-	
-	@RequestMapping(value = "/list/{type}/{category}", method = RequestMethod.GET)
-	@ResponseBody
-	public String getDoctorArticleByCategory(HttpSession session,HttpServletRequest request,@PathVariable("type") String type,@PathVariable("category") String category) throws IOException{
-		List<Article> list = articleService.getArticleByTypeAndCategory(Integer.parseInt(type),Integer.parseInt(category));
-		if(list!=null&&list.size()>0){
-			for(Article a : list){
-				a.setCoverImageUrl(ConstantUtil.DOMAIN+a.getCoverImageUrl());
-				a.setPostTime(DateUtil.date2Str(DateUtil.parse(a.getPostTime(), DateUtil.DATE_PATTERN), DateUtil.DATE_PATTERN));
-			}
-		}
-		return JsonUtil.object2String(list);
-	}
-	
-	
-	@RequestMapping(value = "/list/{type}", method = RequestMethod.GET)
+	@RequestMapping(value = "/list/{type}")
 	public ModelAndView doctorArticleList(HttpSession session,HttpServletRequest request,@PathVariable("type") String type) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "article", "default");
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		String delFlag = request.getParameter("delFlag");
@@ -83,12 +71,14 @@ public class ArticleController extends BaseController{
 	}
 	@RequestMapping(value = "/view/doctor/add", method = RequestMethod.GET)
 	public String addDoctorArticleView(HttpSession session,HttpServletRequest request) throws IOException{
-		
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "article", "default");
 		return "/back/article/doctor/addArticle";
 	}
 	@RequestMapping(value = "/view/patient/add", method = RequestMethod.GET)
 	public String addPatientArticleView(HttpSession session,HttpServletRequest request) throws IOException{
-		
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "article", "default");
 		return "/back/article/patient/addArticle";
 	}
 	
@@ -144,6 +134,7 @@ public class ArticleController extends BaseController{
 			article.setCoverImageUrl(imageUrls.get(0));
 		}
 		article.setDelFlag(0);
+		article.setRemarkCount(0);
 		articleService.saveArticle(article);
 		return "redirect:/back/article/list/"+article.getType();
 	}

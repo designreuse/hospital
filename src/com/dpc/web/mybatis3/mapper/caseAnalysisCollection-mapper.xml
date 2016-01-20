@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dpc.web.mybatis3.mapper.CaseAnalysisCollectionMapper" >
+  <resultMap id="BaseResultMap" type="caseAnalysisCollection" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="INTEGER" />
+    <result column="caseId" property="caseId" jdbcType="INTEGER" />
+    <result column="collectTime" property="collectTime" jdbcType="TIMESTAMP" />
+    <result column="delFlag" property="delFlag" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <resultMap id="caseAnalysisCollectMap" type="caseAnalysisCollection" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="INTEGER" />
+    <result column="caseId" property="caseId" jdbcType="INTEGER" />
+    <result column="collectTime" property="collectTime" jdbcType="TIMESTAMP" />
+    <result column="delFlag" property="delFlag" jdbcType="TINYINT" />
+    <collection property="caseAnalysisList" ofType="caseAnalysis">
+    	<id column="rid" property="id" jdbcType="INTEGER" />
+    	<result column="illCaseImage" property="illCaseImage" jdbcType="VARCHAR" />
+    	<result column="hospital" property="hospital" jdbcType="VARCHAR" />
+    	<result column="eliteType" property="eliteType" jdbcType="INTEGER" />
+    	<result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, userId, caseId, collectTime, delFlag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_caseAnalysis_collection
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_caseAnalysis_collection
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="caseAnalysisCollection" >
+    insert into t_caseAnalysis_collection (id, userId, caseId, 
+      collectTime, delFlag)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{caseId,jdbcType=INTEGER}, 
+      #{collectTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="caseAnalysisCollection" >
+    insert into t_caseAnalysis_collection
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="caseId != null" >
+        caseId,
+      </if>
+      <if test="collectTime != null" >
+        collectTime,
+      </if>
+      <if test="delFlag != null" >
+        delFlag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="caseId != null" >
+        #{caseId,jdbcType=INTEGER},
+      </if>
+      <if test="collectTime != null" >
+        #{collectTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="caseAnalysisCollection" >
+    update t_caseAnalysis_collection
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="caseId != null" >
+        caseId = #{caseId,jdbcType=INTEGER},
+      </if>
+      <if test="collectTime != null" >
+        collectTime = #{collectTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="caseAnalysisCollection" >
+    update t_caseAnalysis_collection
+    set userId = #{userId,jdbcType=INTEGER},
+      caseId = #{caseId,jdbcType=INTEGER},
+      collectTime = #{collectTime,jdbcType=TIMESTAMP},
+      delFlag = #{delFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getCaseAnalysisCollectList" parameterType="java.lang.Integer" resultMap="caseAnalysisCollectMap">
+  	 SELECT 
+		a.id,
+		b.eliteType,
+		b.hospital,
+		b.doctorName,
+		date_format(a.collectTime, '%Y-%m-%d %k:%i:%s') as collectTime,
+		b.illCaseImage
+ 	from t_caseAnalysis_collection a INNER JOIN d_case_analysis b on b.id=a.caseId where a.delFlag = 0 and a.userId=#{0}
+  </select>
+  
+  <select id="getCaseAnalysisCollect" resultType="java.lang.Integer" parameterType="caseAnalysisCollection">
+  	select count(*) from t_caseAnalysis_collection
+  	<where>
+  		delFlag = 0 
+  		<if test="caseId != null"> and caseId = #{caseId}</if>
+  		<if test="userId != null"> and userId = #{userId}</if>
+  	</where>
+  </select>
+</mapper>

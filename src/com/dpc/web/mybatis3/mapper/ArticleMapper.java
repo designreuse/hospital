@@ -29,10 +29,12 @@ public interface ArticleMapper {
 
 	List<Article> getArticlesByIllType(int illType);
 
-	List<Article> getHeartVedioList();
+	List<Article> getHeartVedioList(Article article);
 
-	List<Article> getCartoonList();
+	List<Article> getCartoonList(Article article);
 	List<Article> getArticlesLately();
 
 	Article getArticleDetailById(int id);
+
+	Article getArticleDetail(int id);
 }

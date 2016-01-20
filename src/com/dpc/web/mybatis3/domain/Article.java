@@ -1,5 +1,7 @@
 package com.dpc.web.mybatis3.domain;
 
+import java.util.List;
+
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -25,12 +27,28 @@ public class Article {
     private Integer illType;
 
     private Integer delFlag;
+    private Integer remarkCount;
 
     private String content;
     private String startDate;
     private String endDate;
     private Integer start;
     private Integer limit;
+    
+    private List<ArticleRemark> remarkList;
+    
+	public List<ArticleRemark> getRemarkList() {
+		return remarkList;
+	}
+	public void setRemarkList(List<ArticleRemark> remarkList) {
+		this.remarkList = remarkList;
+	}
+	public Integer getRemarkCount() {
+		return remarkCount;
+	}
+	public void setRemarkCount(Integer remarkCount) {
+		this.remarkCount = remarkCount;
+	}
 	public Integer getId() {
 		return id;
 	}

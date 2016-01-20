@@ -34,9 +34,14 @@ public class DoctorVO implements Serializable{
 	private String city;
 	private String county;
 	private String profileImageUrl;
+	private String doctorIdentityPlain;
 	
-	
-    
+	public String getDoctorIdentityPlain() {
+		return doctorIdentityPlain;
+	}
+	public void setDoctorIdentityPlain(String doctorIdentityPlain) {
+		this.doctorIdentityPlain = doctorIdentityPlain;
+	}
 	public String getProfileImageUrl() {
 		return profileImageUrl;
 	}

@@ -11,8 +11,10 @@ import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.mybatis3.domain.Admin;
+import com.dpc.web.mybatis3.domain.ChatOnline;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.mapper.AdminMapper;
+import com.dpc.web.mybatis3.mapper.ChatOnlineMapper;
 import com.dpc.web.mybatis3.mapper.UserMapper;
 import com.dpc.web.service.IUserService;
 
@@ -24,6 +26,8 @@ public class UserServiceImpl implements IUserService {
 	private UserMapper userMapper;
 	@Autowired
 	private AdminMapper adminMapper;
+	@Autowired
+	private ChatOnlineMapper chatOnlineMapper;
 	@Override
 	public void register(User u) {
 		userMapper.addUser(u);
@@ -85,5 +89,16 @@ public class UserServiceImpl implements IUserService {
 	public List<User> getUserList(User u) {
 		return userMapper.getUserList(u);
 	}
+
+	@Override
+	public void chatOnline(ChatOnline chatOnline) {
+		chatOnlineMapper.insertSelective(chatOnline);
+	}
+
+	@Override
+	public List<ChatOnline> getChatOnlineInfo(ChatOnline chatOnline) {
+		return chatOnlineMapper.getChatOnlineInfo(chatOnline);
+	}
+	
 	
 }

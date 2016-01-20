@@ -11,7 +11,9 @@ import com.dpc.utils.PageContext;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.mybatis3.domain.Article;
+import com.dpc.web.mybatis3.domain.ArticleRemark;
 import com.dpc.web.mybatis3.mapper.ArticleMapper;
+import com.dpc.web.mybatis3.mapper.ArticleRemarkMapper;
 import com.dpc.web.service.IArticleService;
 
 @Service
@@ -20,6 +22,8 @@ public class ArticleServiceImpl implements IArticleService {
 
 	@Autowired
 	private ArticleMapper articleMapper;
+	@Autowired
+	private ArticleRemarkMapper articleRemarkMapper;
 
 	@Override
 	public void saveArticle(Article article) {
@@ -75,13 +79,13 @@ public class ArticleServiceImpl implements IArticleService {
 	}
 
 	@Override
-	public List<Article> getHeartVedioList() {
-		return articleMapper.getHeartVedioList();
+	public List<Article> getHeartVedioList(Article param) {
+		return articleMapper.getHeartVedioList(param);
 	}
 
 	@Override
-	public List<Article> getCartoonList() {
-		return articleMapper.getCartoonList();
+	public List<Article> getCartoonList(Article param) {
+		return articleMapper.getCartoonList(param);
 	}
 
 	@Override
@@ -94,6 +98,15 @@ public class ArticleServiceImpl implements IArticleService {
 		return articleMapper.getArticleDetailById(id);
 	}
 
+	@Override
+	public Article getArticleDetail(int id) {
+		
+		return articleMapper.getArticleDetail(id);
+	}
+
 	
-	
+	@Override
+	public void addArticleRemark(ArticleRemark articleRemark) {
+		articleRemarkMapper.insertSelective(articleRemark);
+	}
 }

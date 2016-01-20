@@ -13,10 +13,9 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +63,16 @@ public class BaseController
 		String filePath =  year + File.separator + month + File.separator + day + File.separator;
 		
 		for (String imageBase64 : imageBase64s) {
-			
+			imageBase64 = imageBase64.substring("data:image/png;base64,".length());
 			if(ValidateUtil.isEmpty(imageBase64))
 				continue;
 			String fileNamePrefix = System.currentTimeMillis()+"";
 			filePath = filePath+fileNamePrefix+".png";	
 			
 			Base64 base64 = new Base64();
-			
-			byte[] bytes1 = base64.decode(imageBase64.substring("data:image/png;base64,".length()));  
+			BASE64Decoder decoder = new BASE64Decoder();
+//			byte[] bytes1 = decoder.decodeBuffer(imageBase64);  
+			byte[] bytes1 = base64.decode(imageBase64);  
 	        ByteArrayInputStream bais = new ByteArrayInputStream(bytes1);    
 	        BufferedImage bi1 =ImageIO.read(bais); 
 			  
@@ -137,6 +137,52 @@ public class BaseController
                 }
             }
         }
+		return results;
+	}
+	
+	public List<String> upload(HttpSession session,HttpServletRequest request,List<MultipartFile> images)throws IllegalStateException, IOException
+	{
+		
+		List<String> results = new ArrayList<String>();
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH)+1;
+		int day = c.get(Calendar.DATE);
+		
+		String savePath = request.getServletContext().getRealPath("/upload");
+		String filePath =  year + File.separator + month + File.separator + day + File.separator;
+		if(images!=null&&images.size()>0){
+			for(MultipartFile file : images){
+				if(file!=null && !file.isEmpty()){
+					String fileName = System.currentTimeMillis()+".png";
+					String finalpath = savePath+File.separator+filePath+fileName;
+		            //获取存储文件路径
+		            File fileDir=new File(savePath+File.separator+filePath);
+		            if(!fileDir.exists()){
+		                //如果文件夹没有：新建
+		                fileDir.mkdirs();
+		            }
+		            FileOutputStream fos=null;
+		            try {
+		                fos=new FileOutputStream(finalpath);
+		                fos.write(file.getBytes());
+		                fos.flush();
+		                String externalPath =  year + "/" + month + "/" + day + "/" + fileName;
+		                results.add(ConstantUtil.IMAGE_PATH_EXTERNAL+externalPath);
+		            } catch (Exception e) {
+		                e.printStackTrace();
+		            } finally{
+		                try {
+		                    if(fos!=null){
+		                        fos.close();
+		                    }
+		                } catch (IOException e) {
+		                    e.printStackTrace();
+		                }
+		            }
+		        }
+			}
+		}
 		return results;
 	}
 	

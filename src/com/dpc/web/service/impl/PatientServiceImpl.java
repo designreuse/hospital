@@ -1,17 +1,22 @@
 package com.dpc.web.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.PageContext;
+import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Announcement;
+import com.dpc.web.mybatis3.domain.ArticleRemark;
+import com.dpc.web.mybatis3.domain.DayLive;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
@@ -21,6 +26,8 @@ import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.User;
 import com.dpc.web.mybatis3.domain.Wish;
 import com.dpc.web.mybatis3.domain.WishRemark;
+import com.dpc.web.mybatis3.mapper.ArticleRemarkMapper;
+import com.dpc.web.mybatis3.mapper.DayLiveMapper;
 import com.dpc.web.mybatis3.mapper.DiscoveryMapper;
 import com.dpc.web.mybatis3.mapper.DoctorMapper;
 import com.dpc.web.mybatis3.mapper.PatientMapper;
@@ -36,9 +43,9 @@ public class PatientServiceImpl implements IPatientService {
 	@Autowired
 	private PatientMapper patientMapper;
 	@Autowired
-	private DoctorMapper doctorMapper;
+	private ArticleRemarkMapper articleRemarkMapper;
 	@Autowired
-	private UserMapper userMapper;
+	private DayLiveMapper dayLiveMapper;
 	
 	@Override
 	public void addDiscovery(Discovery discovery, List<String> imageUrls) {
@@ -132,8 +139,8 @@ public class PatientServiceImpl implements IPatientService {
 			//患者验证信息已发送。
 			dp.setChecked(0);
 		}else{
-			//医生邀请信息已发送，
-			dp.setChecked(3);
+			//医生绑定患者
+			dp.setChecked(1);
 		}
 		patientMapper.patientBindDoctor(dp);
 	}
@@ -191,6 +198,20 @@ public class PatientServiceImpl implements IPatientService {
 		d.setStart(start);
 		d.setLimit(limit);
 		List<Discovery> datas = discoveryMapper.findDiscoveryByPaginaton(d,start,limit);
+		if(datas!=null&&datas.size()>0){
+			for(Discovery dis : datas){
+				if(dis.getImageList()!=null&&dis.getImageList().size()>0){
+					Integer len = dis.getImageList().size();
+					List<DiscoveryImage> dim = new ArrayList<DiscoveryImage>();
+					DiscoveryImage di = dis.getImageList().get(len-1);
+					if(!ValidateUtil.isEmpty(di.getImageUrl())){
+						di.setImageUrl(ConstantUtil.DOMAIN+di.getImageUrl());
+					}
+					dim.add(di);
+					dis.setImageList(dim);
+				}
+			}
+		}
 		Integer totalCount = discoveryMapper.findDiscoveryTotal(d);
 		Pager<Discovery> pager = new Pager<Discovery>();
 		pager.setPageOffset(start);
@@ -219,6 +240,21 @@ public class PatientServiceImpl implements IPatientService {
 			}
 		}
 	}
-	
+
+	@Override
+	public List<PatientVO> getAllPatient() {
+		return patientMapper.getAllPatient();
+	}
+
+	@Override
+	public List<DoctorPatientRelation> getBindDoctors(Integer id) {
+		return patientMapper.getBindDoctors(id);
+	}
+
+	@Override
+	public void addDayLive(DayLive dayLive) {
+		dayLiveMapper.insertSelective(dayLive);
+	}
+
 	
 }

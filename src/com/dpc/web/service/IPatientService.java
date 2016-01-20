@@ -6,6 +6,8 @@ import com.dpc.web.VO.Pager;
 import com.dpc.web.VO.PatientVO;
 import com.dpc.web.VO.WishVO;
 import com.dpc.web.mybatis3.domain.Announcement;
+import com.dpc.web.mybatis3.domain.ArticleRemark;
+import com.dpc.web.mybatis3.domain.DayLive;
 import com.dpc.web.mybatis3.domain.Discovery;
 import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.DiscoveryRemark;
@@ -68,6 +70,12 @@ public interface IPatientService {
 	Discovery getDiscoveryDetailById(int parseInt);
 
 	void addBackPost(Discovery d, List<String> imageUrls);
+
+	List<PatientVO> getAllPatient();
+
+	List<DoctorPatientRelation> getBindDoctors(Integer id);
+
+	void addDayLive(DayLive dayLive);
 
 
 }

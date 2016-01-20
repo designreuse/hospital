@@ -31,7 +31,6 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -95,7 +94,7 @@
 	          			<td></td>
 	          			<td colspan="1">
 		          			<button style="width: 130px" class="btn btn-success pull-left" type="submit">保存</button>
-		          			<button style="width: 130px" class="btn btn-default pull-right" onclick="cancel()">取消</button>
+		          			<button style="width: 130px" class="btn btn-default pull-right" type="button" onclick="cancel('${diaId}')">取消</button>
 	          			</td>
 	          		</tr>
 	          	</table>
@@ -106,8 +105,8 @@
 </div>
 </body>
 <script type="text/javascript">
-	function cancel(){
-		window.location.href = "${ctx}/back/doctor/update/"+id;
+	function cancel(id){
+		window.location.href = "${ctx}/back/doctor/diaexp/detail/"+id;
 	}
 </script>
 </html>

@@ -20,6 +20,7 @@ public class Doctor implements Serializable{
 	private String crtOperTime;//认证操作时间
 	private String doctorIdentity;
 	private String doctorIdentityPlain;
+	private Integer patientCount;
 	
 	//非持久化字段
 	private String username;
@@ -29,6 +30,12 @@ public class Doctor implements Serializable{
 	private String profileImageUrl;
 	private String relation;//患者与该医生的关系
 	
+	public Integer getPatientCount() {
+		return patientCount;
+	}
+	public void setPatientCount(Integer patientCount) {
+		this.patientCount = patientCount;
+	}
 	public String getRelation() {
 		return relation;
 	}

@@ -33,5 +33,7 @@ public interface IBackDoctorService {
 	List<CaseAnalysis> getCaseAnalysisList();
 
 	CaseAnalysis getCaseAnalysisDetail(int parseInt);
+
+	void updateAcademicSupport(AcademicSupport academicSupport);
 	
 }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import com.dpc.utils.GsonUtil;
 import com.dpc.utils.JsonUtil;
 import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.Field;
 import com.dpc.web.VO.FieldDescn;
 import com.dpc.web.VO.Pager;
@@ -88,7 +91,10 @@ public class InterfaceController extends BaseController{
 	}
 	
 	@RequestMapping(value = { "/view/list" }, method = RequestMethod.GET)
-	public String listView(InterfaceCategory category){
+	public String listView(HttpSession session,InterfaceCategory category){
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "interface", "default");
+		
 		return "/back/interface/common/interfaceList";
 	}
 	

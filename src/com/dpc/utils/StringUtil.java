@@ -1,5 +1,6 @@
 package com.dpc.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,15 @@ public class StringUtil {
 	private static String randChars = "0123456789abcdefghigklmnopqrstuvtxyzABCDEFGHIGKLMNOPQRSTUVWXYZ";
 	private static String randCharsNoBig = "0123456789abcdefghigklmnopqrstuvtxyz";
 	private static Random random = new Random();	
+	
+    public static String encodeStr(String str) {  
+        try {  
+            return new String(str.getBytes("ISO-8859-1"), "UTF-8");  
+        } catch (UnsupportedEncodingException e) {  
+            e.printStackTrace();  
+            return null;  
+        }  
+    }  
 	
 	public static String getSummary(String input,int length){
 		

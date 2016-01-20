@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dpc.utils.PageEntity;
 import com.dpc.web.VO.DoctorVO;
+import com.dpc.web.VO.PatientVO;
 import com.dpc.web.mybatis3.domain.AcademicSupport;
 import com.dpc.web.mybatis3.domain.Announcement;
 import com.dpc.web.mybatis3.domain.Article;
@@ -29,7 +30,7 @@ public interface DoctorMapper{
 	DoctorVO getDoctorDetail(@Param("id") Integer id);
 	List<DiagnoseExperience> getDiagnoseExperienceListWithPager(@Param("dia") DiagnoseExperience dia, @Param("start") Integer start, @Param("limit") Integer limit);
 	Integer getAllDiagnoseExperienceCount(@Param("dia") DiagnoseExperience dia);
-	DiagnoseExperience getDiaExpDetail(String id);
+	DiagnoseExperience getDiaExpDetail(int i);
 	void addAcademicSupport(AcademicSupport academicSupport);
 	List<AcademicSupport> getAcademicSupportListWithPager(@Param("support") AcademicSupport support, @Param("start") Integer start, @Param("limit") Integer limit);
 	Integer getAllAcademicSupportCount(@Param("support") AcademicSupport support);
@@ -43,6 +44,14 @@ public interface DoctorMapper{
 	void delAcademicSupport(int id);
 	List<AcademicSupport> getAcademicSupportList();
 	void addCaseAnalysis(CaseAnalysis caseAnalysis);
+	void delRelation(int id);
+	Integer getBindListToday(int id);
+	Integer getBindListTotal(int id);
+	PatientVO getMyPatientInfo(Integer doctorId, int patient);
+	List<DoctorPatientRelation> getMyPatients(Integer id);
+	void updateAcademicSupport(AcademicSupport academicSupport);
+	Integer getDayLiveTotal(int id);
+	void doctorunBindPatient(Integer doctorId, int patientId);
 }
 
 

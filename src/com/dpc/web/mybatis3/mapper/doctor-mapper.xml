@@ -6,6 +6,8 @@
     	<id column="id" property="id" jdbcType="INTEGER" />
     	<result column="doctorName" property="doctorName" jdbcType="VARCHAR" />
     	<result column="status" property="status" jdbcType="INTEGER" />
+    	<result column="doctorId" property="doctorId" jdbcType="INTEGER" />
+    	<result column="score" property="score" jdbcType="INTEGER" />
     	<result column="isAnonymous" property="isAnonymous" jdbcType="INTEGER" />
     	<result column="creTime" property="creTime" jdbcType="VARCHAR" />
     	<result column="illType" property="illType" jdbcType="VARCHAR" />
@@ -131,14 +133,19 @@
  	insert into p_announcement(doctorId,content,imageUrl,delFlag,postTime) values(#{doctorId},#{content},#{imageUrl},#{delFlag},#{postTime})
  </insert>
  <select id="getAnnouncementByDoctorId" parameterType="java.lang.Integer" resultType="announcement">
- 	select * from p_announcement where doctorId = #{0} and delFlag = 0 order by postTime desc
+ 	select 
+		a.id,
+	    content,
+	    u.profileImageUrl as imageUrl,
+	    postTime
+ 	from p_announcement a left join t_user u on a.doctorId=u.id where doctorId = #{0} and a.delFlag = 0 order by a.postTime desc
  </select>
  <update id="delAnnouncement" parameterType="java.lang.Integer">
- 	update p_announcement set delFlag = 1 where doctorId = #{0}
+ 	update p_announcement set delFlag = 1 where id = #{0}
  </update>
  
  <select id="getDoctorListWithPager" parameterType="doctor" resultType="doctorVO">
- 	select  u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime ,d.verifyed,d.score
+ 	select d.doctorIdentityPlain, u.id,u.username,u.name,d.hospital,d.department,d.address,d.technicalTitle,date_format(u.registerTime, '%Y-%m-%d %k:%i:%s') as registerTime ,d.verifyed,d.score
 	from t_user u left join t_doctor d on u.id=d.userId 
   	<where>
   		registerType = 1
@@ -251,17 +258,20 @@
  </select>
  <select id="getDiaExpDetail" parameterType="java.lang.Integer" resultMap="diagnoseExperienceMap">
  	SELECT 
- 		a.doctorName,
+ 		a.id,
+ 		u.name as doctorName,
 		a.`status`,
 		a.isAnonymous,
-		a.creTime,
+		date_format(a.creTime, '%Y-%m-%d %k:%i:%s') as creTime,
+		d.score,
+		a.doctorId,
 		a.illType,
 		a.readCount,
 		a.illDesc,
 		a.experience,
 		b.imageUrl
- 	from d_diagnose_experience a LEFT JOIN d_dia_exp_image  b on a.id=b.diaExpId
-	where a.id =1
+ 	from d_diagnose_experience a LEFT JOIN d_dia_exp_image  b on a.id=b.diaExpId left join t_user u on a.doctorId=u.id left join t_doctor d on d.userId=u.id
+	where a.id = #{0}
  </select>
  
  <insert id="addAcademicSupport" parameterType="academicSupport">
@@ -358,7 +368,15 @@
  </select>
  
  <select id="getBindList" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
- 	select * from t_doctor_patient where doctorId = #{0} order by checked 
+ 	select 
+ 		a.id,
+ 		doctorId,
+   		patientId,
+    	patientName,
+   		relation,
+    	bindTime,
+		checked
+ 	 from t_doctor_patient a left join t_user b on a.patientId=b.id where a.doctorId = #{0} and checked in(0,1) order by checked 
  </select>
   
  <update id="bindAcceptOrNot" parameterType="doctorPatientRelation">
@@ -370,6 +388,9 @@
  	<where>
  		<if test="id != null">id=#{id}</if>
  	</where>
+ </update>
+ <update id="delRelation" parameterType="java.lang.Integer">
+	delete from  t_doctor_patient where id = #{0}
  </update>
  <select id="getAuthenticationListWithPager" parameterType="doctor" resultType="doctorVO">
 	select  
@@ -406,7 +427,7 @@
 		u.registerTime,
 		d.score,
 		d.address
- 	from t_doctor d left join t_user u on d.userId=u.id
+ 	from t_doctor d left join t_user u on d.userId=u.id where u.registerType = 1
  </select>
  
  <select id="getDoctorById" parameterType="java.lang.Integer" resultType="doctor">
@@ -414,7 +435,7 @@
  </select>
  
  <select id="getAcademicSupportDetail" parameterType="java.lang.Integer" resultType="academicSupport">
- 	select title,content,score,date_format(creTime, '%Y-%m-%d %k:%i') as creTime,promoteImage  from d_academic_support where id = #{0} and delFlag = 0
+ 	select id,title,content,score,date_format(creTime, '%Y-%m-%d %k:%i') as creTime,promoteImage  from d_academic_support where id = #{0} and delFlag = 0
  </select>
  
  <update id="delAcademicSupport" parameterType="java.lang.Integer">
@@ -476,4 +497,56 @@
 	      </if>
 	    </trim>
  </insert>
+ <select id="getBindListToday" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+ 	SELECT COUNT(*) from t_doctor_patient where doctorId = #{0} and checked = 1 and date_format(NOW(), '%Y-%m-%d')
+ </select>
+ <select id="getBindListTotal" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+ 	SELECT COUNT(*) from t_doctor_patient where doctorId = #{0} and checked = 1 
+ </select>
+ <select id="getMyPatientInfo" parameterType="java.lang.Integer" resultType="patientVO">
+ 	SELECT 
+ 		a.patientId as userId,
+		b.mobile,
+		b.age,
+		(CASE b.agender WHEN 1 THEN "男" WHEN "2" THEN "女" END) AS agender,
+		b.profileImageUrl,
+		a.remark,
+		c.illProfile,
+		b.name
+ 	from t_doctor_patient a  left join t_user b on b.id=a.patientId left join t_patient c on b.id=c.userid
+	where a.doctorId = #{0} and a.patientId = #{1}
+ </select>
+ 
+  <select id="getMyPatients" parameterType="java.lang.Integer" resultType="doctorPatientRelation">
+ 	select 
+ 		a.id,
+ 		b.age,
+ 		b.agender,
+		doctorId,
+   		patientId,
+    	b.name as patientName,
+   		relation,
+    	bindTime
+ 	from t_doctor_patient a left join t_user b on a.patientId=b.id where a.doctorId = #{0} and checked in(1) order by checked 
+ </select>
+ 
+ <update id="updateAcademicSupport" parameterType="academicSupport">
+ 	update d_academic_support
+ 	<set>
+ 		<if test="title != null">title= #{title},</if>
+ 		<if test="score != null">score = #{score},</if>
+ 		<if test="content != null">content = #{content}</if>
+ 	</set>
+ 	<where>
+ 		<if test="id != null">id = #{id}</if>
+ 	</where>
+ </update>
+ 
+ <select id="getDayLiveTotal" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+ 	select count(*) from t_daylive where doctorId = #{0} and date_format(operTime, '%Y-%m-%d')= date_format(NOW(), '%Y-%m-%d')
+ </select>
+ 
+ <delete id="doctorunBindPatient" parameterType="java.lang.Integer">
+ 	delete from t_doctor_patient where doctorId=#{0} and patientId=#{1}
+ </delete>
 </mapper>

@@ -3,6 +3,7 @@ package com.dpc.web.controller.front;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.controller.BaseController;
+import com.dpc.web.mybatis3.domain.ChatOnline;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.Patient;
 import com.dpc.web.mybatis3.domain.User;
@@ -289,10 +291,71 @@ public class UserController extends BaseController{
 		return success(result);
 	}
 	
-	
-	
 	@RequestMapping(value = "/view/login", method = RequestMethod.GET)
 	public String loginView(HttpSession session,HttpServletRequest request) throws IOException{
 		return "login";
+	}
+	
+	//聊天
+	@RequestMapping(value = "/chatonline", method = RequestMethod.POST)
+	@ResponseBody
+	public String chatonline(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		//fromUserId:医生ID
+		//toUserId:患者ID
+		String fromUserId = request.getParameter("fromUserId"); 
+		String toUserID = request.getParameter("toUserID"); 
+		String fromChat = request.getParameter("fromChat"); 
+		String toChat = request.getParameter("toChat"); 
+		
+		String[] imageBase64s=request.getParameterValues("imageBase64s");
+		List<String> imageUrls = null;
+		if(!ValidateUtil.isEmpty(imageBase64s)){
+			imageUrls =upload(session,request,imageBase64s);
+		}
+		ChatOnline chatOnline = new ChatOnline();
+		chatOnline.setFromUserId(Integer.parseInt(fromUserId));
+		chatOnline.setToUserID(Integer.parseInt(toUserID));
+		chatOnline.setFromChat(fromChat);
+		chatOnline.setToChat(toChat);
+		if(!ValidateUtil.isEmpty(imageUrls)){
+			chatOnline.setImageUrl(imageUrls.get(0));
+		}
+		chatOnline.setTimePoint(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
+		userService.chatOnline(chatOnline);
+		return success();
+	}
+	
+	@RequestMapping(value = "/chatonline/info", method = RequestMethod.POST)
+	@ResponseBody
+	public String getChatOnlineInfo(HttpSession session,HttpServletRequest request) throws IOException{
+		String accessToken = request.getParameter("accessToken");
+		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+		//无效授权
+		if (memSession == null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		User u = (User) memSession.getAttribute("user");
+		Integer uid = 0;
+		if(u==null){
+			return error(ErrorCodeUtil.e10002);
+		}
+		String fromUserId = request.getParameter("fromUserId"); 
+		String toUserID = request.getParameter("toUserID"); 
+		
+		ChatOnline chatOnline = new ChatOnline();
+		chatOnline.setFromUserId(Integer.parseInt(fromUserId));
+		chatOnline.setToUserID(Integer.parseInt(toUserID));
+		List<ChatOnline> list = userService.getChatOnlineInfo(chatOnline);
+		return JsonUtil.object2String(list);
 	}
 }

@@ -14,6 +14,7 @@ public class FeedBack {
 
     private String feedBackTime;
     private String contact;
+    private String operator;
 
     private Integer status;
     
@@ -26,6 +27,14 @@ public class FeedBack {
     private Integer limit;
     
     
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
 	public String getContact() {
 		return contact;
 	}

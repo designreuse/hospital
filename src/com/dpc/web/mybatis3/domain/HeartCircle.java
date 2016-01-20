@@ -21,6 +21,7 @@ public class HeartCircle {
     
     private Integer doctorId;
     private Integer delFlag;
+    private Integer type;
     
     private List<HeartCircleRemark> remarkList;
     private List<HeartCircleImage> imageList;
@@ -29,7 +30,17 @@ public class HeartCircle {
     private Integer limit;
     private String name;
     private String username;
-    public List<HeartCircleRemark> getRemarkList() {
+    
+    
+    public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public List<HeartCircleRemark> getRemarkList() {
 		return remarkList;
 	}
 

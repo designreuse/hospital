@@ -48,11 +48,11 @@
 	         	<input type="text" class="form-control" name="weight" value="${p.weight }" />
 	         </div>
 	          <div class="col-md-1 text-right">手机号：</div>
-	         <div class="col-md-1">
+	         <div class="col-md-2">
 	        	 <input type="text" class="form-control" name="mobile" value="${p.mobile }" />
 	         </div>
 	         <div class="col-md-1 text-right"> 出生日期：</div>
-	         <div class="col-md-1">
+	         <div class="col-md-2">
 	         	<input type="text" class="form-control" name="birthday" value="${p.birthday }" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
 	         </div>
 	     </div>

@@ -36,19 +36,25 @@
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
        <div class="row">
-          <div class="col-lg-12">
+          <div class="col-lg-9">
           	<table>
           		<tr>
           			<td class="text-right">医生姓名:</td>
           			<td>${dia.doctorName }</td>
           			<td class="text-right">发表状态:</td>
-          			<td>${dia.status }</td>
+          			<td>
+          				<c:if test="${dia.status == 0}">未发表</c:if>
+          				<c:if test="${dia.status == 1}">已发表</c:if>
+          			</td>
           			<td class="text-right">匿名状态:</td>
-          			<td>${dia.isAnonymous }</td>
+          			<td>
+          				<c:if test="${dia.isAnonymous == 0}">不匿名</c:if>
+          				<c:if test="${dia.isAnonymous == 1}">匿名</c:if>
+          			</td>
           		</tr>
           		<tr>
           			<td class="text-right">积分打赏:</td>
-          			<td>12</td>
+          			<td>${dia.score }积分</td>
           			<td class="text-right">发表时间:</td>
           			<td>${dia.creTime }</td>
           			<td class="text-right"></td>
@@ -77,9 +83,9 @@
           				</c:forEach>	
           			</td>
           		</tr>
-          		<tr>
-          			<td colspan="6"><button class="btn btn-success pull-right" onclick="edit('${d.id }')">编辑</button></td>
-          		</tr>
+<!--           		<tr> -->
+<%--           			<td colspan="6"><button class="btn btn-success pull-right" onclick="edit('${dia.doctorId }')">编辑</button></td> --%>
+<!--           		</tr> -->
           	</table>
            </div>
        </div>
@@ -87,8 +93,8 @@
 </div>
 </body>
 <script type="text/javascript">
-	function edit(id){
-		window.location.href = "${ctx}/back/doctor/update/view/"+id;
-	}
+// 	function edit(id){
+// 		window.location.href = "${ctx}/back/doctor/update/view/"+id+"?diaId=${dia.id }";
+// 	}
 </script>
 </html>

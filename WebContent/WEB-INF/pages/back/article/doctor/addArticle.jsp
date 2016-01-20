@@ -39,7 +39,7 @@
                                     	<div class="form-group">
 			                                <div class="input-group">
 			                                	<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-			                                    <input type="text" class="form-control" name="postTime" id="postTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			                                    <input type="text" class="form-control" name="postTime" id="postTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})">
 			                                </div>
 			                            </div>
                                     </div>
@@ -48,7 +48,7 @@
                                     <div class="col-lg-5"><input type="text" name="resource" class="form-control"></div>
                                 </div>
                                 <div class="form-group"><label class="col-lg-1 control-label">封面图</label>
-                                    <div class="col-lg-2"><input type="file" name="coverImage" class="form-control"></div>
+                                    <div class="col-lg-2"><input type="file" id="coverImage" name="coverImage" class="form-control"></div>
                                 </div>
                                 
                                 <div class="form-group"><label class="col-lg-1 control-label">文章标题</label>

@@ -60,7 +60,7 @@
 <script src="${ctx }/static/js/plugins/My97DatePicker/WdatePicker.js"></script>
 
 
-<script type="text/javascript" charset="utf-8" src="${ctx }/static/js/plugins/UEditor/ueditor.config.js"></script>
-<script type="text/javascript" charset="utf-8" src="${ctx }/static/js/plugins/UEditor/ueditor.all.js"></script>
-<script type="text/javascript" charset="utf-8" src="${ctx }/static/js/plugins/UEditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" charset="utf-8" src="${ctx }/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="${ctx }/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="${ctx }/ueditor/lang/zh-cn/zh-cn.js"></script>
     

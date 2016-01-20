@@ -25,7 +25,9 @@ import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.PageEntity;
 import com.dpc.utils.PageResult;
+import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.controller.BaseController;
@@ -98,8 +100,10 @@ public class BackDoctorController extends BaseController{
 	}
 	@RequestMapping(value = "/update/view/{id}", method = RequestMethod.GET)
 	public String updateDoctorView(HttpSession session,HttpServletRequest request,@PathVariable("id") String id) throws IOException{
+		String diaId = request.getParameter("diaId");
 		DoctorVO d = backDoctorService.getDoctorDetail(Integer.parseInt(id));
 		request.setAttribute("d", d);
+		request.setAttribute("diaId", diaId);
 		return "/back/doctor/update";
 	}
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -117,8 +121,11 @@ public class BackDoctorController extends BaseController{
 		return "/back/doctor/detail";
 	}
 	
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/list")
 	public String getDoctorList(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "doctor", "default");
+		
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		String username = request.getParameter("username");
@@ -143,7 +150,11 @@ public class BackDoctorController extends BaseController{
 			doctor.setExportRowCount(Integer.parseInt(exportRowCount));
 		}
 		if(!ValidateUtil.isEmpty(verifyed)){
-			doctor.setVerifyed(Integer.parseInt(verifyed));
+			if(verifyed.equals("-1")){
+				doctor.setVerifyed(null);
+			}else{
+				doctor.setVerifyed(Integer.parseInt(verifyed));
+			}
 		}
 		if(!ValidateUtil.isEmpty(startScore) && !ValidateUtil.isEmpty(endScore)){
 			doctor.setStartScore(Integer.parseInt(startScore));
@@ -157,13 +168,16 @@ public class BackDoctorController extends BaseController{
 	//诊后心得
 	@RequestMapping(value = "/diaexp/list", method = RequestMethod.GET)
 	public String getDiaExpList(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "doctor", "default");
+		
 		String doctorName = request.getParameter("doctorName");
 		String status = request.getParameter("status");
 		String creTime = request.getParameter("creTime");
 		
 		DiagnoseExperience dia = new DiagnoseExperience();
 		if(!ValidateUtil.isEmpty(doctorName)){
-			dia.setDoctorName(doctorName);
+			dia.setDoctorName(StringUtil.encodeStr(doctorName));
 		}
 		if(!ValidateUtil.isEmpty(status) && !status.equals("-1")){
 			dia.setStatus(Integer.parseInt(status));
@@ -222,6 +236,20 @@ public class BackDoctorController extends BaseController{
 		backDoctorService.addAcademicSupport(academicSupport);
 		return "/back/doctor/addAcademicSupport";
 	}
+	@RequestMapping(value = "/academicSupport/update", method = RequestMethod.POST)
+	public String updateAcademicSupport(HttpSession session,HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		String title = request.getParameter("title");
+		String score = request.getParameter("score");
+		String content = request.getParameter("content");
+		AcademicSupport academicSupport = new AcademicSupport();
+		academicSupport.setTitle(title);
+		academicSupport.setId(Integer.parseInt(id));
+		academicSupport.setScore(Integer.parseInt(score));
+		academicSupport.setContent(content);
+		backDoctorService.updateAcademicSupport(academicSupport);
+		return "redirect:/back/doctor/academicSupport/list";
+	}
 	@RequestMapping(value = "/academicSupport/detail", method = RequestMethod.GET)
 	public String academicSupportDetail(HttpServletRequest request) throws IOException{
 		String id = request.getParameter("id");
@@ -235,18 +263,25 @@ public class BackDoctorController extends BaseController{
 		backDoctorService.delAcademicSupport(Integer.parseInt(id));
 		return new ModelAndView("redirect:/back/doctor/academicSupport/list");
 	}
+	@RequestMapping(value = "/academicSupport/update/view", method = RequestMethod.GET)
+	public ModelAndView eidtAcademicSupport(HttpServletRequest request) throws IOException{
+		String id = request.getParameter("id");
+		AcademicSupport academicSupport = backDoctorService.getAcademicSupportDetail(Integer.parseInt(id));
+		request.setAttribute("academic", academicSupport);
+		return new ModelAndView("/back/doctor/updateAcademicSupport");
+	}
 	
-	
-	
-	@RequestMapping(value = "/academicSupport/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/academicSupport/list")
 	public String getAcademicSupportList(HttpSession session,HttpServletRequest request,AcademicSupport academicSupport) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "doctor", "default");
 		String title = request.getParameter("title");
 		String type = request.getParameter("type");
 		String creTime = request.getParameter("creTime");
 		
 		AcademicSupport support = new AcademicSupport();
 		if(!ValidateUtil.isEmpty(title)){
-			support.setTitle(title);
+			support.setTitle(StringUtil.encodeStr(title));
 		}
 		if(!ValidateUtil.isEmpty(type) && !type.equals("-1")){
 			support.setType(Integer.parseInt(type));
@@ -300,6 +335,8 @@ public class BackDoctorController extends BaseController{
 	//获取医生认证列表
 	@RequestMapping(value = "/authentication/list", method = RequestMethod.GET)
 	public String getAuthenticationList(HttpSession session,HttpServletRequest request) throws IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "verify", "default");
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		
@@ -335,7 +372,7 @@ public class BackDoctorController extends BaseController{
 		  //创建可写入的Excel工作薄，且内容将写入到输出流，并通过输出流输出给客户端浏览
 		  WritableWorkbook wk = Workbook.createWorkbook(output);
 		  ///创建可写入的Excel工作表
-		  WritableSheet sheet=wk.createSheet("患者列表", 0);
+		  WritableSheet sheet=wk.createSheet("医生列表", 0);
 		 
 		//把单元格（column, row）到单元格（column1, row1）进行合并。
 		//mergeCells(column, row, column1, row1);
@@ -420,7 +457,7 @@ public class BackDoctorController extends BaseController{
 				sheet.addCell(new Label(1,i+2,d.getMobile(),wcfTitle));
 				sheet.addCell(new Label(2,i+2,d.getHospital(),wcfTitle));
 				sheet.addCell(new Label(3,i+2,d.getDepartment(),wcfTitle));
-				sheet.addCell(new Label(4,i+2,d.getTeachingTitle(),wcfTitle));
+				sheet.addCell(new Label(4,i+2,d.getTechnicalTitle(),wcfTitle));
 				sheet.addCell(new Label(5,i+2,"erweima",wcfTitle));
 				sheet.addCell(new Label(6,i+2,province,wcfTitle));
 				sheet.addCell(new Label(7,i+2,city,wcfTitle));
@@ -502,7 +539,9 @@ public class BackDoctorController extends BaseController{
 		return "/back/doctor/exchangeHistoryList";
 	}
 	@RequestMapping(value = "/newCaseAnalysis", method = RequestMethod.GET)
-	public String newCaseAnalysis(HttpServletRequest request){
+	public String newCaseAnalysis(HttpSession session ,HttpServletRequest request){
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "doctor", "default");
 		return "/back/doctor/newCaseAnalysis";
 	}
 	@RequestMapping(value = "/saveCaseAnalysis", method = RequestMethod.POST)
@@ -549,7 +588,7 @@ public class BackDoctorController extends BaseController{
 		if(!ValidateUtil.isEmpty(imageUrls)){
 			c.setIllCaseImage(imageUrls.get(0));
 		}
-		doctorService.updateCaseAnalysis(caseAnalysis);
+		doctorService.updateCaseAnalysis(c);
 		return "redirect:/back/doctor/getCaseAnalysisList";
 	}
 	@RequestMapping(value = "/caseAnalysis/del", method = RequestMethod.GET)
@@ -577,6 +616,9 @@ public class BackDoctorController extends BaseController{
 	}
 	@RequestMapping(value = "/getCaseAnalysisList", method = RequestMethod.GET)
 	public String getCaseAnalysisList(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
+		MemSession mem = MemSession.getSession("menu_" + session.getId(),true,"default");
+		mem.setAttribute("menu", "doctor", "default");
+		
 		String doctorName = request.getParameter("doctorName");
 		String eliteType = request.getParameter("eliteType");
 		String hospital = request.getParameter("hospital");

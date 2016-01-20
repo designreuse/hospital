@@ -11,7 +11,7 @@
     <result column="remarkCount" property="remarkCount" jdbcType="INTEGER" />
     <result column="postTime" property="creTime" jdbcType="TIMESTAMP" />
     <collection property="remarkList" ofType="heartCircleRemark">
-    	<id column="id" property="id" jdbcType="INTEGER" />
+    	<id column="rid" property="id" jdbcType="INTEGER" />
     	<result column="remarkUserName" property="doctorName" jdbcType="VARCHAR" />
     	<result column="remarkUserProfileImageUrl" property="profileImage" jdbcType="VARCHAR" />
     	<result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -72,6 +72,9 @@
       <if test="delFlag != null" >
         delFlag,
       </if>
+      <if test="type != null" >
+        type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="profileImage != null" >
@@ -94,6 +97,9 @@
       </if>
       <if test="delFlag != null" >
         #{delFlag},
+      </if>
+      <if test="type != null" >
+        #{type},
       </if>
     </trim>
   </insert>
@@ -177,9 +183,9 @@
 		hr.profileImageUrl as remarkUserProfileImageUrl,
 		date_format(hr.creTime, '%Y-%m-%d %k:%i') as remarkTime,
 		hr.remark
- 	from (SELECT a.id,a.content,a.creTime,u.`name`,u.profileImageUrl,a.remarkCount from d_heart_circle a LEFT JOIN t_user u on a.doctorId=u.id) hc 
+ 	from (SELECT a.id,a.content,a.creTime,u.`name`,u.profileImageUrl,a.remarkCount,a.type from d_heart_circle a LEFT JOIN t_user u on a.doctorId=u.id) hc 
 	left join (SELECT a.heartCircleId,a.remark,a.creTime,u.name,u.profileImageUrl from d_heartcircle_remark a LEFT JOIN t_user u on a.doctorId=u.id) hr on hc.id = hr.heartCircleId
-	where hc.id = #{0}
+	where hc.id = #{0} and hc.type=2
   </select>
   
   <select id="getHeartCircleList" resultMap="BaseResultMap">
@@ -193,7 +199,7 @@
 		hci.imageUrl
 	 from d_heart_circle hc
 	LEFT JOIN t_user u on hc.doctorId=u.id
-	LEFT JOIN d_heart_circle_image hci on hc.id=hci.heartCircleId
+	LEFT JOIN d_heart_circle_image hci on hc.id=hci.heartCircleId where hc.type=2 ORDER BY posttime desc
   </select>
   
   <select id="getHeartCircleImageListByHeartCircleId"  parameterType="java.lang.Integer" resultType="heartCircleImage">
@@ -208,9 +214,9 @@
 	  SELECT
 	  	 a.id,u.username,DATE_FORMAT(a.creTime, "%Y-%m-%d %l:%i:%s") creTime,a.content,b.imageUrl from d_heart_circle a 
 	  LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId  
-	  left join t_user u on u.id=a.doctorId 
+	  left join t_user u on u.id=a.doctorId  
 	  <where>
-	  	a.delFlag=0
+	  	a.delFlag=0 
 	  	<if test="h.username != null"> and u.username = #{h.username}</if>
 	  	<if test="h.creTime != null"> and DATE_FORMAT(a.creTime, "%Y-%m-%d") = #{h.creTime}</if>
 	  </where>

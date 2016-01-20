@@ -92,7 +92,7 @@
 								<td>${item.creTime}</td>
 								<td>
 									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="detail('${item.id}')">详情</button> 
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="del('${item.id}')">兑换记录</button> 
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" onclick="exchange('${item.doctorId}')">兑换记录</button> 
 								</td>
 							</tr>
 						</c:forEach>
@@ -110,8 +110,8 @@
 function detail(id){
 	window.location.href = "${ctx}/back/doctor/diaexp/detail/"+id;
 }
-function exchange(){
-	
+function exchange(id){
+	window.location.href = "${ctx}/back/doctor/exchangeHistoryView?userId="+id
 }
 </script>
 </html>

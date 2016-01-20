@@ -21,20 +21,20 @@
        <div class="row">
 			<div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                        <form class="form-horizontal" id="queryForm" method="GET" action="${ctx}/back/article/list/1">
+                        <form class="form-horizontal" id="queryForm" method="POST" action="${ctx}/back/article/list/1">
                        		<div class="col-lg-12">
                        			<label class="col-lg-1 control-label">开始时间：</label>
 	                          	<div class="form-group col-lg-2">
 	                                <div class="input-group">
 	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+	                                    <input type="text" class="form-control" name="startDate" id="startDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})">
 	                                </div>
 	                            </div>
 	                          	<label class="col-lg-1 control-label">结束时间：</label>
 	                          	<div class="form-group col-lg-2">
 	                                <div class="input-group">
 	                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+	                                    <input type="text" class="form-control" name="endDate" id="endDate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})">
 	                                </div>
 	                            </div>
                             <label class="col-lg-1 control-label">是否删除：</label>

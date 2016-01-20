@@ -18,7 +18,6 @@
              </ol>
          </div>
          <div class="col-lg-2 pull-right" style="margin-top: 30px;">
-    		<button  class="btn btn-primary pull-right" onclick="javascript:window.location.href='${_base}/menu/more/guessLike?code=skill'">返回</button>
     	</div>
     </div>
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -68,8 +67,8 @@
 								<td>${item.id}</td>
 								<td>${item.name}</td>
 								<td>
-									<img src="${item.crtWithPhotoUrl }">
-									<img src="${item.crtWithNameUrl }">
+									<img width="150" height="90" src="${item.crtWithPhotoUrl }">
+									<img width="150" height="90" src="${item.crtWithNameUrl }">
 								</td>
 								<td>${item.crtOperTime}</td>
 								<td id="authStatus${item.id}">
@@ -96,8 +95,10 @@
        </div>
     </div>
 </div>
+
 </body>
 <script type="text/javascript">
+
 function detail(id){
 	window.location.href = "${ctx}/back/doctor/diaexp/detail/"+id;
 }
@@ -110,7 +111,7 @@ function updateAuthStatus(obj,id,flag){
 		success : function(data){
 			if(data.status == "suc"){
 				if(flag==1){
-					$("#authStatus"+id).html("通过");
+					$("#authStatus"+id).html("已通过");
 				}
 				if(flag==2){
 					$("#authStatus"+id).html("审核未通过");

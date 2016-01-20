@@ -27,7 +27,7 @@
                                     <th width="10%">医院</th>
                                     <th width="10%">标题</th>
                                     <th width="5%">病历图片</th>
-                                    <th width="10%">解读病历</th>
+<!--                                     <th width="10%">解读病历</th> -->
                                     <th width="10%">发表时间</th>
                                     <th width="10%">操作</th>
                                 </tr>
@@ -45,7 +45,7 @@
 		                                    <td>
 		                                    	<img width="200" height="100" src="${item.illCaseImage }">
 		                                    </td>
-		                                    <td>${item.analysis }</td>
+<%-- 		                                    <td>${item.analysis }</td> --%>
 		                                    <td>${item.postTime }</td>
 		                                    <td>
 		                                    	<button  class="btn btn-success" onclick="detail('${item.id}')">详情</button>

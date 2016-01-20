@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.mybatis3.domain.Admin;
+import com.dpc.web.mybatis3.domain.ChatOnline;
 import com.dpc.web.mybatis3.domain.User;
 
 public interface IUserService {
@@ -25,5 +26,9 @@ public interface IUserService {
 	Admin getAdmin(Admin admin);
 
 	List<User> getUserList(User u);
+
+	void chatOnline(ChatOnline chatOnline);
+
+	List<ChatOnline> getChatOnlineInfo(ChatOnline chatOnline);
 	
 }
