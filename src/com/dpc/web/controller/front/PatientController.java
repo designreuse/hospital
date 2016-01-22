@@ -18,6 +18,7 @@ import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
+import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.PatientVO;
@@ -118,7 +119,7 @@ public class PatientController extends BaseController{
 			user.setMobile(mobile);
 		}
 		if(!ValidateUtil.isEmpty(name)){
-			user.setName(name);
+			user.setName(StringUtil.encodeStr(name));
 		}
 		if(!ValidateUtil.isEmpty(agender)){
 			user.setAgender(Integer.parseInt(agender));
@@ -313,7 +314,7 @@ public class PatientController extends BaseController{
 		discovery.setDelFlag(0);
 		discovery.setUserId(u.getId());
 		discovery.setType(2);
-		discovery.setContent(content);
+		discovery.setContent(StringUtil.encodeStr(content));
 		patientService.addDiscovery(discovery,imageUrls);
 		
 		//记录日活
@@ -334,8 +335,13 @@ public class PatientController extends BaseController{
 					//给对应医生添加积分
 					Doctor d = doctorService.getDoctorById(relation.getDoctorId());
 					if(d!=null){
+						Integer dayScore = 0;
+						if(d.getDayScore()!=null){
+							dayScore = d.getDayScore();
+						}
 						Doctor doctor = new Doctor();
 						doctor.setId(d.getId());
+						doctor.setDayScore(dayScore+10);
 						doctor.setScore(d.getScore()+10);
 						doctorService.updateDoctor(doctor);
 					}
@@ -367,7 +373,7 @@ public class PatientController extends BaseController{
 		DiscoveryRemark discoveryRemark = new DiscoveryRemark();
 		discoveryRemark.setDiscoveryId(Integer.parseInt(id));
 		discoveryRemark.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
-		discoveryRemark.setRemark(remark);
+		discoveryRemark.setRemark(StringUtil.encodeStr(remark));
 		discoveryRemark.setUserId(u.getId());
 		patientService.addDiscoveryRemark(discoveryRemark);
 		
@@ -423,16 +429,16 @@ public class PatientController extends BaseController{
 	@RequestMapping(value = "/discovery/list", method = RequestMethod.GET)
 	@ResponseBody
 	public String getDiscoveryRemarkList(HttpSession session,HttpServletRequest request) throws IOException{
-		String accessToken = request.getParameter("accessToken");
-		MemSession memSession = userService.getSessionByAccessToken(accessToken);
-		//无效授权
-		if (memSession == null){
-			return error(ErrorCodeUtil.e10002);
-		}
-		User u = (User) memSession.getAttribute("user");
-		if(u==null){
-			return error(ErrorCodeUtil.e10002);
-		}
+//		String accessToken = request.getParameter("accessToken");
+//		MemSession memSession = userService.getSessionByAccessToken(accessToken);
+//		//无效授权
+//		if (memSession == null){
+//			return error(ErrorCodeUtil.e10002);
+//		}
+//		User u = (User) memSession.getAttribute("user");
+//		if(u==null){
+//			return error(ErrorCodeUtil.e10002);
+//		}
 		List<Discovery> list = patientService.getDiscoveryList();
 		if(list!=null&&list.size()>0){
 			for(Discovery d : list){
@@ -647,9 +653,32 @@ public class PatientController extends BaseController{
 			dp.setRelation(2);
 			patientService.patientBindDoctor(dp);
 		}else{
+			Patient p = patientService.getPatientById(u.getId());
 			//绑定关系
 			dp.setRelation(1);
 			patientService.patientBindDoctor(dp);
+			//第一次绑定添加积分
+			Integer doctorId = user.getId();
+			Doctor doc = doctorService.getDoctorById(doctorId);
+			Integer dayScore = doc.getDayScore();
+			Integer score = doc.getScore();
+			doc = new Doctor();
+			doc.setUserId(doctorId);
+			if(p.getHasBind()==null){
+				doc.setScore(score+50);
+			}
+			doctorService.updateDoctor(doc);
+			if(p.getHasBind()==null){
+				p = new Patient();
+				p.setUserId(u.getId());
+				p.setHasBind(1);
+				patientService.updatePatient(p);
+			}
+			//更改今日新增积分
+			doc = new Doctor();
+			doc.setUserId(doctorId);
+			doc.setDayScore(dayScore+50);
+			doctorService.updateDoctor(doc);
 		}
 		
 		return success();
@@ -806,7 +835,7 @@ public class PatientController extends BaseController{
 		articleRemark.setArticleId(Integer.parseInt(articleId));
 		articleRemark.setDelFlag(0);
 		articleRemark.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
-		articleRemark.setRemark(remark);
+		articleRemark.setRemark(StringUtil.encodeStr(remark));
 		articleRemark.setUserId(u.getId());
 		articleService.addArticleRemark(articleRemark);
 		
@@ -849,8 +878,13 @@ public class PatientController extends BaseController{
 							//给对应医生添加积分
 							Doctor d = doctorService.getDoctorById(relation.getDoctorId());
 							if(d!=null){
+								Integer dayScore = 0;
+								if(d.getDayScore()!=null){
+									dayScore = d.getDayScore();
+								}
 								Doctor doctor = new Doctor();
 								doctor.setId(d.getId());
+								doctor.setDayScore(dayScore+10);
 								doctor.setScore(d.getScore()+10);
 								doctorService.updateDoctor(doctor);
 							}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dpc.utils.Base64;
+import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeProperties;
 import com.dpc.utils.ErrorCodeUtil;
@@ -24,6 +25,7 @@ import com.dpc.utils.RandomNumberGenerator;
 import com.dpc.utils.SMSUtil;
 import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
+import com.dpc.utils.QrCode.QRCodeUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.controller.BaseController;
 import com.dpc.web.mybatis3.domain.ChatOnline;
@@ -126,6 +128,7 @@ public class UserController extends BaseController{
 			doctor.setScore(0);
 			doctor.setTotalPatient(0);
 			doctor.setVerifyed(0);
+			doctor.setDayScore(0);
 			doctorService.addDoctorWithRegister(doctor);
 			
 			Doctor d = new Doctor();
@@ -133,6 +136,16 @@ public class UserController extends BaseController{
 			d.setDoctorIdentityPlain(doctor.getUserId().toString()+RandomNumberGenerator.generateNumber(3));
 			d.setDoctorIdentity(MD5Encoder.encrypt(doctor.getUserId().toString()+RandomNumberGenerator.generateNumber(3)));
 			doctorService.updateDoctor(d);
+			
+			//生成医生二维码
+			String text = ConstantUtil.DOMAIN+"/patient/patientBindDoctor?doctorIdentity="+d.getDoctorIdentityPlain();
+			try {
+				String path  = QRCodeUtil.encode(text, this.getClass().getResource("/qr.png").getPath(), request.getServletContext().getRealPath("/upload"), true);
+				d.setQrCodeUrl(path);
+				doctorService.updateDoctor(d);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		if(registerType.equals("2")){
 			//病人
@@ -141,7 +154,24 @@ public class UserController extends BaseController{
 			patient.setUserId(u.getId());
 			patientService.addPatient(patient);
 		}
-		return success();
+		
+		//用户授权
+		//session 默认30天
+		MemSession usession = MemSession.getSession("u" + u.getId(),true,"default");
+		usession.setAttribute("user",u,"default");
+		//保存session
+		String accessToken = StringUtil.getRandStr(6, false) + "-"+ (System.currentTimeMillis() + 12 * 60 * 60 * 1000) + "_"+ u.getId();
+		usession.setAttribute("accessToken", accessToken,"default");
+		if(u.getRegisterType()==1){
+			String doctorNo = doctorService.getDoctorById(u.getId()).getDoctorIdentityPlain();
+			u.setDoctorNo(doctorNo);
+		}
+		Map<String, Object> result = new HashMap<String, Object>();
+		//设置返回值
+		result.put("accessToken",Base64.encodeToString(accessToken.getBytes(),11));
+		result.put("user", u);
+				
+		return success(result);
 	}
 	
 	@RequestMapping(value = "/pwd/reset", method = RequestMethod.POST)
@@ -214,7 +244,7 @@ public class UserController extends BaseController{
 			return error(ErrorCodeUtil.e11010);
 		}
 		User user = new User();
-		user.setMobile(mobile);
+		user.setUsername(mobile);
 		User u = userService.getUser(user);
 		Integer uid = u.getId();
 		String salt = u.getSalt();
@@ -281,8 +311,13 @@ public class UserController extends BaseController{
 		String accessToken = StringUtil.getRandStr(6, false) + "-"+ (System.currentTimeMillis() + 12 * 60 * 60 * 1000) + "_"+ user.getId();
 		session.setAttribute("accessToken", accessToken,"default");
 		if(user.getRegisterType()==1){
-			String doctorNo = doctorService.getDoctorById(user.getId()).getDoctorIdentityPlain();
-			user.setDoctorNo(doctorNo);
+			Doctor d = doctorService.getDoctorById(user.getId());
+			if(d!=null){
+				String doctorNo = d.getDoctorIdentityPlain();
+				String qrCode = d.getQrCodeUrl();
+				user.setDoctorNo(doctorNo);
+				user.setQrCodeUrl(ConstantUtil.DOMAIN+ConstantUtil.IMAGE_PATH_EXTERNAL+qrCode);
+			}
 		}
 		//设置返回值
 		result.put("accessToken",Base64.encodeToString(accessToken.getBytes(),11));

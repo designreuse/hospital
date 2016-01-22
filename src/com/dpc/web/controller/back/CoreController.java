@@ -237,7 +237,7 @@ public class CoreController extends BaseController{
 			return error(ErrorCodeUtil.e11700);
 		}
 		FeedBack feedBack = new FeedBack();
-		feedBack.setContent(content);
+		feedBack.setContent(StringUtil.encodeStr(content));
 		feedBack.setUserId(u.getId());
 		feedBack.setContact(contact);
 		feedBack.setFeedBackTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));

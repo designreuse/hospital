@@ -80,4 +80,6 @@ public interface PatientMapper {
 
 	void updateDoctorPatientRelation(DoctorPatientRelation doctorPatientRelation);
 
+	Patient getPatientById(Integer id);
+
 }

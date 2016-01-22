@@ -69,7 +69,7 @@
                             			<td>${item.username }</td>
                             			<td>
                             				<c:forEach items="${item.imageList }" var="images">
-                            					<img alt="" src="${images.imageUrl }">
+                            					<img width="120" height="100" alt="" src="${images.imageUrl }">
                             				</c:forEach>
                             			</td>
                             			<td  class="text-left">${item.content }</td>

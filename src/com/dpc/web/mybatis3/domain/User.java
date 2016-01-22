@@ -19,8 +19,14 @@ public class User implements Serializable{
 	private String salt;//颜值
 	private Integer registerType;//颜值
 	private String doctorNo;
+	private String qrCodeUrl;
 	
-	
+	public String getQrCodeUrl() {
+		return qrCodeUrl;
+	}
+	public void setQrCodeUrl(String qrCodeUrl) {
+		this.qrCodeUrl = qrCodeUrl;
+	}
 	public String getDoctorNo() {
 		return doctorNo;
 	}

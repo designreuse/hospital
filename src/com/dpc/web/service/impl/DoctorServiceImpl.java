@@ -1,5 +1,6 @@
 package com.dpc.web.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -7,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.PageContext;
+import com.dpc.utils.ValidateUtil;
 import com.dpc.web.VO.DoctorVO;
 import com.dpc.web.VO.Pager;
 import com.dpc.web.VO.PatientVO;
@@ -21,6 +24,7 @@ import com.dpc.web.mybatis3.domain.DiagnoseExperience;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceImage;
 import com.dpc.web.mybatis3.domain.DiagnoseExperienceRemark;
 import com.dpc.web.mybatis3.domain.Discovery;
+import com.dpc.web.mybatis3.domain.DiscoveryImage;
 import com.dpc.web.mybatis3.domain.Doctor;
 import com.dpc.web.mybatis3.domain.DoctorPatientRelation;
 import com.dpc.web.mybatis3.domain.ExchangeHistory;
@@ -249,6 +253,23 @@ public class DoctorServiceImpl implements IDoctorService {
 		h.setStart(start);
 		h.setLimit(limit);
 		List<HeartCircle> datas = heartCircleMapper.findHeartCircleByPaginaton(h,start,limit);
+		if(datas!=null&datas.size()>0){
+			for(HeartCircle hc : datas){
+				List<HeartCircleImage> imageList = hc.getImageList();
+				if(imageList!=null&&imageList.size()>0){
+					
+					Integer len = imageList.size();
+					List<HeartCircleImage> dim = new ArrayList<HeartCircleImage>();
+					HeartCircleImage di = imageList.get(len-1);
+					if(!ValidateUtil.isEmpty(di.getImageUrl())){
+						di.setImageUrl(ConstantUtil.DOMAIN+di.getImageUrl());
+					}
+					
+					dim.add(di);
+					hc.setImageList(dim);
+				}
+			}
+		}
 		Integer totalCount = heartCircleMapper.getHeartCircleCount(h);
 		Pager<HeartCircle> pager = new Pager<HeartCircle>();
 		pager.setPageOffset(start);

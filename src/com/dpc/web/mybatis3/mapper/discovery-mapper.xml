@@ -244,7 +244,7 @@
   </select>
   
   <select id="findDiscoveryByPaginaton" parameterType="discovery" resultMap="discoveryAndImageMap">
- 	 SELECT a.id,u.username,a.content,DATE_FORMAT(a.postTime, "%Y-%m-%d %l:%i:%s") postTime,b.imageUrl from 
+ 	 SELECT a.id,u.username,a.content,DATE_FORMAT(a.postTime, "%Y-%m-%d %H:%i:%s") postTime,b.imageUrl from 
  	 (select id,content,postTime,type,delFlag,userid from p_discovery 
  	 	<where>
  	 		 delFlag = 0
@@ -261,7 +261,7 @@
  	 		and u.username = #{discovery.username}
  	 	</if>
  	 	<if test="discovery.postTime != null">
- 	 		and DATE_FORMAT(a.postTime, "%Y-%m-%d") = #{discovery.postTime}
+ 	 		and a.postTime = DATE_FORMAT(#{discovery.postTime}, "%Y-%m-%d %H:%i:%s")
  	 	</if>
  	</where>
   </select>

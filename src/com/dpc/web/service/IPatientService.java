@@ -77,5 +77,7 @@ public interface IPatientService {
 
 	void addDayLive(DayLive dayLive);
 
+	Patient getPatientById(Integer id);
+
 
 }

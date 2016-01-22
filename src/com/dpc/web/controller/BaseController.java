@@ -155,6 +155,11 @@ public class BaseController
 			for(MultipartFile file : images){
 				if(file!=null && !file.isEmpty()){
 					String fileName = System.currentTimeMillis()+".png";
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}  
 					String finalpath = savePath+File.separator+filePath+fileName;
 		            //获取存储文件路径
 		            File fileDir=new File(savePath+File.separator+filePath);

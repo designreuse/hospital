@@ -1,6 +1,7 @@
 package com.dpc.web.controller.front;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.JsonUtil;
+import com.dpc.utils.StringUtil;
 import com.dpc.utils.ValidateUtil;
 import com.dpc.utils.memcached.MemSession;
 import com.dpc.web.VO.DoctorVO;
@@ -49,6 +51,7 @@ import com.dpc.web.service.IDistrictService;
 import com.dpc.web.service.IDoctorService;
 import com.dpc.web.service.IPatientService;
 import com.dpc.web.service.IUserService;
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value="/doctor",produces = {"application/json;charset=UTF-8"})
@@ -524,7 +527,7 @@ public class DoctorController extends BaseController{
 		}
 		
 		HeartCircle circle = new HeartCircle();
-		circle.setContent(content);
+		circle.setContent(StringUtil.encodeStr(content));
 		circle.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		circle.setDoctorId(u.getId());
 		circle.setProfileImage(u.getProfileImageUrl());
@@ -595,7 +598,7 @@ public class DoctorController extends BaseController{
 		HeartCircleRemark heartCircleRemark = new HeartCircleRemark();
 		
 		heartCircleRemark.setDoctorId(u.getId());
-		heartCircleRemark.setRemark(remark);
+		heartCircleRemark.setRemark(StringUtil.encodeStr(remark));
 		heartCircleRemark.setHeartCircleId(Integer.parseInt(heartCircleId));
 		heartCircleRemark.setCreTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		doctorService.addHeartCircleRemark(heartCircleRemark);
@@ -663,13 +666,11 @@ public class DoctorController extends BaseController{
 		if(u.getRegisterType()==2){
 			return error(ErrorCodeUtil.e10000);
 		}
-		List<String> crtWithPhotoUrls;
-		List<String> crtWithNameUrls;
+		List<String> crtWithPhotoUrls = new ArrayList<String>();
+		List<String> crtWithNameUrls = new ArrayList<String>();
 		if(!ValidateUtil.isEmpty(crtWithPhoto) && crtWithPhoto.length==1 && !ValidateUtil.isEmpty(crtWithName) && crtWithName.length==1){
 			crtWithPhotoUrls =upload(session,request,crtWithPhoto);
 			crtWithNameUrls =upload(session,request,crtWithName);
-		}else{
-			return error(ErrorCodeUtil.e11204);
 		}
 		if(crtWithPhotoUrls!=null&&crtWithPhotoUrls.size()>0&&crtWithNameUrls!=null&&crtWithNameUrls.size()>0){
 			String crtWithPhotoUrl = crtWithPhotoUrls.get(0);
@@ -740,7 +741,7 @@ public class DoctorController extends BaseController{
 		User user = new User();
 		user.setId(u.getId());
 		if(!ValidateUtil.isEmpty(name)){
-			user.setName(name);
+			user.setName(StringUtil.encodeStr(name));
 		}
 		if(!ValidateUtil.isEmpty(agender)){
 			user.setAgender(Integer.parseInt(agender));
@@ -793,7 +794,7 @@ public class DoctorController extends BaseController{
 		}
 		Announcement announcement = new Announcement();
 		announcement.setDoctorId(u.getId());
-		announcement.setContent(content);
+		announcement.setContent(StringUtil.encodeStr(content));
 		announcement.setDelFlag(0);
 		announcement.setPostTime(DateUtil.date2Str(new Date(), DateUtil.DATETIME_PATTERN));
 		//暂时处理为空
@@ -1176,7 +1177,7 @@ public class DoctorController extends BaseController{
 		}
 		Integer doctorId = u.getId();
 		User user = new User();
-		user.setMobile(mobile);
+		user.setUsername(mobile);
 		user = userService.getUser(user);
 		if(user==null){
 			return error(ErrorCodeUtil.e11011);
@@ -1211,6 +1212,31 @@ public class DoctorController extends BaseController{
 			//绑定关系
 			dp.setRelation(1);
 			patientService.patientBindDoctor(dp);
+			
+			Patient p = patientService.getPatientById(patientId);
+		
+			//第一次绑定添加积分
+			Doctor doc = doctorService.getDoctorById(doctorId);
+			Integer dayScore = doc.getDayScore();
+			Integer score = doc.getScore();
+			doc = new Doctor();
+			doc.setUserId(doctorId);
+			if(p.getHasBind()==null){
+				doc.setScore(score+50);
+				doctorService.updateDoctor(doc);
+			}
+			
+			if(p.getHasBind()==null){
+				p = new Patient();
+				p.setUserId(u.getId());
+				p.setHasBind(1);
+				patientService.updatePatient(p);
+			}
+			//更改今日新增积分
+			doc = new Doctor();
+			doc.setUserId(doctorId);
+			doc.setDayScore(dayScore+50);
+			doctorService.updateDoctor(doc);
 		}
 		return success();
 	}
@@ -1234,7 +1260,6 @@ public class DoctorController extends BaseController{
 	@ResponseBody
 	public String getScoreIncreaseByDay(HttpServletRequest request) throws IOException{
 		String accessToken = request.getParameter("accessToken");
-		String patientId = request.getParameter("patientId");
 		if(ValidateUtil.isEmpty(accessToken)){
 			return error(ErrorCodeUtil.e10007);
 		}
@@ -1243,8 +1268,14 @@ public class DoctorController extends BaseController{
 			return error(ErrorCodeUtil.e10008);
 		}
 		User u = (User) memSession.getAttribute("user");
-		doctorService.doctorunBindPatient(u.getId(),Integer.parseInt(patientId));
-		return success();
+		Doctor d = doctorService.getDoctorById(u.getId()); 
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		Integer dayScore = 0;
+		if(d.getDayScore()!=null){
+			dayScore = d.getDayScore();
+		}
+		result.put("dayScore", dayScore);
+		return JsonUtil.object2String(result);
 	}
 	@RequestMapping(value = "/mypatient/{patientId}", method = RequestMethod.GET)
 	@ResponseBody

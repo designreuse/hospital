@@ -97,6 +97,9 @@
       <if test="illProfile != null" >
         illProfile = #{illProfile,jdbcType=VARCHAR},
       </if>
+      <if test="hasBind != null" >
+        hasBind = #{hasBind},
+      </if>
     </set>
     <where>
     	<if test="id != null">id = #{id,jdbcType=INTEGER}</if>
@@ -461,4 +464,10 @@
  		<if test="patientId != null">and patientId = #{patientId}</if>
  	</where>
  </update>
+ 
+ <select id="getPatientById" parameterType="java.lang.Integer" resultType="patient">
+		 select * from t_patient where userId = #{0}	
+ </select>
+
+ 
 </mapper>

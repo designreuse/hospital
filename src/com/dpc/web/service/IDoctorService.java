@@ -123,4 +123,5 @@ public interface IDoctorService {
 
 	void updateDoctorPatientRelation(DoctorPatientRelation doctorPatientRelation);
 
+
 }

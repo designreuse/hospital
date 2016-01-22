@@ -16,11 +16,13 @@ public class Doctor implements Serializable{
 	private Integer verifyed;//医生是否已经认证：0未认证，1已认证
 	private String crtWithPhotoUrl;//认证证件有照片的页
 	private String crtWithNameUrl;//认证证件有姓名的页
+	private String qrCodeUrl;//认证证件有姓名的页
 	private Integer totalPatient;//名下的患者数量
 	private String crtOperTime;//认证操作时间
 	private String doctorIdentity;
 	private String doctorIdentityPlain;
 	private Integer patientCount;
+	private Integer dayScore;
 	
 	//非持久化字段
 	private String username;
@@ -30,6 +32,19 @@ public class Doctor implements Serializable{
 	private String profileImageUrl;
 	private String relation;//患者与该医生的关系
 	
+	
+	public String getQrCodeUrl() {
+		return qrCodeUrl;
+	}
+	public void setQrCodeUrl(String qrCodeUrl) {
+		this.qrCodeUrl = qrCodeUrl;
+	}
+	public Integer getDayScore() {
+		return dayScore;
+	}
+	public void setDayScore(Integer dayScore) {
+		this.dayScore = dayScore;
+	}
 	public Integer getPatientCount() {
 		return patientCount;
 	}

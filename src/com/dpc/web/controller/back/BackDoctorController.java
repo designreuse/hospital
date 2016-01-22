@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.dpc.utils.ConstantUtil;
 import com.dpc.utils.DateUtil;
 import com.dpc.utils.ErrorCodeUtil;
 import com.dpc.utils.PageEntity;
@@ -604,6 +606,9 @@ public class BackDoctorController extends BaseController{
 	public String caseAnalysisDetail(HttpServletRequest request,HttpSession session) throws IllegalStateException, IOException{
 		String id = request.getParameter("id");
 		CaseAnalysis caseAnalysis = doctorService.getCaseAnalysisById(Integer.parseInt(id));
+		if(!ValidateUtil.isEmpty(caseAnalysis.getIllCaseImage())){
+			caseAnalysis.setIllCaseImage(ConstantUtil.DOMAIN+caseAnalysis.getIllCaseImage());
+		}
 		request.setAttribute("detail", caseAnalysis);
 		return "/back/doctor/caseAnalysisDetail";
 	}

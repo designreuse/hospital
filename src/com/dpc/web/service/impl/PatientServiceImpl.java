@@ -256,5 +256,10 @@ public class PatientServiceImpl implements IPatientService {
 		dayLiveMapper.insertSelective(dayLive);
 	}
 
+	@Override
+	public Patient getPatientById(Integer id) {
+		return patientMapper.getPatientById(id);
+	}
+
 	
 }

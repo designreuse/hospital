@@ -73,6 +73,9 @@
 	      <if test="totalPatient != null" >
 	        totalPatient,
 	      </if>
+	      <if test="dayScore != null" >
+	        dayScore,
+	      </if>
 	    </trim>
 	    <trim prefix="values (" suffix=")" suffixOverrides="," >
 	      <if test="userId != null" >
@@ -102,6 +105,9 @@
 	      <if test="totalPatient != null" >
 	        #{totalPatient,jdbcType=INTEGER},
 	      </if>
+	      <if test="dayScore != null" >
+	        #{dayScore,jdbcType=INTEGER},
+	      </if>
 	    </trim>
   </insert>
   
@@ -112,6 +118,8 @@
   		<if test="crtWithNameUrl != null">crtWithNameUrl=#{crtWithNameUrl},</if>
   		<if test="hospital != null and hospital != ''">hospital=#{hospital},</if>
   		<if test="score != null">score=#{score},</if>
+  		<if test="qrCodeUrl != null">qrCodeUrl=#{qrCodeUrl},</if>
+  		<if test="dayScore != null">dayScore=#{dayScore},</if>
   		<if test="address != null and address != ''">address=#{address},</if>
   		<if test="technicalTitle != null and technicalTitle != ''">technicalTitle=#{technicalTitle},</if>
   		<if test="teachingTitle != null and teachingTitle != ''">teachingTitle=#{teachingTitle},</if>

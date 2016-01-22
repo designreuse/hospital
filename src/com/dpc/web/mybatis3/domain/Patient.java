@@ -1,3 +1,4 @@
+
 package com.dpc.web.mybatis3.domain;
 
 public class Patient {
@@ -8,10 +9,20 @@ public class Patient {
     private Double weight;
 
     private Integer score;
+    private Integer hasBind;
 
     private String illProfile;
 
-    public Integer getId() {
+    
+    public Integer getHasBind() {
+		return hasBind;
+	}
+
+	public void setHasBind(Integer hasBind) {
+		this.hasBind = hasBind;
+	}
+
+	public Integer getId() {
         return id;
     }
 

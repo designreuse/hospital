@@ -248,7 +248,7 @@
    <select id="getCartoonList" parameterType="article" resultType="article">
   	select * from t_article 
   	<where>
-  		delFlag = 0 and type=2 and category=6
+  		delFlag = 0 and type=2 and category=5
   		<if test="illType != null"> and illType = #{illType}</if>
   	</where>
   	 order by postTime desc

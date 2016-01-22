@@ -211,20 +211,20 @@
   </select>
   
   <select id="findHeartCircleByPaginaton" parameterType="heartCircle" resultMap="heartCirclePageMap">
-	  SELECT
-	  	 a.id,u.username,DATE_FORMAT(a.creTime, "%Y-%m-%d %l:%i:%s") creTime,a.content,b.imageUrl from d_heart_circle a 
+	 SELECT
+	  	 a.id,u.username,DATE_FORMAT(a.creTime, "%Y-%m-%d %H:%i:%s") creTime,a.content,b.imageUrl from
+	  	 (select id,DATE_FORMAT(creTime, "%Y-%m-%d %H:%i:%s") as creTime,content,doctorId from d_heart_circle where delFlag=0 order by creTime desc limit #{start},#{limit}) a
 	  LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId  
-	  left join t_user u on u.id=a.doctorId  
+	  left join t_user u on u.id=a.doctorId   
 	  <where>
-	  	a.delFlag=0 
 	  	<if test="h.username != null"> and u.username = #{h.username}</if>
-	  	<if test="h.creTime != null"> and DATE_FORMAT(a.creTime, "%Y-%m-%d") = #{h.creTime}</if>
+	  	<if test="h.creTime != null"> and a.creTime = DATE_FORMAT(#{h.creTime}, "%Y-%m-%d %H:%i:%s")</if>
 	  </where>
-	  order by a.creTime desc
- 	  limit #{start},#{limit}
   </select>
   <select id="getHeartCircleCount" parameterType="heartCircle" resultType="java.lang.Integer">
-	 SELECT count(distinct(a.id)) from d_heart_circle a LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId 
+	 SELECT count(distinct(a.id)) from d_heart_circle a 
+	 LEFT JOIN d_heart_circle_image b on a.id=b.heartCircleId 
+	 left join t_user u on u.id=a.doctorId   
 	 <where>
 	  	a.delFlag=0
 	  	<if test="h.username != null"> and u.username = #{h.username}</if>

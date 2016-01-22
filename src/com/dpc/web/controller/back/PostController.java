@@ -107,7 +107,7 @@ public class PostController extends BaseController{
 		if(!ValidateUtil.isEmpty(postTime)){
 			d.setPostTime(postTime);
 		}
-		d.setType(1);
+//		d.setType(1);
 		Pager<Discovery> page = patientService.findDiscoveryByPaginaton(d);
 		request.setAttribute("page", page);
 		
